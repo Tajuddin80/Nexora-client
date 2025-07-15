@@ -7,73 +7,54 @@ const Navbar = () => {
 
   const links = (
     <>
-      <li>
+      <li className="mr-3">
         <NavLink
           to="/"
           className={({ isActive }) =>
-            isActive ? "btn btn-sm btn-primary" : "btn btn-sm btn-ghost"
+            isActive
+              ? "btn btn-md btn-primary"
+              : "btn btn-md btn-ghost hover:text-white"
           }
         >
           Home
         </NavLink>
       </li>
-      <li>
-        <NavLink
-          to="/sendParcel"
-          className={({ isActive }) =>
-            isActive ? "btn btn-sm btn-primary" : "btn btn-sm btn-ghost"
-          }
-        >
-          Send a Parcel
-        </NavLink>
-      </li>
-      <li>
+
+      <li className="mr-3">
         <NavLink
           to="/coverage"
           className={({ isActive }) =>
-            isActive ? "btn btn-sm btn-primary" : "btn btn-sm btn-ghost"
+            isActive
+              ? "btn btn-md btn-primary"
+              : "btn btn-md btn-ghost hover:text-white"
           }
         >
-          Coverage
+          Apartment
         </NavLink>
       </li>
+
       {user && (
-        <li>
+        <li className="mr-3">
           <NavLink
             to="/dashboard"
             className={({ isActive }) =>
-              isActive ? "btn btn-sm btn-primary" : "btn btn-sm btn-ghost"
+              isActive
+                ? "btn btn-md btn-primary"
+                : "btn btn-md btn-ghost hover:text-white"
             }
           >
             Dashboard
           </NavLink>
         </li>
       )}
-      <li>
-        <NavLink
-          to="/pricingCalculator"
-          className={({ isActive }) =>
-            isActive ? "btn btn-sm btn-primary" : "btn btn-sm btn-ghost"
-          }
-        >
-          Pricing
-        </NavLink>
-      </li>
-      <li>
-        <NavLink
-          to="/be-a-rider"
-          className={({ isActive }) =>
-            isActive ? "btn btn-sm btn-primary" : "btn btn-sm btn-ghost"
-          }
-        >
-          Be a Rider
-        </NavLink>
-      </li>
-      <li>
+
+      <li className="mr-3">
         <NavLink
           to="/aboutUs"
           className={({ isActive }) =>
-            isActive ? "btn btn-sm btn-primary" : "btn btn-sm btn-ghost"
+            isActive
+              ? "btn btn-md btn-primary"
+              : "btn btn-md btn-ghost hover:text-white"
           }
         >
           About Us
@@ -110,7 +91,7 @@ const Navbar = () => {
             {links}
           </ul>
         </div>
-      <Logo></Logo>
+        <Logo></Logo>
       </div>
 
       {/* Center: desktop menu */}
@@ -126,28 +107,35 @@ const Navbar = () => {
             <Link to="/login" className="btn btn-primary btn-sm mr-2">
               Sign In
             </Link>
-            <Link to="/register" className="btn btn-primary btn-sm">
-              Register
-            </Link>
           </>
         ) : (
           <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn btn-ghost btn-circle avatar"
+            >
               <div className="w-10 rounded-full">
                 <img src={user?.photoURL} alt="User Avatar" />
               </div>
             </div>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow"
+              className="menu menu-md dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow"
             >
+              <li className="text-lg text-center font-bold text-secondary">
+              <span > {user?.displayName}</span>
+              </li>
               <li>
                 <Link to="/dashboard/updateProfile">Profile</Link>
               </li>
               <li>
+                <Link to="/dashboard/dashboard">Dashboard</Link>
+              </li>
+              <li>
                 <button
                   onClick={() => logOut().catch(console.error)}
-                  className="text-red-500"
+                  className="text-white bg-secondary"
                 >
                   Logout
                 </button>

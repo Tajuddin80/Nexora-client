@@ -1,11 +1,20 @@
 import React from "react";
+import Banner from "./Banner/Banner";
+import Apartments from "./Apartments/Apartments";
+import BuildingDetails from "./BuildingDetails/BuildingDetails";
+import CouponsSection from "./CouponsSection/CouponsSection";
+import LocationSection from "./LocationSection/LocationSection";
 
 const Home = () => {
-  return <>
-
-<div className="btn bg-[#433D8B] text-white hover:bg-[#5A55A4]">Button 2</div>
-
-</>
+  return (
+    <>
+      <Banner></Banner>
+      <Apartments></Apartments>
+      <BuildingDetails></BuildingDetails>
+      <CouponsSection></CouponsSection>
+      <LocationSection></LocationSection>
+    </>
+  );
 };
 
 export default Home;
