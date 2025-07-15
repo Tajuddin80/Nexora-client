@@ -92,9 +92,9 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-200 p-4">
-      <div className="w-full max-w-md bg-base-100 rounded-xl shadow-lg p-8">
-        <h2 className="text-3xl font-bold mb-6 text-center">Create an Account</h2>
+    <div className="min-h-screen flex items-center justify-center bg-base-100 p-4">
+      <div className="w-full  bg-base-100 rounded-xl shadow-lg p-8">
+        <h2 className="text-3xl font-bold mb-6 text-start">Create an Account</h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Image Upload */}
@@ -200,7 +200,7 @@ const Register = () => {
           {/* Login Link */}
           <p className="text-sm">
             Already have an account?{" "}
-            <Link to="/signin" className="text-primary hover:underline">
+            <Link to="/login" className="text-primary hover:underline">
               Login here
             </Link>
           </p>

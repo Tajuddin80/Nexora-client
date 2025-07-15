@@ -1,23 +1,37 @@
 import { Outlet } from "react-router";
 import Lottie from "lottie-react";
-
 import logo from "../../assets/login.json";
+import Logo from "../../Shared/Logo/Logo";
+
 const AuthLayout = () => {
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
-   
-      <div className="flex-1 flex items-center justify-center text-white p-6">
-   
-        <Lottie animationData={logo} loop={true} />
+    <>
+      {/* Logo always visible on top */}
+      <div className="mt-5 flex justify-center">
+        <Logo />
       </div>
 
-  
-      <div className="flex-1 flex items-center justify-center p-6 bg-base-100">
-        <div className="w-full max-w-md">
-          <Outlet />
+      {/* Main content */}
+      <div className="flex min-h-[70vh] flex-col-reverse lg:flex-row p-6 gap-6 lg:gap-12">
+        {/* Left side: form */}
+        <div className="flex-1 flex items-center justify-center bg-base-100 text-base-content rounded-lg p-6 ">
+          <div className="w-full max-w-md">
+            <Outlet />
+          </div>
+        </div>
+
+        {/* Right side: Lottie animation */}
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="w-48 sm:w-72 md:w-80 lg:w-96 max-w-full">
+            <Lottie
+              animationData={logo}
+              loop={true}
+              style={{ width: "100%", height: "auto" }}
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

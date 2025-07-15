@@ -66,14 +66,14 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-200 p-4">
+    <div className="shadow-3xl  rounded-xl flex items-center justify-center bg-base-100 p-4">
       <div className="w-full max-w-md bg-base-100 rounded-xl shadow-lg p-8">
-        <h2 className="text-3xl font-bold mb-6 text-center">Welcome Back</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center">{/* inherits theme color */}Welcome Back</h2>
 
         <form className="space-y-4" onSubmit={handleLogin}>
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium">
+            <label htmlFor="email" className="block text-sm font-medium text-base-content">
               Email address
             </label>
             <input
@@ -89,12 +89,12 @@ const Login = () => {
           {/* Password */}
           <div>
             <div className="flex justify-between items-center">
-              <label htmlFor="password" className="block text-sm font-medium">
+              <label htmlFor="password" className="block text-sm font-medium text-base-content">
                 Password
               </label>
               <Link
                 to="/forgot-password"
-                className="text-sm text-primary hover:underline"
+                className="text-primary hover:underline"
               >
                 Forgot password?
               </Link>
@@ -111,7 +111,8 @@ const Login = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/60 hover:text-base-content"
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
                   // 👁 Eye Icon
@@ -163,7 +164,7 @@ const Login = () => {
           </div>
 
           {/* Register Link */}
-          <p className="text-sm">
+          <p className="text-sm text-base-content">
             Don’t have an account?{" "}
             <Link to="/register" className="text-primary hover:underline">
               Register here

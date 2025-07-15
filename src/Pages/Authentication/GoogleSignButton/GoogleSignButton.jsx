@@ -74,7 +74,7 @@ const GoogleSignButton = () => {
       onClick={handleGoogleSignIn}
       type="button"
       disabled={loading}
-      className="w-full flex btn cursor-pointer items-center justify-center border border-gray-300 rounded-md py-2 mb-4 hover:shadow"
+      className="w-full flex btn btn-primary cursor-pointer items-center justify-center border rounded-md py-2 mb-4 hover:shadow"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

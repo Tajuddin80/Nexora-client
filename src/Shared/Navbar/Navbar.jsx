@@ -123,7 +123,7 @@ const Navbar = () => {
         <Toggle></Toggle>
         {!user ? (
           <>
-            <Link to="/signin" className="btn btn-primary btn-sm mr-2">
+            <Link to="/login" className="btn btn-primary btn-sm mr-2">
               Sign In
             </Link>
             <Link to="/register" className="btn btn-primary btn-sm">
