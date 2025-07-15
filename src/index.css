@@ -1,0 +1,45 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+
+/* mycustomlight theme */
+[data-theme="mycustomlight"] {
+  --color-base-100: #FCFAEE;        /* app background */
+  --color-base-content: #000000;    /* main text black */
+  --color-primary: #B8001F;         /* buttons or secondary background */
+  --color-primary-content: #FFFFFF; /* button text white */
+  
+  --color-secondary: #B8001F;
+  --color-accent: #B8001F;
+  --color-neutral: #000000;
+  --color-info: #3ABFF8;
+  --color-success: #36D399;
+  --color-warning: #FBBF24;
+  --color-error: #F87272;
+
+  --radius-selector: 1rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+}
+
+/* mycustomdark theme */
+[data-theme="mycustomdark"] {
+    /* dark background */
+  --color-base-100: #00032e;        
+  /* --color-base-100: #030637;       */
+  --color-base-content: #FFFFFF;    /* text white */
+  --color-primary: #433D8B;         /* buttons background */
+  --color-primary-content: #FFFFFF; /* button text white */
+  
+  --color-secondary: #f5f5f5;
+  --color-accent: #fbbf24;
+  --color-neutral: #1f2937;
+  --color-info: #3abff8;
+  --color-success: #36d399;
+  --color-warning: #A0153E;
+  --color-error: #f87272;
+
+  --radius-selector: 1rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+}
