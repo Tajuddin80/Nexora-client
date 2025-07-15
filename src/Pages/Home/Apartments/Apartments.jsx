@@ -30,7 +30,7 @@ function generatePageNumbers(currentPage, totalPages) {
       if (i - l === 2) {
         rangeWithDots.push(l + 1);
       } else if (i - l !== 1) {
-        rangeWithDots.push('...');
+        rangeWithDots.push("...");
       }
     }
     rangeWithDots.push(i);
@@ -39,7 +39,6 @@ function generatePageNumbers(currentPage, totalPages) {
 
   return rangeWithDots;
 }
-
 
 const Apartments = () => {
   const axiosPublic = useAxiosPublic();
@@ -60,6 +59,8 @@ const Apartments = () => {
   // Sorting
   const [sortBy, setSortBy] = useState("rent");
   const [sortOrder, setSortOrder] = useState("asc");
+
+    const [selectedApt, setSelectedApt] = useState(null); 
 
   const fetchApartments = async ({ queryKey }) => {
     const [_key, page, minRent, maxRent, sortBy, sortOrder] = queryKey;
@@ -107,9 +108,19 @@ const Apartments = () => {
     );
   }
 
+ const handleDetails = (apt) => {
+    setSelectedApt(apt);
+    // open modal
+    const modal = document.getElementById("apt_details_modal");
+    if (modal) {
+      modal.showModal();
+    }
+  };
+
+
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4 text-primary">Apartments</h1>
+      <h1 className="text-2xl font-bold mb-4 text-secondary">Apartments</h1>
 
       {/* 🔎 Filters */}
       <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
@@ -214,56 +225,126 @@ const Apartments = () => {
                 </div>
 
                 {/* Button */}
-                <button
-                  onClick={() => handleAgreement(apt)}
-                  className="bg-primary hover:bg-primary/80 text-white mt-3 px-3 py-1 rounded-md shadow-md"
-                >
-                  Agreement
-                </button>
+                <div className="flex justify-between">
+                  {" "}
+                  <button
+                    onClick={() => handleAgreement(apt)}
+                    className="bg-primary hover:bg-primary/80 cursor-pointer text-white mt-3 px-3 py-1 rounded-md shadow-md"
+                  >
+                    Agreement
+                  </button>
+                  <button
+                    onClick={() => handleDetails(apt)}
+                    className="bg-primary hover:bg-primary/80 cursor-pointer text-white mt-3 px-3 py-1 rounded-md shadow-md"
+                  >
+                   More Details
+                  </button>
+                </div>
               </div>
             </motion.div>
           );
         })}
       </div>
 
-     {/* 📄 Pagination */}
-<div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
-  {/* Prev Button */}
-  <button
-    onClick={() => setPage(old => Math.max(old - 1, 1))}
-    disabled={page === 1}
-    className="px-3 py-1 bg-secondary/30 rounded hover:bg-secondary/50"
-  >
-    Prev
-  </button>
+      {/* 📌 Modal */}
+    <dialog id="apt_details_modal" className="modal">
+  <div className="modal-box max-w-2xl text-secondary p-6 rounded-2xl shadow-2xl">
+    {selectedApt && (
+      <div className="space-y-5">
+        {/* Title */}
+        <h3 className="font-bold text-2xl md:text-3xl text-secondary ">
+          Apartment {selectedApt.apartmentNo}
+        </h3>
 
-  {/* Page Numbers */}
-  {generatePageNumbers(page, data.pages).map((p, idx) =>
-    p === '...' ? (
-      <span key={idx} className="px-2 py-1 select-none text-gray-400">...</span>
-    ) : (
-      <button
-        key={idx}
-        onClick={() => setPage(p)}
-        className={`px-3 py-1 rounded hover:bg-primary/70 ${
-          p === page ? 'bg-primary text-white font-bold' : 'bg-secondary/30'
-        }`}
-      >
-        {p}
-      </button>
-    )
-  )}
+        {/* Image */}
+        <div className="overflow-hidden rounded-xl shadow-md">
+          <img
+            src={selectedApt.image}
+            alt={selectedApt.apartmentNo}
+            className="w-full h-56 md:h-72 object-cover hover:scale-105 transition-transform duration-300"
+          />
+        </div>
 
-  {/* Next Button */}
-  <button
-    onClick={() => setPage(old => (old < data.pages ? old + 1 : old))}
-    disabled={page === data.pages}
-    className="px-3 py-1 bg-secondary/30 rounded hover:bg-secondary/50"
-  >
-    Next
-  </button>
-</div>
+        {/* Info */}
+        <div className="grid grid-cols-2 gap-3 md:gap-6 text-base md:text-lg">
+          <p>
+            <span className="font-semibold text-secondary">Floor:</span>{" "}
+            {selectedApt.floor}
+          </p>
+          <p>
+            <span className="font-semibold text-secondary">Block:</span>{" "}
+            {selectedApt.block}
+          </p>
+          <p>
+            <span className="font-semibold text-secondary">Rent:</span>{" "}
+            <span className="text-secondary text-xl font-bold">{selectedApt.rent} tk</span>
+          </p>
+        </div>
 
+        {/* Description */}
+        <p className="leading-relaxed text-sm md:text-base border-t pt-3 border-secondary/20">
+          {selectedApt.description}
+        </p>
+      </div>
+    )}
+
+    {/* Actions */}
+    <div className="modal-action mt-6">
+      <form method="dialog">
+        <button className="btn bg-primary hover:bg-primary/80 text-white px-6">
+          Close
+        </button>
+      </form>
+    </div>
+  </div>
+
+  {/* Backdrop */}
+  <form method="dialog" className="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+      {/* 📄 Pagination */}
+      <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
+        {/* Prev Button */}
+        <button
+          onClick={() => setPage((old) => Math.max(old - 1, 1))}
+          disabled={page === 1}
+          className="px-3 py-1 bg-secondary/30 rounded hover:bg-secondary/50"
+        >
+          Prev
+        </button>
+
+        {/* Page Numbers */}
+        {generatePageNumbers(page, data.pages).map((p, idx) =>
+          p === "..." ? (
+            <span key={idx} className="px-2 py-1 select-none text-gray-400">
+              ...
+            </span>
+          ) : (
+            <button
+              key={idx}
+              onClick={() => setPage(p)}
+              className={`px-3 py-1 rounded hover:bg-primary/70 cursor-pointer ${
+                p === page
+                  ? "bg-primary text-white font-bold"
+                  : "bg-secondary/30"
+              }`}
+            >
+              {p}
+            </button>
+          )
+        )}
+
+        {/* Next Button */}
+        <button
+          onClick={() => setPage((old) => (old < data.pages ? old + 1 : old))}
+          disabled={page === data.pages}
+          className="px-3 py-1 bg-secondary/30 rounded hover:bg-secondary/50"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 
