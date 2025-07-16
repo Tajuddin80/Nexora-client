@@ -237,7 +237,7 @@ const Apartments = () => {
                     onClick={() => handleDetails(apt)}
                     className="bg-primary hover:bg-primary/80 cursor-pointer text-white mt-3 px-3 py-1 rounded-md shadow-md"
                   >
-                   More Details
+                   Details
                   </button>
                 </div>
               </div>

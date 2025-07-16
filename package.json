@@ -15,6 +15,7 @@
     "axios": "^1.10.0",
     "firebase": "^11.10.0",
     "framer-motion": "^12.23.5",
+    "gsap": "^3.13.0",
     "leaflet": "^1.9.4",
     "lottie-react": "^2.4.1",
     "react": "^19.1.0",

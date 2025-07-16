@@ -4,6 +4,7 @@ import Apartments from "./Apartments/Apartments";
 import BuildingDetails from "./BuildingDetails/BuildingDetails";
 import CouponsSection from "./CouponsSection/CouponsSection";
 import LocationSection from "./LocationSection/LocationSection";
+import MagicBentoWithImages from "../../Shared/component/MagicBentoWithImages/MagicBentoWithImages";
 
 const Home = () => {
   return (
@@ -13,6 +14,7 @@ const Home = () => {
       <BuildingDetails></BuildingDetails>
       <CouponsSection></CouponsSection>
       <LocationSection></LocationSection>
+      <MagicBentoWithImages></MagicBentoWithImages>
     </>
   );
 };

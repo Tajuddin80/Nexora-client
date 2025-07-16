@@ -43,3 +43,14 @@
   --radius-field: 0.25rem;
   --radius-box: 0.5rem;
 }
+
+
+/* In your style tag or Tailwind classes */
+
+.overflow-hidden.rounded-xl img {
+  transition: transform 0.3s ease;
+}
+
+.overflow-hidden.rounded-xl img:hover {
+  transform: scale(1.05);
+}
