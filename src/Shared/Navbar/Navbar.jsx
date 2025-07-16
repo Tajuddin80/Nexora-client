@@ -64,7 +64,7 @@ const Navbar = () => {
   );
 
   return (
-    <div className="navbar bg-base-100  sticky top-0 z-2000 shadow-2xl border rounded-xl">
+    <div className="navbar bg-base-100  sticky top-0 z-20 shadow-2xl  rounded-xl">
       {/* Left: mobile menu & logo */}
       <div className="navbar-start">
         <div className="dropdown">
@@ -124,7 +124,7 @@ const Navbar = () => {
               className="menu menu-md dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow"
             >
               <li className="text-lg text-center font-bold text-secondary">
-              <span > {user?.displayName}</span>
+                <span> {user?.displayName}</span>
               </li>
               <li>
                 <Link to="/dashboard/updateProfile">Profile</Link>
@@ -135,7 +135,7 @@ const Navbar = () => {
               <li>
                 <button
                   onClick={() => logOut().catch(console.error)}
-                  className="text-white bg-secondary"
+                  className="text-white bg-primary"
                 >
                   Logout
                 </button>

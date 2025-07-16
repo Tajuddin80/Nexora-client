@@ -11,10 +11,10 @@ const Home = () => {
     <>
       <Banner></Banner>
       <Apartments></Apartments>
-      <BuildingDetails></BuildingDetails>
       <CouponsSection></CouponsSection>
-      <LocationSection></LocationSection>
       <MagicBentoWithImages></MagicBentoWithImages>
+      <BuildingDetails></BuildingDetails>
+      <LocationSection></LocationSection>
     </>
   );
 };

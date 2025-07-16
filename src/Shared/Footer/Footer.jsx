@@ -1,10 +1,16 @@
 import React from "react";
-import { FaFacebookF, FaTwitter, FaInstagram } from "react-icons/fa";
+import {
+  FaFacebookF,
+  FaTwitter,
+  FaInstagram,
+  FaLinkedinIn,
+} from "react-icons/fa";
 import Logo from "../Logo/Logo";
+import { BiBriefcase } from "react-icons/bi";
 
 const Footer = () => {
   return (
-    <footer className="px-4 divide-y bg-base-100 text-base-content shadow-2xl border rounded-xl">
+    <footer className="px-4 divide-y bg-base-100 text-base-content shadow-2xl  rounded-xl">
       <div className="container flex flex-col justify-between py-10 mx-auto space-y-8 lg:flex-row lg:space-y-0">
         {/* Logo */}
         <Logo></Logo>
@@ -75,25 +81,28 @@ const Footer = () => {
             <div className="uppercase font-semibold">Social media</div>
             <div className="flex justify-start space-x-3">
               <a
-                href="#"
-                title="Facebook"
+                href="https://www.linkedin.com/in/tajuddin80/"
+                title="LinkedinIn"
+                target="_blank"
                 className="p-1 hover:text-primary transition-colors"
               >
-                <FaFacebookF className="w-5 h-5" />
+                <FaLinkedinIn className="w-5 h-5" />
               </a>
               <a
-                href="#"
+                href="https://x.com/TajuddinCSE"
                 title="Twitter"
+                target="_blank"
                 className="p-1 hover:text-primary transition-colors"
               >
                 <FaTwitter className="w-5 h-5" />
               </a>
               <a
-                href="#"
-                title="Instagram"
+                href="https://portfolio-tajuddin.netlify.app/"
+                target="_blank"
+                title="portfolio"
                 className="p-1 hover:text-primary transition-colors"
               >
-                <FaInstagram className="w-5 h-5" />
+                <BiBriefcase size={20} className="w-5 h-5" />
               </a>
             </div>
           </div>

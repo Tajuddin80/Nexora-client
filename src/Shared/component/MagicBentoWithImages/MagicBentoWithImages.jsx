@@ -12,31 +12,34 @@ const DEFAULT_GLOW_COLOR = PRIMARY_COLOR; // use primary as glow
 const cardData = [
   {
     color: "#060010",
-    title: "Advanced Analytics",
+    title: "24/7 CCTV Monitoring",
     description:
-      "Gain deep insights with real‑time data tracking and reporting.",
-    label: "Insights",
+      "Round‑the‑clock surveillance ensures complete safety and peace of mind.",
+    label: "Security",
     image: "https://i.ibb.co/whvstfQ6/lr36.jpg",
   },
   {
     color: "#060010",
-    title: "Unified Dashboard",
-    description: "View all your business metrics and updates in one place.",
-    label: "Overview",
+    title: "Soundproof Interiors",
+    description:
+      "High‑grade insulation for a quieter, more comfortable living experience.",
+    label: "Privacy",
     image: "https://i.ibb.co/vvgMQrcV/lr33.jpg",
   },
   {
     color: "#060010",
-    title: "Team Collaboration",
-    description: "Work together seamlessly with shared projects and chats.",
-    label: "Teamwork",
+    title: "Stylish Modern Rooms",
+    description:
+      "Premium finishing with elegant designs that redefine luxury living.",
+    label: "Lifestyle",
     image: "https://i.ibb.co/hJS85cfG/lr29.jpg",
   },
   {
     color: "#060010",
-    title: "Robust Security",
-    description: "Keep your data safe with enterprise‑grade protection.",
-    label: "Protection",
+    title: "Smart Access Control",
+    description:
+      "Keyless entry and biometric access for secure, hassle‑free movement.",
+    label: "Technology",
     image: "https://i.ibb.co/yb2x2SR/lr34.jpg",
   },
 ];

@@ -1,7 +1,7 @@
 import { Navigate } from "react-router";
 import useAuth from "../hooks/useAuth";
 import useUserRole from "../hooks/useUserRole";
-import Loader from "../Pages/shared/Loader/Loader";
+import Loader from "../Shared/component/Loader/Loader";
 
 const MemberRoute = ({ children }) => {
   const { user, loading } = useAuth();

@@ -120,7 +120,7 @@ const Apartments = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4 text-secondary">Apartments</h1>
+      <h1 className="text-3xl md:text-4xl mt-3 font-bold mb-4 text-secondary">Apartments</h1>
 
       {/* 🔎 Filters */}
       <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
