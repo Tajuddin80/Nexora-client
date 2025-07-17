@@ -1,13 +1,13 @@
-// src/pages/Dashboard/Apartments/Apartments.jsx
+
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import useAxiosPublic from "../../../hooks/useAxiosPublic";
-import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useNavigate } from "react-router";
-import useAuth from "../../../hooks/useAuth";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import { FaStar, FaBath, FaUtensils, FaRulerCombined } from "react-icons/fa";
+import useAuth from "../../hooks/useAuth";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 function generatePageNumbers(currentPage, totalPages) {
   const delta = 2; // how many pages around current to show
@@ -481,11 +481,26 @@ const Apartments = () => {
             <form method="dialog" className="w-full">
               <div className="flex justify-between w-full">
                 <button
-                  onClick={() => handleAgreement(selectedApt)}
+                  onClick={() => {
+                    if (!selectedApt.available) {
+                      // Show a SweetAlert
+                      Swal.fire({
+                        icon: "error",
+                        title: "Apartment Unavailable",
+                        text: "Sorry, this apartment is no longer available.",
+                        showConfirmButton: false,
+                        timer: 2000,
+                        timerProgressBar: true,
+                      });
+                    } else {
+                      handleAgreement(selectedApt);
+                    }
+                  }}
                   className="btn bg-primary hover:bg-primary/80 text-white px-6"
                 >
                   Agreement
                 </button>
+
                 <button className="btn bg-primary hover:bg-primary/80 text-white px-6">
                   Close
                 </button>
@@ -563,6 +578,8 @@ const Apartments = () => {
       if (result.isConfirmed) {
         axiosSecure
           .post("/agreements", {
+            apartmentId: apt._id,
+            availability: apt.available,
             userName: user.displayName,
             userEmail: user.email,
             floor: apt.floor,

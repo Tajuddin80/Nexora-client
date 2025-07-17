@@ -8,7 +8,18 @@ import Login from "../Pages/Authentication/Login/Login";
 import AuthLayout from "../Layouts/AuthLayout/AuthLayout";
 import Forbidden from "../Pages/Forbidden/Forbidden";
 import DashboardLayout from "../Layouts/DashboardLayout/DashboardLayout";
-import Apartments from "../Pages/Home/Apartments/Apartments";
+import Apartments from "../Pages/Apartments/Apartments";
+
+// Dashboard pages
+import Announcements from "../Pages/Dashboard/Announcements/Announcements";
+import MakePayment from "../Pages/Dashboard/MakePayment/MakePayment";
+import PaymentHistory from "../Pages/Dashboard/PaymentHistory/PaymentHistory";
+import AdminProfile from "../Pages/Dashboard/AdminProfile/AdminProfile";
+import ManageMembers from "../Pages/Dashboard/ManageMembers/ManageMembers";
+import MakeAnnouncement from "../Pages/Dashboard/MakeAnnouncement/MakeAnnouncement";
+import AgreementRequests from "../Pages/Dashboard/AgreementRequests/AgreementRequests";
+import ManageCoupons from "../Pages/Dashboard/ManageCoupons/ManageCoupons";
+import MyProfile from "../Pages/Dashboard/MyProfile/MyProfile";
 
 export const router = createBrowserRouter([
   {
@@ -51,8 +62,24 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: 'dashboard',
-    element: <DashboardLayout></DashboardLayout>,
-    errorElement: <ErrorPage></ErrorPage>
-  }
+    path: "dashboard",
+    element: <DashboardLayout />,
+    errorElement: <ErrorPage />,
+    children: [
+      // USER & MEMBER common
+      { path: "my-profile", element: <MyProfile /> },
+      { path: "announcements", element: <Announcements /> },
+
+      // MEMBER extra
+      { path: "make-payment", element: <MakePayment /> },
+      { path: "payment-history", element: <PaymentHistory /> },
+
+      // ADMIN extra
+      { path: "admin-profile", element: <AdminProfile /> },
+      { path: "manage-members", element: <ManageMembers /> },
+      { path: "make-announcement", element: <MakeAnnouncement /> },
+      { path: "agreement-requests", element: <AgreementRequests /> },
+      { path: "manage-coupons", element: <ManageCoupons /> },
+    ],
+  },
 ]);

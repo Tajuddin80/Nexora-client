@@ -75,14 +75,14 @@ const DashboardLayout = () => {
           className="drawer-overlay lg:hidden"
         ></label>
         {/* sidebar design */}
-      <ul
-  className="
+        <ul
+          className="
     menu p-4 gap-3 w-80 min-h-screen shadow-lg
     bg-[color-mix(in_srgb,var(--color-primary)_10%,var(--color-base-100)_90%)]
     text-[color:var(--color-base-content)]
     border-r border-[rgba(0,0,0,0.1)]
   "
->
+        >
           {/* Logo */}
           <div className="mb-8 flex justify-center">
             <Logo />
