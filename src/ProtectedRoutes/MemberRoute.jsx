@@ -11,7 +11,7 @@ const MemberRoute = ({ children }) => {
     return <Loader />;
   }
 
-  if (!user || role !== "rider") {
+  if (!user || role !== "member") {
     return <Navigate to={"/forbidden"}></Navigate>;
   }
 
