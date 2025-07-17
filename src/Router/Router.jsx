@@ -8,6 +8,7 @@ import Login from "../Pages/Authentication/Login/Login";
 import AuthLayout from "../Layouts/AuthLayout/AuthLayout";
 import Forbidden from "../Pages/Forbidden/Forbidden";
 import DashboardLayout from "../Layouts/DashboardLayout/DashboardLayout";
+import Apartments from "../Pages/Home/Apartments/Apartments";
 
 export const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <Home></Home>,
+      },
+         {
+        path: 'apartments',
+        element: <Apartments></Apartments>
       },
       {
         path: 'forbidden',

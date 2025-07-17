@@ -7,7 +7,7 @@ import { useNavigate } from "react-router";
 import useAuth from "../../../hooks/useAuth";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
-import { FaStar } from "react-icons/fa";
+import { FaStar, FaBath, FaUtensils, FaRulerCombined } from "react-icons/fa";
 
 function generatePageNumbers(currentPage, totalPages) {
   const delta = 2; // how many pages around current to show
@@ -60,7 +60,7 @@ const Apartments = () => {
   const [sortBy, setSortBy] = useState("rent");
   const [sortOrder, setSortOrder] = useState("asc");
 
-    const [selectedApt, setSelectedApt] = useState(null); 
+  const [selectedApt, setSelectedApt] = useState(null);
 
   const fetchApartments = async ({ queryKey }) => {
     const [_key, page, minRent, maxRent, sortBy, sortOrder] = queryKey;
@@ -108,7 +108,7 @@ const Apartments = () => {
     );
   }
 
- const handleDetails = (apt) => {
+  const handleDetails = (apt) => {
     setSelectedApt(apt);
     // open modal
     const modal = document.getElementById("apt_details_modal");
@@ -117,10 +117,11 @@ const Apartments = () => {
     }
   };
 
-
   return (
-    <div className="p-4">
-      <h1 className="text-3xl md:text-4xl mt-3 font-bold mb-4 text-secondary">Apartments</h1>
+    <div className="p-4 my-10">
+      <h1 className="text-3xl md:text-4xl mt-3 font-bold mb-4 text-secondary">
+        Apartments
+      </h1>
 
       {/* 🔎 Filters */}
       <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
@@ -182,64 +183,226 @@ const Apartments = () => {
         {data.apartments.map((apt) => {
           const oldPrice = Math.round(apt.rent * 1.1);
           return (
+            // <motion.div
+            //   key={apt._id}
+            //   whileHover={{ scale: 1.02 }}
+            //   className="rounded-xl shadow-lg overflow-hidden p-3 bg-secondary/10"
+            // >
+            //   <div className="overflow-hidden rounded-lg">
+            //     <motion.img
+            //       src={apt.image}
+            //       alt={apt.apartmentNo}
+            //       className="w-full h-48 object-cover rounded-lg"
+            //       whileHover={{ scale: 1.05 }}
+            //       transition={{ duration: 0.3 }}
+            //     />
+            //   </div>
+            //   <div className="mt-3 space-y-1">
+            //     <p className="text-secondary font-semibold">
+            //       Floor: <span>{apt.floor}</span>
+            //     </p>
+            //     <p className="text-secondary font-semibold">
+            //       Block: <span>{apt.block}</span>
+            //     </p>
+            //     <p className="text-secondary font-semibold">
+            //       Apartment No: <span>{apt.apartmentNo}</span>
+            //     </p>
+
+            //     {/* Rent */}
+            //     <div className="flex items-center gap-2 mt-2">
+            //       <span className="text-gray-500 line-through text-sm">
+            //         {oldPrice} tk
+            //       </span>
+            //       <span className="text-lg font-bold text-secondary">
+            //         {apt.rent} tk
+            //       </span>
+            //     </div>
+
+            //     {/* Stars */}
+            //     <div className="flex items-center gap-1 mt-1">
+            //       {[...Array(5)].map((_, idx) => (
+            //         <FaStar key={idx} className="text-yellow-400" />
+            //       ))}
+            //     </div>
+
+            //     {/* Button */}
+
+            //     <button
+            //       onClick={() => handleDetails(apt)}
+            //       className="bg-primary hover:bg-primary/80 cursor-pointer text-white mt-3 px-3 py-1 rounded-md shadow-md"
+            //     >
+            //       Check Now
+            //     </button>
+            //   </div>
+            // </motion.div>
+
+            // <motion.div
+            //   key={apt._id}
+            //   whileHover={{ scale: 1.02 }}
+            //   className="relative rounded-xl shadow-lg overflow-hidden bg-secondary/10"
+            // >
+            //   {/* Image with overlay */}
+            //   <div className="relative overflow-hidden rounded-b-none rounded-t-xl">
+            //     <motion.img
+            //       src={apt.image}
+            //       alt={apt.apartmentNo}
+            //       className="w-full h-48 object-cover"
+            //       whileHover={{ scale: 1.05 }}
+            //       transition={{ duration: 0.3 }}
+            //     />
+            //     {/* Stars in top-right */}
+            //     <div className="absolute top-2 right-2 flex gap-0.5 bg-black/40 px-2 py-1 rounded-full backdrop-blur-sm">
+            //       {[...Array(5)].map((_, idx) => (
+            //         <FaStar key={idx} className="text-yellow-400 w-4 h-4" />
+            //       ))}
+            //     </div>
+            //   </div>
+
+            //   {/* Content */}
+            //   <div className="p-4 space-y-2">
+            //     {/* Apartment info */}
+            //     <div className="text-sm text-secondary space-y-0.5">
+            //       <p className="font-medium">Floor: <span className="font-semibold">{apt.floor}</span></p>
+            //       <p className="font-medium">Block: <span className="font-semibold">{apt.block}</span></p>
+            //       <p className="font-medium">Apartment No: <span className="font-semibold">{apt.apartmentNo}</span></p>
+            //     </div>
+
+            //     {/* Rent */}
+            //     <div className="flex items-center gap-2 mt-3">
+            //       <span className="text-gray-500 line-through text-sm">{oldPrice} tk</span>
+            //       <span className="text-xl font-bold text-secondary">{apt.rent} tk</span>
+            //     </div>
+
+            //     {/* Button */}
+            //     <button
+            //       onClick={() => handleDetails(apt)}
+            //       className="w-full mt-4 bg-primary hover:bg-primary/80 text-white py-2 rounded-lg font-medium shadow-md transition-colors"
+            //     >
+            //       Check Now
+            //     </button>
+            //   </div>
+            // </motion.div>
+
+            // <motion.div
+            //   whileHover={{ scale: 1.02 }}
+            //   className="rounded-xl p-4 shadow-xl bg-white/10 backdrop-blur-md border border-white/20"
+            // >
+            //   <div className="flex justify-between items-start">
+            //     <h3 className="text-lg font-bold text-secondary">
+            //       Apartment {apt.apartmentNo}
+            //     </h3>
+            //     <div className="flex gap-0.5">
+            //       {[...Array(5)].map((_, i) => (
+            //         <FaStar key={i} className="text-yellow-400 w-4 h-4" />
+            //       ))}
+            //     </div>
+            //   </div>
+            //   <img
+            //     src={apt.image}
+            //     alt={apt.apartmentNo}
+            //     className="w-full h-40 object-cover rounded-lg my-3"
+            //   />
+            //   <p className="text-sm text-gray-300">
+            //     Floor {apt.floor} • Block {apt.block}
+            //   </p>
+            //   <div className="flex items-center gap-2 mt-3">
+            //     <span className="text-gray-400 line-through text-sm">
+            //       {oldPrice} tk
+            //     </span>
+            //     <span className="text-xl font-bold text-secondary">
+            //       {apt.rent} tk
+            //     </span>
+            //   </div>
+            //   <button className="w-full mt-4 bg-primary text-white py-2 rounded-lg hover:bg-primary/80">
+            //     Check Now
+            //   </button>
+            // </motion.div>
+
             <motion.div
               key={apt._id}
               whileHover={{ scale: 1.02 }}
-              className="rounded-xl shadow-lg overflow-hidden p-3 bg-secondary/10"
+              className="relative rounded-xl shadow-lg overflow-hidden bg-secondary/10"
             >
-              <div className="overflow-hidden rounded-lg">
+              {/* Image */}
+              <div className="relative overflow-hidden">
                 <motion.img
                   src={apt.image}
                   alt={apt.apartmentNo}
-                  className="w-full h-48 object-cover rounded-lg"
+                  className="w-full h-48 object-cover"
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.3 }}
                 />
-              </div>
-              <div className="mt-3 space-y-1">
-                <p className="text-secondary font-semibold">
-                  Floor: <span>{apt.floor}</span>
-                </p>
-                <p className="text-secondary font-semibold">
-                  Block: <span>{apt.block}</span>
-                </p>
-                <p className="text-secondary font-semibold">
-                  Apartment No: <span>{apt.apartmentNo}</span>
-                </p>
+                {/* Availability Badge */}
+                <span
+                  className="absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full text-white"
+                  style={{
+                    backgroundColor: apt.available
+                      ? "var(--badge-available)"
+                      : "var(--badge-unavailable)",
+                  }}
+                >
+                  {apt.available ? "Available" : "Unavailable"}
+                </span>
 
+                {/* Star Ratings */}
+                <div className="absolute top-3 right-3 flex gap-0.5 bg-black/40 px-2 py-1 rounded-full backdrop-blur-sm">
+                  {[...Array(5)].map((_, idx) => (
+                    <FaStar key={idx} className="text-yellow-400 w-4 h-4" />
+                  ))}
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-4 space-y-3">
+                {/* Row: Basic info (left) + Features (right) */}
+                <div className="flex justify-between items-center">
+                  {/* Basic info on the left */}
+                  <div className="text-sm text-secondary space-y-0.5">
+                    <p className="font-medium">
+                      Floor: <span className="font-semibold">{apt.floor}</span>
+                    </p>
+                    <p className="font-medium">
+                      Block: <span className="font-semibold">{apt.block}</span>
+                    </p>
+                    <p className="font-medium">
+                      Apartment:{" "}
+                      <span className="font-semibold">{apt.apartmentNo}</span>
+                    </p>
+                  </div>
+
+                  {/* Features with icons on the right */}
+                  <div className="flex items-center gap-4 text-secondary text-sm">
+                    <div className="flex items-center gap-1">
+                      <FaBath className="  text-lg md:text-xl" />
+                      <span className="font-medium">{apt.washroomCount}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <FaUtensils className=" text-lg md:text-xl" />
+                      <span className="font-medium">{apt.kitchenCount}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <FaRulerCombined className=" text-lg md:text-xl" />
+                      <span className="font-medium">{apt.squareFeet} sqft</span>
+                    </div>
+                  </div>
+                </div>
                 {/* Rent */}
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center gap-2 mt-3">
                   <span className="text-gray-500 line-through text-sm">
-                    {oldPrice} tk
+                    {Math.round(apt.rent * 1.1)} tk
                   </span>
-                  <span className="text-lg font-bold text-secondary">
+                  <span className="text-xl font-bold text-secondary">
                     {apt.rent} tk
                   </span>
                 </div>
 
-                {/* Stars */}
-                <div className="flex items-center gap-1 mt-1">
-                  {[...Array(5)].map((_, idx) => (
-                    <FaStar key={idx} className="text-yellow-400" />
-                  ))}
-                </div>
-
                 {/* Button */}
-                <div className="flex justify-between">
-                  {" "}
-                  <button
-                    onClick={() => handleAgreement(apt)}
-                    className="bg-primary hover:bg-primary/80 cursor-pointer text-white mt-3 px-3 py-1 rounded-md shadow-md"
-                  >
-                    Agreement
-                  </button>
-                  <button
-                    onClick={() => handleDetails(apt)}
-                    className="bg-primary hover:bg-primary/80 cursor-pointer text-white mt-3 px-3 py-1 rounded-md shadow-md"
-                  >
-                   Details
-                  </button>
-                </div>
+                <button
+                  onClick={() => handleDetails(apt)}
+                  className="w-full mt-4 bg-primary hover:bg-primary/80 text-white py-2 rounded-lg font-medium shadow-md transition-colors"
+                >
+                  Check Now
+                </button>
               </div>
             </motion.div>
           );
@@ -247,62 +410,93 @@ const Apartments = () => {
       </div>
 
       {/* 📌 Modal */}
-    <dialog id="apt_details_modal" className="modal">
-  <div className="modal-box max-w-2xl text-secondary p-6 rounded-2xl shadow-2xl">
-    {selectedApt && (
-      <div className="space-y-5">
-        {/* Title */}
-        <h3 className="font-bold text-2xl md:text-3xl text-secondary ">
-          Apartment {selectedApt.apartmentNo}
-        </h3>
+      <dialog id="apt_details_modal" className="modal">
+        <div className="modal-box max-w-2xl text-secondary p-6 rounded-2xl shadow-2xl">
+          {selectedApt && (
+            <div className="space-y-5">
+              {/* Title & Badge */}
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-2xl md:text-3xl text-secondary">
+                  Apartment {selectedApt.apartmentNo}
+                </h3>
+                <span
+                  className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                    selectedApt.available
+                      ? "bg-green-500 text-white"
+                      : "bg-red-500 text-white"
+                  }`}
+                >
+                  {selectedApt.available ? "Available" : "Unavailable"}
+                </span>
+              </div>
 
-        {/* Image */}
-        <div className="overflow-hidden rounded-xl shadow-md">
-          <img
-            src={selectedApt.image}
-            alt={selectedApt.apartmentNo}
-            className="w-full h-56 md:h-72 object-cover hover:scale-105 transition-transform duration-300"
-          />
+              {/* Image */}
+              <div className="overflow-hidden rounded-xl shadow-md">
+                <img
+                  src={selectedApt.image}
+                  alt={selectedApt.apartmentNo}
+                  className="w-full h-56 md:h-72 object-cover hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+
+              {/* Info Grid */}
+              <div className="grid grid-cols-2 gap-3 md:gap-6 text-base md:text-lg">
+                <p>
+                  <span className="font-semibold">Floor:</span>{" "}
+                  {selectedApt.floor}
+                </p>
+                <p>
+                  <span className="font-semibold">Block:</span>{" "}
+                  {selectedApt.block}
+                </p>
+                <p>
+                  <span className="font-semibold">Rent:</span>{" "}
+                  <span className="text-xl font-bold">
+                    {selectedApt.rent} tk
+                  </span>
+                </p>
+                <p className="flex items-center gap-1">
+                  <FaBath className="text-primary" /> Washrooms:{" "}
+                  {selectedApt.washroomCount}
+                </p>
+                <p className="flex items-center gap-1">
+                  <FaUtensils className="text-primary" /> Kitchen:{" "}
+                  {selectedApt.kitchenCount}
+                </p>
+                <p className="flex items-center gap-1">
+                  <FaRulerCombined className="text-primary" />{" "}
+                  {selectedApt.squareFeet} sqft
+                </p>
+              </div>
+
+              {/* Description */}
+              <p className="leading-relaxed text-sm md:text-base border-t pt-3 border-secondary/20">
+                {selectedApt.description}
+              </p>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="modal-action mt-6">
+            <form method="dialog" className="w-full">
+              <div className="flex justify-between w-full">
+                <button
+                  onClick={() => handleAgreement(selectedApt)}
+                  className="btn bg-primary hover:bg-primary/80 text-white px-6"
+                >
+                  Agreement
+                </button>
+                <button className="btn bg-primary hover:bg-primary/80 text-white px-6">
+                  Close
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-
-        {/* Info */}
-        <div className="grid grid-cols-2 gap-3 md:gap-6 text-base md:text-lg">
-          <p>
-            <span className="font-semibold text-secondary">Floor:</span>{" "}
-            {selectedApt.floor}
-          </p>
-          <p>
-            <span className="font-semibold text-secondary">Block:</span>{" "}
-            {selectedApt.block}
-          </p>
-          <p>
-            <span className="font-semibold text-secondary">Rent:</span>{" "}
-            <span className="text-secondary text-xl font-bold">{selectedApt.rent} tk</span>
-          </p>
-        </div>
-
-        {/* Description */}
-        <p className="leading-relaxed text-sm md:text-base border-t pt-3 border-secondary/20">
-          {selectedApt.description}
-        </p>
-      </div>
-    )}
-
-    {/* Actions */}
-    <div className="modal-action mt-6">
-      <form method="dialog">
-        <button className="btn bg-primary hover:bg-primary/80 text-white px-6">
-          Close
-        </button>
-      </form>
-    </div>
-  </div>
-
-  {/* Backdrop */}
-  <form method="dialog" className="modal-backdrop">
-    <button>close</button>
-  </form>
-</dialog>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
 
       {/* 📄 Pagination */}
       <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">

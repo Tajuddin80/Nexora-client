@@ -22,7 +22,7 @@ const Navbar = () => {
 
       <li className="mr-3">
         <NavLink
-          to="/coverage"
+          to="apartments"
           className={({ isActive }) =>
             isActive
               ? "btn btn-md btn-primary"
@@ -36,7 +36,7 @@ const Navbar = () => {
       {user && (
         <li className="mr-3">
           <NavLink
-            to="/dashboard"
+            to="dashboard"
             className={({ isActive }) =>
               isActive
                 ? "btn btn-md btn-primary"
@@ -64,7 +64,10 @@ const Navbar = () => {
   );
 
   return (
-    <div className="navbar bg-base-100  sticky top-0 z-20 shadow-2xl  rounded-xl">
+    <div className="navbar   sticky top-0 z-20 shadow-2xl  rounded-xl   bg-[color-mix(in_srgb,var(--color-primary)_10%,var(--color-base-100)_90%)]
+    text-[color:var(--color-base-content)]
+    border-r border-[rgba(0,0,0,0.1)]">
+   
       {/* Left: mobile menu & logo */}
       <div className="navbar-start">
         <div className="dropdown">
@@ -130,7 +133,7 @@ const Navbar = () => {
                 <Link to="/dashboard/updateProfile">Profile</Link>
               </li>
               <li>
-                <Link to="/dashboard/dashboard">Dashboard</Link>
+                <Link to="/dashboard">Dashboard</Link>
               </li>
               <li>
                 <button

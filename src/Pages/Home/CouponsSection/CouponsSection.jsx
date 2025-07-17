@@ -41,7 +41,9 @@ const CouponsSection = () => {
   };
 
   return (
-    <section className="my-12 p-6 md:p-10 bg-gradient-to-r from-primary to-secondary rounded-2xl shadow-xl text-white">
+    <section className="my-12 p-6 md:p-10 rounded-2xl shadow-xl   bg-[color-mix(in_srgb,var(--color-primary)_10%,var(--color-base-100)_90%)]
+    text-[color:var(--color-base-content)]
+    border-r border-[rgba(0,0,0,0.1)]">
       <div className="flex items-center gap-3 mb-6">
         <FaGift className="text-4xl" />
         <h2 className="text-3xl md:text-4xl font-bold"> Special Coupons</h2>

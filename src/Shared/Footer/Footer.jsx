@@ -10,7 +10,9 @@ import { BiBriefcase } from "react-icons/bi";
 
 const Footer = () => {
   return (
-    <footer className="px-4 divide-y bg-base-100 text-base-content shadow-2xl  rounded-xl">
+    <footer className="px-4 divide-y  shadow-2xl  rounded-xl     bg-[color-mix(in_srgb,var(--color-primary)_10%,var(--color-base-100)_90%)]
+    text-[color:var(--color-base-content)]
+    border-r border-[rgba(0,0,0,0.1)]">
       <div className="container flex flex-col justify-between py-10 mx-auto space-y-8 lg:flex-row lg:space-y-0">
         {/* Logo */}
         <Logo></Logo>

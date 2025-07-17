@@ -17,14 +17,18 @@ import Loader from "../../Shared/component/Loader/Loader";
 
 const navLinkClass = ({ isActive }) =>
   `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-300 
-   ${isActive ? "bg-secondary text-white" : "hover:bg-primary hover:text-white text-base-content"} text-base md:text-lg font-medium`;
+   ${
+     isActive
+       ? "bg-secondary text-white"
+       : "hover:bg-primary hover:text-white text-base-content"
+   } text-base md:text-lg font-medium`;
 
 const DashboardLayout = () => {
   const { role, roleLoading } = useUserRole();
-console.log(role);
+  console.log(role);
 
   if (roleLoading) {
-    return <Loader></Loader>
+    return <Loader></Loader>;
   }
 
   return (
@@ -66,11 +70,19 @@ console.log(role);
 
       {/* Sidebar */}
       <div className="drawer-side">
-        <label htmlFor="dashboard-drawer" className="drawer-overlay lg:hidden"></label>
-        <ul
-          className="menu p-4 gap-3 w-80 min-h-screen bg-base-100 text-base-content shadow-lg"
-          style={{ borderRight: "1px solid rgba(0,0,0,0.05)" }}
-        >
+        <label
+          htmlFor="dashboard-drawer"
+          className="drawer-overlay lg:hidden"
+        ></label>
+        {/* sidebar design */}
+      <ul
+  className="
+    menu p-4 gap-3 w-80 min-h-screen shadow-lg
+    bg-[color-mix(in_srgb,var(--color-primary)_10%,var(--color-base-100)_90%)]
+    text-[color:var(--color-base-content)]
+    border-r border-[rgba(0,0,0,0.1)]
+  "
+>
           {/* Logo */}
           <div className="mb-8 flex justify-center">
             <Logo />
@@ -112,7 +124,10 @@ console.log(role);
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/dashboard/payment-history" className={navLinkClass}>
+                <NavLink
+                  to="/dashboard/payment-history"
+                  className={navLinkClass}
+                >
                   <FaClipboardList /> Payment History
                 </NavLink>
               </li>
@@ -133,22 +148,34 @@ console.log(role);
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/dashboard/manage-members" className={navLinkClass}>
+                <NavLink
+                  to="/dashboard/manage-members"
+                  className={navLinkClass}
+                >
                   <FaUsersCog /> Manage Members
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/dashboard/make-announcement" className={navLinkClass}>
+                <NavLink
+                  to="/dashboard/make-announcement"
+                  className={navLinkClass}
+                >
                   <FaBullhorn /> Make Announcement
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/dashboard/agreement-requests" className={navLinkClass}>
+                <NavLink
+                  to="/dashboard/agreement-requests"
+                  className={navLinkClass}
+                >
                   <FaTasks /> Agreement Requests
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/dashboard/manage-coupons" className={navLinkClass}>
+                <NavLink
+                  to="/dashboard/manage-coupons"
+                  className={navLinkClass}
+                >
                   <FaPlus /> Manage Coupons
                 </NavLink>
               </li>

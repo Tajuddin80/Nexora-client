@@ -1,21 +1,20 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-
 /* mycustomlight theme */
 [data-theme="mycustomlight"] {
-  --color-base-100: #FCFAEE;        /* app background */
-  --color-base-content: #000000;    /* main text black */
-  --color-primary: #B8001F;         /* buttons or secondary background */
-  --color-primary-content: #FFFFFF; /* button text white */
-  
-  --color-secondary: #B8001F;
-  --color-accent: #B8001F;
+  --color-base-100: #fcfaee; /* app background */
+  --color-base-content: #000000; /* main text black */
+  --color-primary: #b8001f; /* buttons or secondary background */
+  --color-primary-content: #ffffff; /* button text white */
+
+  --color-secondary: #b8001f;
+  --color-accent: #b8001f;
   --color-neutral: #000000;
-  --color-info: #3ABFF8;
-  --color-success: #36D399;
-  --color-warning: #FBBF24;
-  --color-error: #F87272;
+  --color-info: #3abff8;
+  --color-success: #36d399;
+  --color-warning: #fbbf24;
+  --color-error: #f87272;
 
   --radius-selector: 1rem;
   --radius-field: 0.25rem;
@@ -24,19 +23,19 @@
 
 /* mycustomdark theme */
 [data-theme="mycustomdark"] {
-    /* dark background */
-  --color-base-100: #00032e;        
+  /* dark background */
+  --color-base-100: #00032e;
   /* --color-base-100: #030637;       */
-  --color-base-content: #FFFFFF;    /* text white */
-  --color-primary: #433D8B;         /* buttons background */
-  --color-primary-content: #FFFFFF; /* button text white */
-  
+  --color-base-content: #ffffff; /* text white */
+  --color-primary: #433d8b; /* buttons background */
+  --color-primary-content: #ffffff; /* button text white */
+
   --color-secondary: #f5f5f5;
   --color-accent: #fbbf24;
   --color-neutral: #1f2937;
   --color-info: #3abff8;
   --color-success: #36d399;
-  --color-warning: #A0153E;
+  --color-warning: #a0153e;
   --color-error: #f87272;
 
   --radius-selector: 1rem;
@@ -44,6 +43,15 @@
   --radius-box: 0.5rem;
 }
 
+[data-theme="mycustomlight"] {
+  --badge-available: #16a340; /* Tailwind emerald-600 */
+  --badge-unavailable: #e11d48; /* Tailwind rose-600 */
+}
+
+[data-theme="mycustomdark"] {
+  --badge-available: #22c55e; /* Slightly brighter green for dark */
+  --badge-unavailable: #f43f5e; /* Slightly brighter rose for dark */
+}
 
 /* In your style tag or Tailwind classes */
 
