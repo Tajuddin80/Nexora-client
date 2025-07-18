@@ -62,102 +62,101 @@ const Apartments = () => {
     return data;
   };
 
- const { data, isLoading, isError } = useQuery({
-  queryKey: ["apartments", page, minRent, maxRent, sortBy, sortOrder],
-  queryFn: fetchApartments,
-  placeholderData: (prev) => prev, // keeps previous data while fetching
-});
-
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["apartments", page, minRent, maxRent, sortBy, sortOrder],
+    queryFn: fetchApartments,
+    placeholderData: (prev) => prev, // keeps previous data while fetching
+  });
 
   // ✅ Fetch user agreements
-const { data: userAgreements = [] } = useQuery({
-  queryKey: ["userAgreements", user?.email],
-  queryFn: async () => {
-    const response = await axiosSecure.get(`/agreements/user/${user.email}`);
-    return response.data;
-  },
-  enabled: !!user?.email,
-});
+  const { data: userAgreements = [] } = useQuery({
+    queryKey: ["userAgreements", user?.email],
+    queryFn: async () => {
+      const response = await axiosSecure.get(`/agreements/user/${user.email}`);
+      return response.data;
+    },
+    enabled: !!user?.email,
+  });
 
+// ✅ Handle Agreement
+const handleAgreement = async (apt) => {
+  if (!user) {
+    navigate("/login");
+    return;
+  }
 
-  // ✅ Handle Agreement
-  const handleAgreement = async (apt) => {
-    if (!user) {
-      navigate("/login");
+  Swal.fire({
+    title: "Are you sure?",
+    text: `You are about to send an agreement request for Apartment ${apt.apartmentNo} (Floor: ${apt.floor}, Block: ${apt.block})`,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, proceed",
+    cancelButtonText: "Cancel",
+    background: "#fff",
+  }).then(async (result) => {
+    if (!result.isConfirmed) return;
+
+    // ✅ Check if user already has active or checked agreement
+    const activeAgreements = (userAgreements || []).filter(
+      (a) => a.status === "pending" || a.status === "checked"
+    );
+
+    if (activeAgreements.length > 0) {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "info",
+        title: "You already have an pending or checked agreement.",
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+        background: "#fff",
+      });
       return;
     }
 
-    Swal.fire({
-      title: "Are you sure?",
-      text: `You are about to send an agreement request for Apartment ${apt.apartmentNo} (Floor: ${apt.floor}, Block: ${apt.block})`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, proceed",
-      cancelButtonText: "Cancel",
-      background: "#fff",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        // ✅ Check if user already has active agreement
-        const activeAgreements = (userAgreements || []).filter(
-          (a) => a.status === "pending" || a.status === "accepted"
-        );
+    try {
+      await axiosSecure.post("/agreements", {
+        userName: user.displayName,
+        userEmail: user.email,
+        floor: apt.floor,
+        block: apt.block,
+        apartmentNo: apt.apartmentNo,
+        rent: apt.rent,
+        status: "pending",
+        apartmentId: apt._id,
+        availability: apt.available,
+      });
 
-        if (activeAgreements.length > 0) {
-          Swal.fire({
-            toast: true,
-            position: "top-end",
-            icon: "info",
-            title: "You already have an active or accepted agreement.",
-            showConfirmButton: false,
-            timer: 2500,
-            timerProgressBar: true,
-            background: "#fff",
-          });
-          return;
-        }
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: "Agreement request sent!",
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        background: "#fff",
+      });
+    } catch (err) {
+      const errorMessage =
+        err?.response?.data?.message || "Something went wrong!";
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: errorMessage,
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        background: "#fff",
+      });
+    }
+  });
+};
 
-        try {
-          await axiosSecure.post("/agreements", {
-            apartmentId: apt._id,
-            availability: apt.available,
-            userName: user.displayName,
-            userEmail: user.email,
-            floor: apt.floor,
-            block: apt.block,
-            apartmentNo: apt.apartmentNo,
-            rent: apt.rent,
-            status: "pending",
-          });
-
-          Swal.fire({
-            toast: true,
-            position: "top-end",
-            icon: "success",
-            title: "Agreement request sent!",
-            showConfirmButton: false,
-            timer: 2000,
-            timerProgressBar: true,
-            background: "#fff",
-          });
-        } catch (err) {
-          const errorMessage =
-            err?.response?.data?.message || "Something went wrong!";
-          Swal.fire({
-            toast: true,
-            position: "top-end",
-            icon: "error",
-            title: errorMessage,
-            showConfirmButton: false,
-            timer: 2000,
-            timerProgressBar: true,
-            background: "#fff",
-          });
-        }
-      }
-    });
-  };
 
   const handleDetails = (apt) => {
     setSelectedApt(apt);
@@ -193,7 +192,9 @@ const { data: userAgreements = [] } = useQuery({
   }
 
   if (isError) {
-    return <p className="text-center text-red-500">Error loading apartments.</p>;
+    return (
+      <p className="text-center text-red-500">Error loading apartments.</p>
+    );
   }
 
   return (

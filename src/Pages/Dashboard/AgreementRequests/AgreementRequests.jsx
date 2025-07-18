@@ -7,7 +7,7 @@ const AgreementRequests = () => {
   const axiosSecure = useAxiosSecure();
   const queryClient = useQueryClient();
 
-  // ✅ Fetch pending agreements
+  // ✅ Fetch pending agreement requests
   const {
     data: requests = [],
     isLoading,
@@ -17,9 +17,7 @@ const AgreementRequests = () => {
     queryKey: ["agreements"],
     queryFn: async () => {
       const res = await axiosSecure.get("/agreements?status=pending");
-      console.log(res.data);
       return res.data;
-      
     },
   });
 
@@ -29,21 +27,20 @@ const AgreementRequests = () => {
       const res = await axiosSecure.patch(`/agreements/${id}`, { action, userEmail });
       return res.data;
     },
-    onSuccess: (data, variables) => {
-      // Invalidate and refetch agreements
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries(["agreements"]);
       Swal.fire({
         icon: "success",
-        title: `Agreement ${variables.action === "accept" ? "Accepted" : "Rejected"}!`,
+        title: `Agreement ${variables.action === "accept" ? "Accepted" : "Rejected"}`,
         timer: 1500,
         showConfirmButton: false,
       });
     },
-    onError: (error) => {
+    onError: (err) => {
       Swal.fire({
         icon: "error",
         title: "Operation failed",
-        text: error?.message || "Something went wrong",
+        text: err?.response?.data?.message || err.message,
       });
     },
   });
@@ -57,7 +54,7 @@ const AgreementRequests = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4"> Agreement Requests</h2>
+      <h2 className="text-2xl font-bold mb-4">Agreement Requests</h2>
       {requests.length === 0 ? (
         <p>No pending requests found.</p>
       ) : (
