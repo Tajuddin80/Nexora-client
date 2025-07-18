@@ -2,38 +2,61 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useAuth from "../../../hooks/useAuth";
+import RentStatusMonitor from "./RentStatusMonitor";
 
 const MyProfile = () => {
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
 
-  // Fetch accepted agreement for this user
-  const { data: acceptedAgreement, isLoading } = useQuery({
-    queryKey: ["accepted-agreement", user?.email],
-    queryFn: async () => {
-      const res = await axiosSecure.get(`/agreements/user/${user.email}?status=accepted`);
-      return res.data[0]; // there should be at most one accepted agreement
-    },
-    enabled: !!user?.email,
-  });
+  // ✅ fetch accepted agreement
+ const { data: acceptedAgreement, isLoading } = useQuery({
+  queryKey: ["accepted-agreement", user?.email],
+  queryFn: async () => {
+    const res = await axiosSecure.get(
+      `/agreements/user/${user.email}?status=accepted`
+    );
+    // ✅ never return undefined
+    return res.data.length > 0 ? res.data[0] : null;
+  },
+  enabled: !!user?.email,
+});
 
-  if (!user) return <p className="p-4">Please log in to see your profile.</p>;
-  if (isLoading) return <p className="p-4">Loading...</p>;
+  // ✅ fetch role
+const { data: roleData } = useQuery({
+  queryKey: ["user-role", user?.email],
+  queryFn: async () => {
+    const res = await axiosSecure.get(`/users/${user.email}/role`);
+    return res.data?.role ?? "user"; // fallback to "user"
+  },
+  enabled: !!user?.email,
+});
 
-  // Determine apartment info
+
+  if (!user) {
+    return <p className="p-4">Please log in to see your profile.</p>;
+  }
+  if (isLoading) {
+    return <p className="p-4">Loading...</p>;
+  }
+
+  // Show apartment details only if there is an accepted agreement
   const floor = acceptedAgreement ? acceptedAgreement.floor : "None";
   const block = acceptedAgreement ? acceptedAgreement.block : "None";
   const apartmentNo = acceptedAgreement ? acceptedAgreement.apartmentNo : "None";
   const rent = acceptedAgreement ? acceptedAgreement.rent : "None";
   const acceptDate = acceptedAgreement
-    ? new Date(acceptedAgreement.decisionAt || acceptedAgreement.createdAt).toLocaleDateString()
+    ? new Date(
+        acceptedAgreement.decisionAt || acceptedAgreement.createdAt
+      ).toLocaleDateString()
     : "None";
 
   return (
-    <div className="p-6  mx-auto bg-base-100 rounded-xl shadow-md">
+    <div className="p-6 mx-auto bg-base-100 rounded-xl shadow-md">
+      <RentStatusMonitor />
+
       <h2 className="text-3xl font-bold mb-6">My Profile</h2>
 
-      {/* User basic info */}
+      {/* 🧑 User Info */}
       <div className="flex items-center gap-6 mb-8">
         <img
           src={user.photoURL || "https://via.placeholder.com/100"}
@@ -41,12 +64,21 @@ const MyProfile = () => {
           className="w-24 h-24 rounded-full object-cover border-2 border-primary"
         />
         <div>
-          <p className="text-xl font-semibold">{user.displayName || "Anonymous User"}</p>
+          <p className="text-xl font-semibold">
+            {user.displayName || "Anonymous User"}
+          </p>
           <p className="text-base text-gray-500">{user.email}</p>
         </div>
       </div>
 
-      {/* Apartment info */}
+      {/* 🏷️ Role status */}
+      {roleData === "user" && (
+        <p className="text-red-500 mt-4">
+          Your membership has been downgraded due to unpaid rents.
+        </p>
+      )}
+
+      {/* 🏢 Apartment Info */}
       <h3 className="text-2xl font-semibold mb-4">Apartment Details</h3>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         <div className="p-3 border rounded-lg">

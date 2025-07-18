@@ -1,11 +1,10 @@
-
 import { useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
 import useAuth from "./useAuth";
 
 const axiosSecure = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "http://localhost:5000",
 });
 
 const useAxiosSecure = () => {
@@ -27,20 +26,14 @@ const useAxiosSecure = () => {
       (res) => res,
       (error) => {
         const status = error?.response?.status;
-
-        if (status === 403) {
-          navigate("/forbidden");
-        } else if (status === 401) {
-          logOut()
-            .then(() => navigate("/signin"))
-            .catch((err) => console.log(err));
+        if (status === 403) navigate("/forbidden");
+        else if (status === 401) {
+          logOut().then(() => navigate("/signin")).catch(console.log);
         }
-
         return Promise.reject(error);
       }
     );
 
-    // Cleanup to prevent duplicate interceptors
     return () => {
       axiosSecure.interceptors.request.eject(requestInterceptor);
       axiosSecure.interceptors.response.eject(responseInterceptor);

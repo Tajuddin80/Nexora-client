@@ -105,6 +105,7 @@ const Login = () => {
                 id="password"
                 name="password"
                 placeholder="••••••"
+                defaultValue='123456Aa!'
                 className="input input-bordered w-full pr-10 mt-1"
                 required
               />

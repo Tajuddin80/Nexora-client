@@ -119,7 +119,7 @@ const DashboardLayout = () => {
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/dashboard/make-payment" className={navLinkClass}>
+                <NavLink to="/dashboard/makepayment" className={navLinkClass}>
                   <FaMoneyCheckAlt /> Make Payment
                 </NavLink>
               </li>

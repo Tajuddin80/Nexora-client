@@ -8,7 +8,6 @@ import Login from "../Pages/Authentication/Login/Login";
 import AuthLayout from "../Layouts/AuthLayout/AuthLayout";
 import Forbidden from "../Pages/Forbidden/Forbidden";
 import DashboardLayout from "../Layouts/DashboardLayout/DashboardLayout";
-import Apartments from "../Pages/Apartments/Apartments";
 
 // Dashboard pages
 import Announcements from "../Pages/Dashboard/Announcements/Announcements";
@@ -20,6 +19,7 @@ import MakeAnnouncement from "../Pages/Dashboard/MakeAnnouncement/MakeAnnounceme
 import AgreementRequests from "../Pages/Dashboard/AgreementRequests/AgreementRequests";
 import ManageCoupons from "../Pages/Dashboard/ManageCoupons/ManageCoupons";
 import MyProfile from "../Pages/Dashboard/MyProfile/MyProfile";
+import Apartments from "../Pages/Apartments/Apartments";
 
 export const router = createBrowserRouter([
   {
@@ -31,14 +31,14 @@ export const router = createBrowserRouter([
         index: true,
         element: <Home></Home>,
       },
-         {
-        path: 'apartments',
-        element: <Apartments></Apartments>
+      {
+        path: "apartments",
+        element: <Apartments></Apartments>,
       },
       {
-        path: 'forbidden',
-        element: <Forbidden></Forbidden>
-      }
+        path: "forbidden",
+        element: <Forbidden></Forbidden>,
+      },
     ],
   },
   {
@@ -71,7 +71,7 @@ export const router = createBrowserRouter([
       { path: "announcements", element: <Announcements /> },
 
       // MEMBER extra
-      { path: "make-payment", element: <MakePayment /> },
+      { path: "makepayment", element: <MakePayment /> },
       { path: "payment-history", element: <PaymentHistory /> },
 
       // ADMIN extra

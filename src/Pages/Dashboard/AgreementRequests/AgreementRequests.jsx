@@ -17,7 +17,9 @@ const AgreementRequests = () => {
     queryKey: ["agreements"],
     queryFn: async () => {
       const res = await axiosSecure.get("/agreements?status=pending");
+      console.log(res.data);
       return res.data;
+      
     },
   });
 

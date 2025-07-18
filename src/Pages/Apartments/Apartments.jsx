@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
@@ -10,7 +9,7 @@ import useAxiosPublic from "../../hooks/useAxiosPublic";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 function generatePageNumbers(currentPage, totalPages) {
-  const delta = 2; // how many pages around current to show
+  const delta = 2;
   const range = [];
   const rangeWithDots = [];
   let l;
@@ -47,19 +46,12 @@ const Apartments = () => {
   const { user } = useAuth();
 
   const [page, setPage] = useState(1);
-
-  // Filter inputs
   const [minRentInput, setMinRentInput] = useState(20000);
   const [maxRentInput, setMaxRentInput] = useState(50000);
-
-  // Applied filters
   const [minRent, setMinRent] = useState(0);
   const [maxRent, setMaxRent] = useState(9999999);
-
-  // Sorting
   const [sortBy, setSortBy] = useState("rent");
   const [sortOrder, setSortOrder] = useState("asc");
-
   const [selectedApt, setSelectedApt] = useState(null);
 
   const fetchApartments = async ({ queryKey }) => {
@@ -70,13 +62,111 @@ const Apartments = () => {
     return data;
   };
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["apartments", page, minRent, maxRent, sortBy, sortOrder],
-    queryFn: fetchApartments,
-    keepPreviousData: true,
-  });
+ const { data, isLoading, isError } = useQuery({
+  queryKey: ["apartments", page, minRent, maxRent, sortBy, sortOrder],
+  queryFn: fetchApartments,
+  placeholderData: (prev) => prev, // keeps previous data while fetching
+});
 
-  // Loading skeleton
+
+  // ✅ Fetch user agreements
+const { data: userAgreements = [] } = useQuery({
+  queryKey: ["userAgreements", user?.email],
+  queryFn: async () => {
+    const response = await axiosSecure.get(`/agreements/user/${user.email}`);
+    return response.data;
+  },
+  enabled: !!user?.email,
+});
+
+
+  // ✅ Handle Agreement
+  const handleAgreement = async (apt) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: `You are about to send an agreement request for Apartment ${apt.apartmentNo} (Floor: ${apt.floor}, Block: ${apt.block})`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, proceed",
+      cancelButtonText: "Cancel",
+      background: "#fff",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        // ✅ Check if user already has active agreement
+        const activeAgreements = (userAgreements || []).filter(
+          (a) => a.status === "pending" || a.status === "accepted"
+        );
+
+        if (activeAgreements.length > 0) {
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "info",
+            title: "You already have an active or accepted agreement.",
+            showConfirmButton: false,
+            timer: 2500,
+            timerProgressBar: true,
+            background: "#fff",
+          });
+          return;
+        }
+
+        try {
+          await axiosSecure.post("/agreements", {
+            apartmentId: apt._id,
+            availability: apt.available,
+            userName: user.displayName,
+            userEmail: user.email,
+            floor: apt.floor,
+            block: apt.block,
+            apartmentNo: apt.apartmentNo,
+            rent: apt.rent,
+            status: "pending",
+          });
+
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "success",
+            title: "Agreement request sent!",
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            background: "#fff",
+          });
+        } catch (err) {
+          const errorMessage =
+            err?.response?.data?.message || "Something went wrong!";
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "error",
+            title: errorMessage,
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            background: "#fff",
+          });
+        }
+      }
+    });
+  };
+
+  const handleDetails = (apt) => {
+    setSelectedApt(apt);
+    const modal = document.getElementById("apt_details_modal");
+    if (modal) {
+      modal.showModal();
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="p-4">
@@ -103,19 +193,8 @@ const Apartments = () => {
   }
 
   if (isError) {
-    return (
-      <p className="text-center text-red-500">Error loading apartments.</p>
-    );
+    return <p className="text-center text-red-500">Error loading apartments.</p>;
   }
-
-  const handleDetails = (apt) => {
-    setSelectedApt(apt);
-    // open modal
-    const modal = document.getElementById("apt_details_modal");
-    if (modal) {
-      modal.showModal();
-    }
-  };
 
   return (
     <div className="p-4 my-10">
@@ -123,7 +202,7 @@ const Apartments = () => {
         Apartments
       </h1>
 
-      {/* 🔎 Filters */}
+      {/* Filters */}
       <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
         <input
           type="number"
@@ -151,7 +230,7 @@ const Apartments = () => {
         </button>
       </div>
 
-      {/* 🔃 Sorting */}
+      {/* Sorting */}
       <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
         <select
           value={sortBy}
@@ -178,243 +257,91 @@ const Apartments = () => {
         </select>
       </div>
 
-      {/* 🏢 Apartments */}
+      {/* Apartments */}
       <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {data.apartments.map((apt) => {
-          const oldPrice = Math.round(apt.rent * 1.1);
-          return (
-            // <motion.div
-            //   key={apt._id}
-            //   whileHover={{ scale: 1.02 }}
-            //   className="rounded-xl shadow-lg overflow-hidden p-3 bg-secondary/10"
-            // >
-            //   <div className="overflow-hidden rounded-lg">
-            //     <motion.img
-            //       src={apt.image}
-            //       alt={apt.apartmentNo}
-            //       className="w-full h-48 object-cover rounded-lg"
-            //       whileHover={{ scale: 1.05 }}
-            //       transition={{ duration: 0.3 }}
-            //     />
-            //   </div>
-            //   <div className="mt-3 space-y-1">
-            //     <p className="text-secondary font-semibold">
-            //       Floor: <span>{apt.floor}</span>
-            //     </p>
-            //     <p className="text-secondary font-semibold">
-            //       Block: <span>{apt.block}</span>
-            //     </p>
-            //     <p className="text-secondary font-semibold">
-            //       Apartment No: <span>{apt.apartmentNo}</span>
-            //     </p>
-
-            //     {/* Rent */}
-            //     <div className="flex items-center gap-2 mt-2">
-            //       <span className="text-gray-500 line-through text-sm">
-            //         {oldPrice} tk
-            //       </span>
-            //       <span className="text-lg font-bold text-secondary">
-            //         {apt.rent} tk
-            //       </span>
-            //     </div>
-
-            //     {/* Stars */}
-            //     <div className="flex items-center gap-1 mt-1">
-            //       {[...Array(5)].map((_, idx) => (
-            //         <FaStar key={idx} className="text-yellow-400" />
-            //       ))}
-            //     </div>
-
-            //     {/* Button */}
-
-            //     <button
-            //       onClick={() => handleDetails(apt)}
-            //       className="bg-primary hover:bg-primary/80 cursor-pointer text-white mt-3 px-3 py-1 rounded-md shadow-md"
-            //     >
-            //       Check Now
-            //     </button>
-            //   </div>
-            // </motion.div>
-
-            // <motion.div
-            //   key={apt._id}
-            //   whileHover={{ scale: 1.02 }}
-            //   className="relative rounded-xl shadow-lg overflow-hidden bg-secondary/10"
-            // >
-            //   {/* Image with overlay */}
-            //   <div className="relative overflow-hidden rounded-b-none rounded-t-xl">
-            //     <motion.img
-            //       src={apt.image}
-            //       alt={apt.apartmentNo}
-            //       className="w-full h-48 object-cover"
-            //       whileHover={{ scale: 1.05 }}
-            //       transition={{ duration: 0.3 }}
-            //     />
-            //     {/* Stars in top-right */}
-            //     <div className="absolute top-2 right-2 flex gap-0.5 bg-black/40 px-2 py-1 rounded-full backdrop-blur-sm">
-            //       {[...Array(5)].map((_, idx) => (
-            //         <FaStar key={idx} className="text-yellow-400 w-4 h-4" />
-            //       ))}
-            //     </div>
-            //   </div>
-
-            //   {/* Content */}
-            //   <div className="p-4 space-y-2">
-            //     {/* Apartment info */}
-            //     <div className="text-sm text-secondary space-y-0.5">
-            //       <p className="font-medium">Floor: <span className="font-semibold">{apt.floor}</span></p>
-            //       <p className="font-medium">Block: <span className="font-semibold">{apt.block}</span></p>
-            //       <p className="font-medium">Apartment No: <span className="font-semibold">{apt.apartmentNo}</span></p>
-            //     </div>
-
-            //     {/* Rent */}
-            //     <div className="flex items-center gap-2 mt-3">
-            //       <span className="text-gray-500 line-through text-sm">{oldPrice} tk</span>
-            //       <span className="text-xl font-bold text-secondary">{apt.rent} tk</span>
-            //     </div>
-
-            //     {/* Button */}
-            //     <button
-            //       onClick={() => handleDetails(apt)}
-            //       className="w-full mt-4 bg-primary hover:bg-primary/80 text-white py-2 rounded-lg font-medium shadow-md transition-colors"
-            //     >
-            //       Check Now
-            //     </button>
-            //   </div>
-            // </motion.div>
-
-            // <motion.div
-            //   whileHover={{ scale: 1.02 }}
-            //   className="rounded-xl p-4 shadow-xl bg-white/10 backdrop-blur-md border border-white/20"
-            // >
-            //   <div className="flex justify-between items-start">
-            //     <h3 className="text-lg font-bold text-secondary">
-            //       Apartment {apt.apartmentNo}
-            //     </h3>
-            //     <div className="flex gap-0.5">
-            //       {[...Array(5)].map((_, i) => (
-            //         <FaStar key={i} className="text-yellow-400 w-4 h-4" />
-            //       ))}
-            //     </div>
-            //   </div>
-            //   <img
-            //     src={apt.image}
-            //     alt={apt.apartmentNo}
-            //     className="w-full h-40 object-cover rounded-lg my-3"
-            //   />
-            //   <p className="text-sm text-gray-300">
-            //     Floor {apt.floor} • Block {apt.block}
-            //   </p>
-            //   <div className="flex items-center gap-2 mt-3">
-            //     <span className="text-gray-400 line-through text-sm">
-            //       {oldPrice} tk
-            //     </span>
-            //     <span className="text-xl font-bold text-secondary">
-            //       {apt.rent} tk
-            //     </span>
-            //   </div>
-            //   <button className="w-full mt-4 bg-primary text-white py-2 rounded-lg hover:bg-primary/80">
-            //     Check Now
-            //   </button>
-            // </motion.div>
-
-            <motion.div
-              key={apt._id}
-              whileHover={{ scale: 1.02 }}
-              className="relative rounded-xl shadow-lg overflow-hidden bg-secondary/10"
-            >
-              {/* Image */}
-              <div className="relative overflow-hidden">
-                <motion.img
-                  src={apt.image}
-                  alt={apt.apartmentNo}
-                  className="w-full h-48 object-cover"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.3 }}
-                />
-                {/* Availability Badge */}
-                <span
-                  className="absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full text-white"
-                  style={{
-                    backgroundColor: apt.available
-                      ? "var(--badge-available)"
-                      : "var(--badge-unavailable)",
-                  }}
-                >
-                  {apt.available ? "Available" : "Unavailable"}
+        {data.apartments.map((apt) => (
+          <motion.div
+            key={apt._id}
+            whileHover={{ scale: 1.02 }}
+            className="relative rounded-xl shadow-lg overflow-hidden bg-secondary/10"
+          >
+            <div className="relative overflow-hidden">
+              <motion.img
+                src={apt.image}
+                alt={apt.apartmentNo}
+                className="w-full h-48 object-cover"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+              />
+              <span
+                className="absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full text-white"
+                style={{
+                  backgroundColor: apt.available
+                    ? "var(--badge-available)"
+                    : "var(--badge-unavailable)",
+                }}
+              >
+                {apt.available ? "Available" : "Unavailable"}
+              </span>
+              <div className="absolute top-3 right-3 flex gap-0.5 bg-black/40 px-2 py-1 rounded-full backdrop-blur-sm">
+                {[...Array(5)].map((_, idx) => (
+                  <FaStar key={idx} className="text-yellow-400 w-4 h-4" />
+                ))}
+              </div>
+            </div>
+            <div className="p-4 space-y-3">
+              <div className="flex justify-between items-center">
+                <div className="text-sm text-secondary space-y-0.5">
+                  <p className="font-medium">
+                    Floor: <span className="font-semibold">{apt.floor}</span>
+                  </p>
+                  <p className="font-medium">
+                    Block: <span className="font-semibold">{apt.block}</span>
+                  </p>
+                  <p className="font-medium">
+                    Apartment:{" "}
+                    <span className="font-semibold">{apt.apartmentNo}</span>
+                  </p>
+                </div>
+                <div className="flex items-center gap-4 text-secondary text-sm">
+                  <div className="flex items-center gap-1">
+                    <FaBath className="text-lg md:text-xl" />
+                    <span className="font-medium">{apt.washroomCount}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <FaUtensils className="text-lg md:text-xl" />
+                    <span className="font-medium">{apt.kitchenCount}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <FaRulerCombined className="text-lg md:text-xl" />
+                    <span className="font-medium">{apt.squareFeet} sqft</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 mt-3">
+                <span className="text-gray-500 line-through text-sm">
+                  {Math.round(apt.rent * 1.1)} tk
                 </span>
-
-                {/* Star Ratings */}
-                <div className="absolute top-3 right-3 flex gap-0.5 bg-black/40 px-2 py-1 rounded-full backdrop-blur-sm">
-                  {[...Array(5)].map((_, idx) => (
-                    <FaStar key={idx} className="text-yellow-400 w-4 h-4" />
-                  ))}
-                </div>
+                <span className="text-xl font-bold text-secondary">
+                  {apt.rent} tk
+                </span>
               </div>
-
-              {/* Content */}
-              <div className="p-4 space-y-3">
-                {/* Row: Basic info (left) + Features (right) */}
-                <div className="flex justify-between items-center">
-                  {/* Basic info on the left */}
-                  <div className="text-sm text-secondary space-y-0.5">
-                    <p className="font-medium">
-                      Floor: <span className="font-semibold">{apt.floor}</span>
-                    </p>
-                    <p className="font-medium">
-                      Block: <span className="font-semibold">{apt.block}</span>
-                    </p>
-                    <p className="font-medium">
-                      Apartment:{" "}
-                      <span className="font-semibold">{apt.apartmentNo}</span>
-                    </p>
-                  </div>
-
-                  {/* Features with icons on the right */}
-                  <div className="flex items-center gap-4 text-secondary text-sm">
-                    <div className="flex items-center gap-1">
-                      <FaBath className="  text-lg md:text-xl" />
-                      <span className="font-medium">{apt.washroomCount}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <FaUtensils className=" text-lg md:text-xl" />
-                      <span className="font-medium">{apt.kitchenCount}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <FaRulerCombined className=" text-lg md:text-xl" />
-                      <span className="font-medium">{apt.squareFeet} sqft</span>
-                    </div>
-                  </div>
-                </div>
-                {/* Rent */}
-                <div className="flex items-center gap-2 mt-3">
-                  <span className="text-gray-500 line-through text-sm">
-                    {Math.round(apt.rent * 1.1)} tk
-                  </span>
-                  <span className="text-xl font-bold text-secondary">
-                    {apt.rent} tk
-                  </span>
-                </div>
-
-                {/* Button */}
-                <button
-                  onClick={() => handleDetails(apt)}
-                  className="w-full mt-4 bg-primary hover:bg-primary/80 text-white py-2 rounded-lg font-medium shadow-md transition-colors"
-                >
-                  Check Now
-                </button>
-              </div>
-            </motion.div>
-          );
-        })}
+              <button
+                onClick={() => handleDetails(apt)}
+                className="w-full mt-4 bg-primary hover:bg-primary/80 text-white py-2 rounded-lg font-medium shadow-md transition-colors"
+              >
+                Check Now
+              </button>
+            </div>
+          </motion.div>
+        ))}
       </div>
 
-      {/* 📌 Modal */}
+      {/* Modal */}
       <dialog id="apt_details_modal" className="modal">
         <div className="modal-box max-w-2xl text-secondary p-6 rounded-2xl shadow-2xl">
           {selectedApt && (
             <div className="space-y-5">
-              {/* Title & Badge */}
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-2xl md:text-3xl text-secondary">
                   Apartment {selectedApt.apartmentNo}
@@ -429,8 +356,6 @@ const Apartments = () => {
                   {selectedApt.available ? "Available" : "Unavailable"}
                 </span>
               </div>
-
-              {/* Image */}
               <div className="overflow-hidden rounded-xl shadow-md">
                 <img
                   src={selectedApt.image}
@@ -438,8 +363,6 @@ const Apartments = () => {
                   className="w-full h-56 md:h-72 object-cover hover:scale-105 transition-transform duration-300"
                 />
               </div>
-
-              {/* Info Grid */}
               <div className="grid grid-cols-2 gap-3 md:gap-6 text-base md:text-lg">
                 <p>
                   <span className="font-semibold">Floor:</span>{" "}
@@ -468,22 +391,17 @@ const Apartments = () => {
                   {selectedApt.squareFeet} sqft
                 </p>
               </div>
-
-              {/* Description */}
               <p className="leading-relaxed text-sm md:text-base border-t pt-3 border-secondary/20">
                 {selectedApt.description}
               </p>
             </div>
           )}
-
-          {/* Actions */}
           <div className="modal-action mt-6">
             <form method="dialog" className="w-full">
               <div className="flex justify-between w-full">
                 <button
                   onClick={() => {
                     if (!selectedApt.available) {
-                      // Show a SweetAlert
                       Swal.fire({
                         icon: "error",
                         title: "Apartment Unavailable",
@@ -500,7 +418,6 @@ const Apartments = () => {
                 >
                   Agreement
                 </button>
-
                 <button className="btn bg-primary hover:bg-primary/80 text-white px-6">
                   Close
                 </button>
@@ -513,9 +430,8 @@ const Apartments = () => {
         </form>
       </dialog>
 
-      {/* 📄 Pagination */}
+      {/* Pagination */}
       <div className="flex justify-center items-center gap-2 mt-6 flex-wrap">
-        {/* Prev Button */}
         <button
           onClick={() => setPage((old) => Math.max(old - 1, 1))}
           disabled={page === 1}
@@ -523,8 +439,6 @@ const Apartments = () => {
         >
           Prev
         </button>
-
-        {/* Page Numbers */}
         {generatePageNumbers(page, data.pages).map((p, idx) =>
           p === "..." ? (
             <span key={idx} className="px-2 py-1 select-none text-gray-400">
@@ -544,8 +458,6 @@ const Apartments = () => {
             </button>
           )
         )}
-
-        {/* Next Button */}
         <button
           onClick={() => setPage((old) => (old < data.pages ? old + 1 : old))}
           disabled={page === data.pages}
@@ -556,67 +468,6 @@ const Apartments = () => {
       </div>
     </div>
   );
-
-  // 🖊️ handle agreement
-  function handleAgreement(apt) {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-
-    Swal.fire({
-      title: "Are you sure?",
-      text: `You are about to send an agreement request for Apartment ${apt.apartmentNo} (Floor: ${apt.floor}, Block: ${apt.block})`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, proceed",
-      cancelButtonText: "Cancel",
-      background: "#fff",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        axiosSecure
-          .post("/agreements", {
-            apartmentId: apt._id,
-            availability: apt.available,
-            userName: user.displayName,
-            userEmail: user.email,
-            floor: apt.floor,
-            block: apt.block,
-            apartmentNo: apt.apartmentNo,
-            rent: apt.rent,
-            status: "pending",
-          })
-          .then(() => {
-            Swal.fire({
-              toast: true,
-              position: "top-end",
-              icon: "success",
-              title: "Agreement request sent!",
-              showConfirmButton: false,
-              timer: 2000,
-              timerProgressBar: true,
-              background: "#fff",
-            });
-          })
-          .catch((err) => {
-            const errorMessage =
-              err?.response?.data?.message || "Something went wrong!";
-            Swal.fire({
-              toast: true,
-              position: "top-end",
-              icon: "error",
-              title: errorMessage,
-              showConfirmButton: false,
-              timer: 2000,
-              timerProgressBar: true,
-              background: "#fff",
-            });
-          });
-      }
-    });
-  }
 };
 
 export default Apartments;
