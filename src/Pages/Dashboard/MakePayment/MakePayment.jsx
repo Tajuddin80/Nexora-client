@@ -34,39 +34,44 @@ const MakePayment = () => {
   });
 
   // ✅ Validate coupon
-  const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) {
+const handleApplyCoupon = async () => {
+  if (!couponCode.trim()) {
+    Swal.fire({
+      icon: "warning",
+      title: "⚠️ Please enter a coupon code",
+    });
+    return;
+  }
+  try {
+    const res = await axiosSecure.post("/coupons/validate", { code: couponCode });
+
+    if (res.data.valid) {
+      setDiscountPercent(res.data.discountPercent);
       Swal.fire({
-        icon: "warning",
-        title: "Please enter a coupon code",
+        icon: "success",
+        title: "✅ Coupon Applied!",
+        text: `-${res.data.discountPercent}% discount applied.`,
+        timer: 2000,
+        showConfirmButton: false,
       });
-      return;
-    }
-    try {
-      const res = await axiosSecure.post("/coupons/validate", { code: couponCode });
-      if (res.data.valid) {
-        setDiscountPercent(res.data.discountPercent);
-        Swal.fire({
-          icon: "success",
-          title: "Coupon Applied!",
-          text: `-${res.data.discountPercent}% discount applied.`,
-        });
-      } else {
-        setDiscountPercent(0);
-        Swal.fire({
-          icon: "error",
-          title: res.data.message || "Invalid Coupon",
-        });
-      }
-    } catch (err) {
+    } else {
       setDiscountPercent(0);
       Swal.fire({
         icon: "error",
-        title: "Coupon Validation Failed",
-        text: err?.response?.data?.message || "Please try again later",
+        title: "❌ Coupon Not Valid",
+        text: res.data.message || "Invalid coupon code",
       });
     }
-  };
+  } catch (err) {
+    setDiscountPercent(0);
+    Swal.fire({
+      icon: "error",
+      title: "❌ Coupon Validation Failed",
+      text: err?.response?.data?.message || "Please try again later",
+    });
+  }
+};
+
 
   // ✅ Mutation for making payment
   const payMutation = useMutation({
