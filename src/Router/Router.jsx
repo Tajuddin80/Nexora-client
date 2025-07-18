@@ -77,7 +77,7 @@ export const router = createBrowserRouter([
       // ADMIN extra
       { path: "admin-profile", element: <AdminProfile /> },
       { path: "manage-members", element: <ManageMembers /> },
-      { path: "make-announcement", element: <MakeAnnouncement /> },
+      { path: "make-announcement", element: <Announcements /> },
       { path: "agreement-requests", element: <AgreementRequests /> },
       { path: "manage-coupons", element: <ManageCoupons /> },
     ],
