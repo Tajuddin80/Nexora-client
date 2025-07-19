@@ -26,13 +26,14 @@ const PaymentHistory = () => {
   });
 
   if (isLoading) {
-    return <Loader></Loader>
+    return <Loader>
+    </Loader>
   }
 
   if (isError) {
     return (
       <p className="p-4 text-red-500">
-        ⚠️ Error loading history: {error.message}
+         Error loading history: {error.message}
       </p>
     );
   }

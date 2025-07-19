@@ -6,6 +6,7 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useAuth from "../../../hooks/useAuth";
 // import RentStatusMonitor from "../MyProfile/RentStatusMonitor";
 import Loader from "../../../Shared/component/Loader/Loader";
+import { useNavigate } from "react-router";
 
 const allMonths = [
   "January",
@@ -26,7 +27,7 @@ const MakePayment = () => {
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
   const queryClient = useQueryClient();
-
+  const navigate = useNavigate();
   const [couponCode, setCouponCode] = useState("");
   const [discountPercent, setDiscountPercent] = useState(0);
 
@@ -68,17 +69,19 @@ const MakePayment = () => {
     if (!couponCode.trim()) {
       Swal.fire({
         icon: "warning",
-        title: "⚠️ Please enter a coupon code",
+        title: " Please enter a coupon code",
       });
       return;
     }
     try {
-      const res = await axiosSecure.post("/coupons/validate", { code: couponCode });
+      const res = await axiosSecure.post("/coupons/validate", {
+        code: couponCode,
+      });
       if (res.data.valid) {
         setDiscountPercent(res.data.discountPercent);
         Swal.fire({
           icon: "success",
-          title: "✅ Coupon Applied!",
+          title: " Coupon Applied!",
           text: `-${res.data.discountPercent}% discount applied.`,
           timer: 2000,
           showConfirmButton: false,
@@ -87,7 +90,7 @@ const MakePayment = () => {
         setDiscountPercent(0);
         Swal.fire({
           icon: "error",
-          title: "❌ Coupon Not Valid",
+          title: " Coupon Not Valid",
           text: res.data.message || "Invalid coupon code",
         });
       }
@@ -95,7 +98,7 @@ const MakePayment = () => {
       setDiscountPercent(0);
       Swal.fire({
         icon: "error",
-        title: "❌ Coupon Validation Failed",
+        title: " Coupon Validation Failed",
         text: err?.response?.data?.message || "Please try again later",
       });
     }
@@ -115,6 +118,7 @@ const MakePayment = () => {
         showConfirmButton: false,
       });
       queryClient.invalidateQueries(["unpaid-rents"]);
+      navigate("/dashboard/payment-history");
     },
     onError: (err) => {
       Swal.fire({
@@ -154,7 +158,7 @@ const MakePayment = () => {
     });
   };
 
-  if (agreementLoading) return <Loader></Loader>
+  if (agreementLoading) return <Loader></Loader>;
   if (!agreement)
     return (
       <div className="p-6">
@@ -175,60 +179,72 @@ const MakePayment = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Email */}
         <div>
-          <label className="block text-sm font-medium text-gray-500">Member Email</label>
+          <label className="block text-sm font-medium text-gray-500">
+            Member Email
+          </label>
           <input
             type="text"
             value={user.email}
             readOnly
-            className="input input-bordered w-full bg-gray-100"
+            className="input input-bordered w-full "
           />
         </div>
 
         {/* Floor, Block, Apartment */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-500">Floor</label>
+            <label className="block text-sm font-medium text-gray-500">
+              Floor
+            </label>
             <input
               type="text"
               value={agreement.floor}
               readOnly
-              className="input input-bordered w-full bg-gray-100"
+              className="input input-bordered w-full "
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-500">Block</label>
+            <label className="block text-sm font-medium text-gray-500">
+              Block
+            </label>
             <input
               type="text"
               value={agreement.block}
               readOnly
-              className="input input-bordered w-full bg-gray-100"
+              className="input input-bordered w-full "
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-500">Apartment No</label>
+            <label className="block text-sm font-medium text-gray-500">
+              Apartment No
+            </label>
             <input
               type="text"
               value={agreement.apartmentNo}
               readOnly
-              className="input input-bordered w-full bg-gray-100"
+              className="input input-bordered w-full "
             />
           </div>
         </div>
 
         {/* Rent */}
         <div>
-          <label className="block text-sm font-medium text-gray-500">Rent (Tk)</label>
+          <label className="block text-sm font-medium text-gray-500">
+            Rent (Tk)
+          </label>
           <input
             type="text"
             value={agreement.rent}
             readOnly
-            className="input input-bordered w-full bg-gray-100"
+            className="input input-bordered w-full "
           />
         </div>
 
         {/* Month */}
         <div>
-          <label className="block text-sm font-medium text-gray-500">Month</label>
+          <label className="block text-sm font-medium text-gray-500">
+            Month
+          </label>
           <select
             {...register("month", { required: "Month is required" })}
             className="select select-bordered w-full"
@@ -252,7 +268,9 @@ const MakePayment = () => {
         {/* Coupon */}
         <div className="flex gap-2 items-end">
           <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-500">Coupon Code</label>
+            <label className="block text-sm font-medium text-gray-500">
+              Coupon Code
+            </label>
             <input
               type="text"
               className="input input-bordered w-full"
@@ -265,7 +283,7 @@ const MakePayment = () => {
             type="button"
             onClick={handleApplyCoupon}
             disabled={!agreement}
-            className="btn bg-secondary hover:bg-secondary/80 text-white"
+            className="btn bg-primary text-white"
           >
             Apply
           </button>

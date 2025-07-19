@@ -64,7 +64,7 @@ const Navbar = () => {
   );
 
   return (
-    <div className="navbar   sticky top-0 z-[9999] shadow-2xl  rounded-xl   bg-[color-mix(in_srgb,var(--color-primary)_10%,var(--color-base-100)_90%)]
+    <div className="navbar   sticky top-0 z-[70] shadow-2xl  rounded-xl   bg-[color-mix(in_srgb,var(--color-primary)_10%,var(--color-base-100)_90%)]
     text-[color:var(--color-base-content)]
     border-r border-[rgba(0,0,0,0.1)]">
    

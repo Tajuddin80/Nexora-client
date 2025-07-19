@@ -30,7 +30,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-     loader: ()=> fetch("/reviews.json"),
+        loader: () => fetch("/reviews.json"),
         element: <Home></Home>,
       },
       {
@@ -39,7 +39,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "about",
-        element: <About></About>
+        element: <About></About>,
       },
       {
         path: "forbidden",

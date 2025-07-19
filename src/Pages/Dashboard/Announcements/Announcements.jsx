@@ -166,7 +166,7 @@ const Announcements = () => {
                   </p>
                 </div>
                 {role === "admin" && (
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => handleEdit(a)}
                       className="flex items-center gap-1 text-sm bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
