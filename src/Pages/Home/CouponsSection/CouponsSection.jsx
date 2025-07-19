@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import Swal from "sweetalert2";
@@ -9,7 +8,12 @@ import Loader from "../../../Shared/component/Loader/Loader";
 const CouponsSection = () => {
   const axiosSecure = useAxiosSecure();
   // ✅ Fetch coupons from backend
-  const { data: coupons = [], isLoading, isError, error } = useQuery({
+  const {
+    data: coupons = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["all-coupons"],
     queryFn: async () => {
       const res = await axiosSecure.get("/coupons");
@@ -17,9 +21,9 @@ const CouponsSection = () => {
     },
   });
 
-if (isLoading) {
-  return <Loader></Loader>
-}
+  if (isLoading) {
+    return <Loader></Loader>;
+  }
   const handleCopy = async (code) => {
     try {
       await navigator.clipboard.writeText(code);
@@ -72,26 +76,36 @@ if (isLoading) {
         border-r border-[rgba(0,0,0,0.1)]"
     >
       <div className="flex items-center gap-3 mb-6">
-        <FaGift className="text-4xl" />
-        <h2 className="text-3xl md:text-4xl font-bold"> Special Coupons</h2>
+        <FaGift className="text-4xl text-secondary" />
+        <h2 className="text-3xl text-secondary md:text-4xl font-bold">
+          {" "}
+          Special Coupons
+        </h2>
       </div>
-
       {coupons.length === 0 ? (
-        <p>No coupons available right now.</p>
+        <p className="text-center text-base-content">
+          No coupons available right now.
+        </p>
       ) : (
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
           {coupons.map((c) => (
             <div
               key={c._id}
-              className="p-5 rounded-xl bg-white text-secondary shadow-md hover:shadow-2xl transition-transform transform hover:-translate-y-1"
+              className="
+          p-5 rounded-xl shadow-md hover:shadow-2xl transition-transform transform hover:-translate-y-1
+          bg-primary text-primary-content
+        "
             >
-              <h3 className="text-xl font-bold text-primary">
-                {c.discount}% OFF
-              </h3>
-              <p className="text-sm mt-1">{c.description}</p>
+              <h3 className="text-xl font-bold">{c.discount}% OFF</h3>
+              <p className="text-sm mt-1 opacity-90">{c.description}</p>
               <button
                 onClick={() => handleCopy(c.code)}
-                className="mt-4 w-full p-2 border-dashed cursor-copy border-2 border-primary rounded-md text-center font-mono font-semibold text-primary bg-primary/5 hover:bg-primary/10 transition-all"
+                className="
+            mt-4 w-full p-2 border-dashed border-2 rounded-md font-mono font-semibold
+            transition-all cursor-copy
+            bg-primary-content/10 hover:bg-primary-content/20
+            border-primary-content text-primary-content
+          "
               >
                 {c.code}
               </button>

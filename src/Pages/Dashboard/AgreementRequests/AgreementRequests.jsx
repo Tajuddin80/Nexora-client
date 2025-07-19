@@ -2,6 +2,7 @@ import React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import Loader from "../../../Shared/component/Loader/Loader";
 
 const AgreementRequests = () => {
   const axiosSecure = useAxiosSecure();
@@ -49,7 +50,7 @@ const AgreementRequests = () => {
     mutation.mutate({ id, userEmail, action });
   };
 
-  if (isLoading) return <div className="p-4">Loading...</div>;
+  if (isLoading) return <Loader></Loader>
   if (isError) return <div className="p-4 text-red-500">Error: {error.message}</div>;
 
   return (

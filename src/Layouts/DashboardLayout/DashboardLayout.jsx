@@ -19,8 +19,8 @@ const navLinkClass = ({ isActive }) =>
   `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-300 
    ${
      isActive
-       ? "bg-secondary text-white"
-       : "hover:bg-primary hover:text-white text-base-content"
+       ? "bg-primary text-white"
+       : " hover:text-white text-base-content"
    } text-base md:text-lg font-medium`;
 
 const DashboardLayout = () => {
@@ -157,7 +157,7 @@ const DashboardLayout = () => {
               </li>
               <li>
                 <NavLink
-                  to="/dashboard/make-announcement"
+                  to="/dashboard/announcements"
                   className={navLinkClass}
                 >
                   <FaBullhorn /> Make Announcement

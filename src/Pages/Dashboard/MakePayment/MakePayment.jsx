@@ -4,7 +4,23 @@ import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useAuth from "../../../hooks/useAuth";
-import RentStatusMonitor from "../MyProfile/RentStatusMonitor";
+// import RentStatusMonitor from "../MyProfile/RentStatusMonitor";
+import Loader from "../../../Shared/component/Loader/Loader";
+
+const allMonths = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 const MakePayment = () => {
   const axiosSecure = useAxiosSecure();
@@ -32,6 +48,21 @@ const MakePayment = () => {
     enabled: !!user?.email,
   });
 
+  // ✅ Fetch unpaid months for this user
+  const { data: unpaidRents = [] } = useQuery({
+    queryKey: ["unpaid-rents", user?.email],
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        `/rent-payments/${user.email}?status=unpaid`
+      );
+      return res.data || [];
+    },
+    enabled: !!user?.email,
+  });
+
+  // derive months that are unpaid
+  const unpaidMonths = unpaidRents.map((rent) => rent.month);
+
   // ✅ Validate coupon
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
@@ -43,7 +74,6 @@ const MakePayment = () => {
     }
     try {
       const res = await axiosSecure.post("/coupons/validate", { code: couponCode });
-
       if (res.data.valid) {
         setDiscountPercent(res.data.discountPercent);
         Swal.fire({
@@ -115,7 +145,7 @@ const MakePayment = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         payMutation.mutate({
-          userEmail: user.email, // ✅ changed from email → userEmail
+          userEmail: user.email,
           apartmentId: agreement._id,
           month: data.month,
           amount: finalAmount,
@@ -124,12 +154,12 @@ const MakePayment = () => {
     });
   };
 
-  if (agreementLoading) return <p className="p-4">Loading agreement...</p>;
+  if (agreementLoading) return <Loader></Loader>
   if (!agreement)
     return (
       <div className="p-6">
         <h2 className="text-2xl font-bold mb-4">Make Payment</h2>
-        <p className="text-red-500">❌ No active agreement found.</p>
+        <p className="text-red-500"> No active agreement found.</p>
       </div>
     );
 
@@ -138,9 +168,9 @@ const MakePayment = () => {
   );
 
   return (
-    <div className="p-6 max-w-3xl mx-auto bg-base-100 rounded-xl shadow-md">
-      <RentStatusMonitor />
-      <h2 className="text-3xl font-bold mb-6 text-primary">💳 Make Payment</h2>
+    <div className="p-6  mx-auto bg-base-100 rounded-xl shadow-md">
+      {/* <RentStatusMonitor /> */}
+      <h2 className="text-3xl font-bold mb-6 text-primary"> Make Payment</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Email */}
@@ -204,24 +234,15 @@ const MakePayment = () => {
             className="select select-bordered w-full"
           >
             <option value="">Select Month</option>
-            {[
-              "January",
-              "February",
-              "March",
-              "April",
-              "May",
-              "June",
-              "July",
-              "August",
-              "September",
-              "October",
-              "November",
-              "December",
-            ].map((month) => (
-              <option key={month} value={month}>
-                {month}
-              </option>
-            ))}
+            {unpaidMonths.length > 0 ? (
+              unpaidMonths.map((month) => (
+                <option key={month} value={month}>
+                  {month}
+                </option>
+              ))
+            ) : (
+              <option disabled>No unpaid months</option>
+            )}
           </select>
           {errors.month && (
             <p className="text-red-500 text-sm">{errors.month.message}</p>
@@ -265,7 +286,7 @@ const MakePayment = () => {
         <button
           type="submit"
           className="btn btn-primary mt-6 w-full text-lg"
-          disabled={payMutation.isLoading}
+          disabled={payMutation.isLoading || unpaidMonths.length === 0}
         >
           {payMutation.isLoading ? "Processing..." : "Pay Now"}
         </button>

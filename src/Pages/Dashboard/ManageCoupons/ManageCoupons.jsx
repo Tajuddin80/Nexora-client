@@ -88,7 +88,7 @@ const ManageCoupons = () => {
         <p>No coupons found.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="table w-full">
+          <table className="table w-full border border-primary ">
             <thead>
               <tr>
                 <th>Coupon Code</th>

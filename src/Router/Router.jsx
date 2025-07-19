@@ -15,7 +15,7 @@ import MakePayment from "../Pages/Dashboard/MakePayment/MakePayment";
 import PaymentHistory from "../Pages/Dashboard/PaymentHistory/PaymentHistory";
 import AdminProfile from "../Pages/Dashboard/AdminProfile/AdminProfile";
 import ManageMembers from "../Pages/Dashboard/ManageMembers/ManageMembers";
-import MakeAnnouncement from "../Pages/Dashboard/MakeAnnouncement/MakeAnnouncement";
+// import MakeAnnouncement from "../Pages/Dashboard/MakeAnnouncement/MakeAnnouncement";
 import AgreementRequests from "../Pages/Dashboard/AgreementRequests/AgreementRequests";
 import ManageCoupons from "../Pages/Dashboard/ManageCoupons/ManageCoupons";
 import MyProfile from "../Pages/Dashboard/MyProfile/MyProfile";
@@ -77,7 +77,6 @@ export const router = createBrowserRouter([
       // ADMIN extra
       { path: "admin-profile", element: <AdminProfile /> },
       { path: "manage-members", element: <ManageMembers /> },
-      { path: "make-announcement", element: <Announcements /> },
       { path: "agreement-requests", element: <AgreementRequests /> },
       { path: "manage-coupons", element: <ManageCoupons /> },
     ],

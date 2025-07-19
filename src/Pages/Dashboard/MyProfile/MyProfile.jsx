@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useAuth from "../../../hooks/useAuth";
 import RentStatusMonitor from "./RentStatusMonitor";
+import Loader from "../../../Shared/component/Loader/Loader";
 
 const MyProfile = () => {
   const axiosSecure = useAxiosSecure();
@@ -36,7 +37,7 @@ const { data: roleData } = useQuery({
     return <p className="p-4">Please log in to see your profile.</p>;
   }
   if (isLoading) {
-    return <p className="p-4">Loading...</p>;
+    return <Loader></Loader>
   }
 
   // Show apartment details only if there is an accepted agreement
