@@ -21,6 +21,7 @@ import ManageCoupons from "../Pages/Dashboard/ManageCoupons/ManageCoupons";
 import MyProfile from "../Pages/Dashboard/MyProfile/MyProfile";
 import Apartments from "../Pages/Apartments/Apartments";
 import About from "../Pages/About/About";
+import DashboardHome from "../Pages/Dashboard/DashboardHome/DashboardHome";
 
 export const router = createBrowserRouter([
   {
@@ -72,6 +73,7 @@ export const router = createBrowserRouter([
     element: <DashboardLayout />,
     errorElement: <ErrorPage />,
     children: [
+      { index: true, element: <DashboardHome></DashboardHome> },
       // USER & MEMBER common
       { path: "my-profile", element: <MyProfile /> },
       { path: "announcements", element: <Announcements /> },
