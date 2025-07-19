@@ -20,6 +20,7 @@ import AgreementRequests from "../Pages/Dashboard/AgreementRequests/AgreementReq
 import ManageCoupons from "../Pages/Dashboard/ManageCoupons/ManageCoupons";
 import MyProfile from "../Pages/Dashboard/MyProfile/MyProfile";
 import Apartments from "../Pages/Apartments/Apartments";
+import About from "../Pages/About/About";
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ export const router = createBrowserRouter([
       {
         path: "apartments",
         element: <Apartments></Apartments>,
+      },
+      {
+        path: "about",
+        element: <About></About>
       },
       {
         path: "forbidden",

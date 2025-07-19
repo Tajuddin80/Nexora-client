@@ -50,7 +50,7 @@ const Navbar = () => {
 
       <li className="mr-3">
         <NavLink
-          to="/aboutUs"
+          to="/about"
           className={({ isActive }) =>
             isActive
               ? "btn btn-md btn-primary"
