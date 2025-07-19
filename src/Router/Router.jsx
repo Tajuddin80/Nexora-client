@@ -30,6 +30,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
+     loader: ()=> fetch("/reviews.json"),
         element: <Home></Home>,
       },
       {
