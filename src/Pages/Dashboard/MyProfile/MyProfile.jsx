@@ -52,7 +52,7 @@ const { data: roleData } = useQuery({
 
   return (
     <div className="p-6 mx-auto bg-base-100 rounded-xl shadow-md">
-      <RentStatusMonitor />
+      {/* <RentStatusMonitor /> */}
 
       <h2 className="text-3xl font-bold mb-6">My Profile</h2>
 
@@ -71,12 +71,12 @@ const { data: roleData } = useQuery({
         </div>
       </div>
 
-      {/* 🏷️ Role status */}
+{/*       
       {roleData === "user" && (
         <p className="text-red-500 mt-4">
           Your membership has been downgraded due to unpaid rents.
         </p>
-      )}
+      )} */}
 
       {/* 🏢 Apartment Info */}
       <h3 className="text-2xl font-semibold mb-4">Apartment Details</h3>

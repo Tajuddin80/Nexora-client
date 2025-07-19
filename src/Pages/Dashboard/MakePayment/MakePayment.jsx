@@ -27,51 +27,49 @@ const MakePayment = () => {
       const res = await axiosSecure.get(
         `/agreements/user/${user.email}?status=accepted`
       );
-      // Return null if no agreement found to avoid undefined error
       return res.data?.[0] || null;
     },
     enabled: !!user?.email,
   });
 
   // ✅ Validate coupon
-const handleApplyCoupon = async () => {
-  if (!couponCode.trim()) {
-    Swal.fire({
-      icon: "warning",
-      title: "⚠️ Please enter a coupon code",
-    });
-    return;
-  }
-  try {
-    const res = await axiosSecure.post("/coupons/validate", { code: couponCode });
-
-    if (res.data.valid) {
-      setDiscountPercent(res.data.discountPercent);
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
       Swal.fire({
-        icon: "success",
-        title: "✅ Coupon Applied!",
-        text: `-${res.data.discountPercent}% discount applied.`,
-        timer: 2000,
-        showConfirmButton: false,
+        icon: "warning",
+        title: "⚠️ Please enter a coupon code",
       });
-    } else {
+      return;
+    }
+    try {
+      const res = await axiosSecure.post("/coupons/validate", { code: couponCode });
+
+      if (res.data.valid) {
+        setDiscountPercent(res.data.discountPercent);
+        Swal.fire({
+          icon: "success",
+          title: "✅ Coupon Applied!",
+          text: `-${res.data.discountPercent}% discount applied.`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      } else {
+        setDiscountPercent(0);
+        Swal.fire({
+          icon: "error",
+          title: "❌ Coupon Not Valid",
+          text: res.data.message || "Invalid coupon code",
+        });
+      }
+    } catch (err) {
       setDiscountPercent(0);
       Swal.fire({
         icon: "error",
-        title: "❌ Coupon Not Valid",
-        text: res.data.message || "Invalid coupon code",
+        title: "❌ Coupon Validation Failed",
+        text: err?.response?.data?.message || "Please try again later",
       });
     }
-  } catch (err) {
-    setDiscountPercent(0);
-    Swal.fire({
-      icon: "error",
-      title: "❌ Coupon Validation Failed",
-      text: err?.response?.data?.message || "Please try again later",
-    });
-  }
-};
-
+  };
 
   // ✅ Mutation for making payment
   const payMutation = useMutation({
@@ -86,7 +84,6 @@ const handleApplyCoupon = async () => {
         timer: 2000,
         showConfirmButton: false,
       });
-      // Refresh unpaid rents
       queryClient.invalidateQueries(["unpaid-rents"]);
     },
     onError: (err) => {
@@ -118,7 +115,7 @@ const handleApplyCoupon = async () => {
     }).then((result) => {
       if (result.isConfirmed) {
         payMutation.mutate({
-          email: user.email,
+          userEmail: user.email, // ✅ changed from email → userEmail
           apartmentId: agreement._id,
           month: data.month,
           amount: finalAmount,
@@ -226,7 +223,9 @@ const handleApplyCoupon = async () => {
               </option>
             ))}
           </select>
-          {errors.month && <p className="text-red-500 text-sm">{errors.month.message}</p>}
+          {errors.month && (
+            <p className="text-red-500 text-sm">{errors.month.message}</p>
+          )}
         </div>
 
         {/* Coupon */}
@@ -244,6 +243,7 @@ const handleApplyCoupon = async () => {
           <button
             type="button"
             onClick={handleApplyCoupon}
+            disabled={!agreement}
             className="btn bg-secondary hover:bg-secondary/80 text-white"
           >
             Apply

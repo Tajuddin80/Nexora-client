@@ -100,7 +100,7 @@ const handleAgreement = async (apt) => {
 
     // ✅ Check if user already has active or checked agreement
     const activeAgreements = (userAgreements || []).filter(
-      (a) => a.status === "pending" || a.status === "checked"
+      (a) => a.status === "pending" || a.status === "accepted" || a.status === "rejected" 
     );
 
     if (activeAgreements.length > 0) {
@@ -127,7 +127,6 @@ const handleAgreement = async (apt) => {
         rent: apt.rent,
         status: "pending",
         apartmentId: apt._id,
-        availability: apt.available,
       });
 
       Swal.fire({
