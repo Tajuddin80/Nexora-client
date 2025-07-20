@@ -57,8 +57,7 @@ const Apartments = () => {
   const fetchApartments = async ({ queryKey }) => {
     const [_key, page, minRent, maxRent, sortBy, sortOrder] = queryKey;
     const { data } = await axiosPublic.get(
-      `/apartments?page=${page}&limit=8&minRent=${minRent}&maxRent=${maxRent}&sortBy=${sortBy}&sortOrder=${sortOrder}`
-    );
+     `/apartments?page=${page}&limit=8&minRent=${minRent}&maxRent=${maxRent}&sortBy=${sortBy}&sortOrder=${sortOrder}`  );
     return data;
   };
 
@@ -78,84 +77,86 @@ const Apartments = () => {
     enabled: !!user?.email,
   });
 
-// ✅ Handle Agreement
-const handleAgreement = async (apt) => {
-  if (!user) {
-    navigate("/login");
-    return;
-  }
-
-  Swal.fire({
-    title: "Are you sure?",
-    text: `You are about to send an agreement request for Apartment ${apt.apartmentNo} (Floor: ${apt.floor}, Block: ${apt.block})`,
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, proceed",
-    cancelButtonText: "Cancel",
-    background: "#fff",
-  }).then(async (result) => {
-    if (!result.isConfirmed) return;
-
-    // ✅ Check if user already has active or checked agreement
-    const activeAgreements = (userAgreements || []).filter(
-      (a) => a.status === "pending" || a.status === "accepted" || a.status === "rejected" 
-    );
-
-    if (activeAgreements.length > 0) {
-      Swal.fire({
-        toast: true,
-        position: "top-end",
-        icon: "info",
-        title: "You already have an pending or checked agreement.",
-        showConfirmButton: false,
-        timer: 2500,
-        timerProgressBar: true,
-        background: "#fff",
-      });
+  // ✅ Handle Agreement
+  const handleAgreement = async (apt) => {
+    if (!user) {
+      navigate("/login");
       return;
     }
 
-    try {
-      await axiosSecure.post("/agreements", {
-        userName: user.displayName,
-        userEmail: user.email,
-        floor: apt.floor,
-        block: apt.block,
-        apartmentNo: apt.apartmentNo,
-        rent: apt.rent,
-        status: "pending",
-        apartmentId: apt._id,
-      });
+    Swal.fire({
+      title: "Are you sure?",
+      text: `You are about to send an agreement request for Apartment ${apt.apartmentNo} (Floor: ${apt.floor}, Block: ${apt.block})`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, proceed",
+      cancelButtonText: "Cancel",
+      background: "#fff",
+    }).then(async (result) => {
+      if (!result.isConfirmed) return;
 
-      Swal.fire({
-        toast: true,
-        position: "top-end",
-        icon: "success",
-        title: "Agreement request sent!",
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-        background: "#fff",
-      });
-    } catch (err) {
-      const errorMessage =
-        err?.response?.data?.message || "Something went wrong!";
-      Swal.fire({
-        toast: true,
-        position: "top-end",
-        icon: "error",
-        title: errorMessage,
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-        background: "#fff",
-      });
-    }
-  });
-};
+      // ✅ Check if user already has active or checked agreement
+      const activeAgreements = (userAgreements || []).filter(
+        (a) =>
+          a.status === "pending" ||
+          a.status === "accepted" ||
+          a.status === "rejected"
+      );
 
+      if (activeAgreements.length > 0) {
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "info",
+          title: "You already have an pending or checked agreement.",
+          showConfirmButton: false,
+          timer: 2500,
+          timerProgressBar: true,
+          background: "#fff",
+        });
+        return;
+      }
+
+      try {
+        await axiosSecure.post("/agreements", {
+          userName: user.displayName,
+          userEmail: user.email,
+          floor: apt.floor,
+          block: apt.block,
+          apartmentNo: apt.apartmentNo,
+          rent: apt.rent,
+          status: "pending",
+          apartmentId: apt._id,
+        });
+
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "success",
+          title: "Agreement request sent!",
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          background: "#fff",
+        });
+      } catch (err) {
+        const errorMessage =
+          err?.response?.data?.message || "Something went wrong!";
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "error",
+          title: errorMessage,
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          background: "#fff",
+        });
+      }
+    });
+  };
 
   const handleDetails = (apt) => {
     setSelectedApt(apt);
@@ -169,8 +170,8 @@ const handleAgreement = async (apt) => {
     return (
       <div className="p-4">
         <h1 className="text-2xl font-bold mb-4 text-primary">Apartments</h1>
-        <div className="grid md:grid-cols-4 gap-6">
-          {[...Array(8)].map((_, index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {[...Array(8)].map((_, index) => (
             <div
               key={index}
               className="rounded-xl shadow-md animate-pulse p-2 bg-secondary/10"
@@ -258,7 +259,7 @@ const handleAgreement = async (apt) => {
       </div>
 
       {/* Apartments */}
-      <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {data.apartments.map((apt) => (
           <motion.div
             key={apt._id}
@@ -303,20 +304,21 @@ const handleAgreement = async (apt) => {
                     <span className="font-semibold">{apt.apartmentNo}</span>
                   </p>
                 </div>
-                <div className="flex items-center gap-4 text-secondary text-sm">
-                  <div className="flex items-center gap-1">
-                    <FaBath className="text-lg md:text-xl" />
-                    <span className="font-medium">{apt.washroomCount}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <FaUtensils className="text-lg md:text-xl" />
-                    <span className="font-medium">{apt.kitchenCount}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <FaRulerCombined className="text-lg md:text-xl" />
-                    <span className="font-medium">{apt.squareFeet} sqft</span>
-                  </div>
-                </div>
+              <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 text-secondary text-sm">
+  <div className="flex items-center gap-1">
+    <FaBath className="text-lg sm:text-xl" />
+    <span className="font-medium">{apt.washroomCount}</span>
+  </div>
+  <div className="flex items-center gap-1">
+    <FaUtensils className="text-lg sm:text-xl" />
+    <span className="font-medium">{apt.kitchenCount}</span>
+  </div>
+  <div className="flex items-center gap-1">
+    <FaRulerCombined className="text-lg sm:text-xl" />
+    <span className="font-medium">{apt.squareFeet} sqft</span>
+  </div>
+</div>
+
               </div>
               <div className="flex items-center gap-2 mt-3">
                 <span className="text-gray-500 line-through text-sm">
@@ -378,6 +380,7 @@ const handleAgreement = async (apt) => {
                     {selectedApt.rent} tk
                   </span>
                 </p>
+
                 <p className="flex items-center gap-1">
                   <FaBath className="text-primary" /> Washrooms:{" "}
                   {selectedApt.washroomCount}

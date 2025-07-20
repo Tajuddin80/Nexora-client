@@ -64,10 +64,11 @@ const Navbar = () => {
   );
 
   return (
-    <div className="navbar   sticky top-0 z-[70] shadow-2xl  rounded-xl   bg-[color-mix(in_srgb,var(--color-primary)_10%,var(--color-base-100)_90%)]
+    <div
+      className="navbar   sticky top-0 z-[70] shadow-2xl  rounded-xl   bg-[color-mix(in_srgb,var(--color-primary)_10%,var(--color-base-100)_90%)]
     text-[color:var(--color-base-content)]
-    border-r border-[rgba(0,0,0,0.1)]">
-   
+    border-r border-[rgba(0,0,0,0.1)]"
+    >
       {/* Left: mobile menu & logo */}
       <div className="navbar-start">
         <div className="dropdown">
@@ -122,29 +123,25 @@ const Navbar = () => {
                 <img src={user?.photoURL} alt="User Avatar" />
               </div>
             </div>
-           <ul
-  tabIndex={0}
-  className="menu menu-md dropdown-content z-[99] bg-base-100 rounded-box mt-3 w-52 p-2 shadow"
->
-  <li className="text-lg text-center font-bold text-secondary">
-    <span>{user?.displayName}</span>
-  </li>
-  <li>
-    <Link to="/dashboard/updateProfile">Profile</Link>
-  </li>
-  <li>
-    <Link to="/dashboard">Dashboard</Link>
-  </li>
-  <li>
-    <button
-      onClick={() => logOut().catch(console.error)}
-      className="text-white bg-primary"
-    >
-      Logout
-    </button>
-  </li>
-</ul>
-
+            <ul
+              tabIndex={0}
+              className="menu menu-md dropdown-content z-[99] bg-base-100 rounded-box mt-3 w-52 p-2 shadow"
+            >
+              <li className="text-lg text-center font-bold text-secondary">
+                <span>{user?.displayName}</span>
+              </li>
+              <li>
+                <Link to="/dashboard">Dashboard</Link>
+              </li>
+              <li>
+                <button
+                  onClick={() => logOut().catch(console.error)}
+                  className="text-white bg-primary"
+                >
+                  Logout
+                </button>
+              </li>
+            </ul>
           </div>
         )}
       </div>

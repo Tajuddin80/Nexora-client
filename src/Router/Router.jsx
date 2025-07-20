@@ -46,6 +46,10 @@ export const router = createBrowserRouter([
         path: "forbidden",
         element: <Forbidden></Forbidden>,
       },
+      {
+        path: "*",
+        element: <ErrorPage />,
+      },
     ],
   },
   {
@@ -87,6 +91,10 @@ export const router = createBrowserRouter([
       { path: "manage-members", element: <ManageMembers /> },
       { path: "agreement-requests", element: <AgreementRequests /> },
       { path: "manage-coupons", element: <ManageCoupons /> },
+      {
+        path: "*",
+        element: <ErrorPage />,
+      },
     ],
   },
 ]);
