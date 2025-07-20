@@ -133,9 +133,15 @@ const MakePayment = () => {
         }
 
         // 2️⃣ Create payment intent on backend
-        const { data: intentRes } = await axiosSecure.post("/create-payment-intent", {
-          amountInCents: finalAmount * 100,
-        });
+        const { data: intentRes } = await axiosSecure.post(
+          "/create-payment-intent",
+          {
+            amountInCents: finalAmount * 100,
+            userEmail: user.email,
+            apartmentNo: agreement.apartmentNo,
+            fullName: user.displayName || "",
+          }
+        );
         const clientSecret = intentRes.clientSecret;
 
         // 3️⃣ Confirm card payment
@@ -156,13 +162,14 @@ const MakePayment = () => {
           if (rentRecord) {
             await axiosSecure.patch(`/rent-payments/${rentRecord._id}`, {
               status: "paid",
+              transactionId: confirmRes.paymentIntent.id,
             });
           }
 
           setIsError(false);
-          setMessage("✅ Payment succeeded!");
+          setMessage("Payment succeeded!");
           Swal.fire({
-            title: "✅ Rent Paid Successfully",
+            title: "Rent Paid Successfully",
             html: `<p class="text-lg">Transaction ID:<br/><strong>${confirmRes.paymentIntent.id}</strong></p>`,
             icon: "success",
             confirmButtonColor: "#3085d6",
@@ -199,7 +206,9 @@ const MakePayment = () => {
 
       {message && (
         <div
-          className={`alert mb-4 ${isError ? "alert-error" : "alert-success"} shadow-md`}
+          className={`alert mb-4 ${
+            isError ? "alert-error" : "alert-success"
+          } shadow-md`}
         >
           <span>{message}</span>
         </div>
@@ -208,35 +217,72 @@ const MakePayment = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Email */}
         <div>
-          <label className="block text-sm font-medium text-gray-500">Member Email</label>
-          <input type="text" value={user.email} readOnly className="input input-bordered w-full" />
+          <label className="block text-sm font-medium text-gray-500">
+            Member Email
+          </label>
+          <input
+            type="text"
+            value={user.email}
+            readOnly
+            className="input input-bordered w-full"
+          />
         </div>
 
         {/* Floor / Block / Apt */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-500">Floor</label>
-            <input type="text" value={agreement.floor} readOnly className="input input-bordered w-full" />
+            <label className="block text-sm font-medium text-gray-500">
+              Floor
+            </label>
+            <input
+              type="text"
+              value={agreement.floor}
+              readOnly
+              className="input input-bordered w-full"
+            />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-500">Block</label>
-            <input type="text" value={agreement.block} readOnly className="input input-bordered w-full" />
+            <label className="block text-sm font-medium text-gray-500">
+              Block
+            </label>
+            <input
+              type="text"
+              value={agreement.block}
+              readOnly
+              className="input input-bordered w-full"
+            />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-500">Apartment No</label>
-            <input type="text" value={agreement.apartmentNo} readOnly className="input input-bordered w-full" />
+            <label className="block text-sm font-medium text-gray-500">
+              Apartment No
+            </label>
+            <input
+              type="text"
+              value={agreement.apartmentNo}
+              readOnly
+              className="input input-bordered w-full"
+            />
           </div>
         </div>
 
         {/* Rent */}
         <div>
-          <label className="block text-sm font-medium text-gray-500">Rent (Tk)</label>
-          <input type="text" value={agreement.rent} readOnly className="input input-bordered w-full" />
+          <label className="block text-sm font-medium text-gray-500">
+            Rent (Tk)
+          </label>
+          <input
+            type="text"
+            value={agreement.rent}
+            readOnly
+            className="input input-bordered w-full"
+          />
         </div>
 
         {/* Month */}
         <div>
-          <label className="block text-sm font-medium text-gray-500">Month</label>
+          <label className="block text-sm font-medium text-gray-500">
+            Month
+          </label>
           <select
             {...register("month", { required: "Month is required" })}
             className="select select-bordered w-full"
@@ -252,13 +298,17 @@ const MakePayment = () => {
               <option disabled>No unpaid months</option>
             )}
           </select>
-          {errors.month && <p className="text-red-500 text-sm">{errors.month.message}</p>}
+          {errors.month && (
+            <p className="text-red-500 text-sm">{errors.month.message}</p>
+          )}
         </div>
 
         {/* Coupon */}
         <div className="flex gap-2 items-end">
           <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-500">Coupon Code</label>
+            <label className="block text-sm font-medium text-gray-500">
+              Coupon Code
+            </label>
             <input
               type="text"
               className="input input-bordered w-full"
@@ -279,12 +329,18 @@ const MakePayment = () => {
 
         {/* Card Input */}
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-500">Card Details</label>
+          <label className="block text-sm font-medium text-gray-500">
+            Card Details
+          </label>
           <div className="border border-gray-300 rounded-lg p-4 shadow-sm">
             <CardElement
               options={{
                 style: {
-                  base: { fontSize: "16px", color: "#374151", "::placeholder": { color: "#9CA3AF" } },
+                  base: {
+                    fontSize: "16px",
+                    color: "#374151",
+                    "::placeholder": { color: "#9CA3AF" },
+                  },
                   invalid: { color: "#DC2626" },
                 },
               }}
@@ -297,7 +353,9 @@ const MakePayment = () => {
           <p className="text-sm text-gray-600">Final Rent to Pay</p>
           <p className="text-xl font-bold text-primary">{discountedRent} Tk</p>
           {discountPercent > 0 && (
-            <p className="text-green-600 text-sm">Coupon applied: -{discountPercent}% off</p>
+            <p className="text-green-600 text-sm">
+              Coupon applied: -{discountPercent}% off
+            </p>
           )}
         </div>
 
