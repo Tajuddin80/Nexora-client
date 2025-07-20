@@ -25,14 +25,19 @@ const AgreementRequests = () => {
   // ✅ Mutation for accept/reject
   const mutation = useMutation({
     mutationFn: async ({ id, userEmail, action }) => {
-      const res = await axiosSecure.patch(`/agreements/${id}`, { action, userEmail });
+      const res = await axiosSecure.patch(`/agreements/${id}`, {
+        action,
+        userEmail,
+      });
       return res.data;
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries(["agreements"]);
       Swal.fire({
         icon: "success",
-        title: `Agreement ${variables.action === "accept" ? "Accepted" : "Rejected"}`,
+        title: `Agreement ${
+          variables.action === "accept" ? "Accepted" : "Rejected"
+        }`,
         timer: 1500,
         showConfirmButton: false,
       });
@@ -47,21 +52,43 @@ const AgreementRequests = () => {
   });
 
   const handleAction = (id, userEmail, action) => {
-    mutation.mutate({ id, userEmail, action });
+    // ✅ Show a confirm modal with blur background
+    Swal.fire({
+      title: `Are you sure to ${action}?`,
+      text: `This request will be marked as ${action}.`,
+      icon: action === "accept" ? "info" : "warning",
+      showCancelButton: true,
+      confirmButtonColor: action === "accept" ? "#16a34a" : "#dc2626",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: `Yes, ${action}`,
+      background: "#fff",
+      backdrop: `
+        rgba(0,0,0,0.4)
+        blur(5px)
+      `,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        mutation.mutate({ id, userEmail, action });
+      }
+    });
   };
 
-  if (isLoading) return <Loader></Loader>
-  if (isError) return <div className="p-4 text-red-500">Error: {error.message}</div>;
+  if (isLoading) return <Loader />;
+  if (isError)
+    return (
+      <div className="p-4 text-red-500">Error: {error?.message || "Error"}</div>
+    );
 
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Agreement Requests</h2>
+
       {requests.length === 0 ? (
         <p>No pending requests found.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="table w-full">
-            <thead>
+            <thead className="bg-gray-100">
               <tr>
                 <th>User Name</th>
                 <th>User Email</th>
@@ -83,21 +110,27 @@ const AgreementRequests = () => {
                   <td>{req.apartmentNo}</td>
                   <td>{req.rent}</td>
                   <td>{new Date(req.createdAt).toLocaleDateString()}</td>
-                  <td className="flex gap-2">
-                    <button
-                      onClick={() => handleAction(req._id, req.userEmail, "accept")}
-                      className="btn btn-sm bg-green-500 text-white hover:bg-green-600"
-                      disabled={mutation.isLoading}
-                    >
-                      Accept
-                    </button>
-                    <button
-                      onClick={() => handleAction(req._id, req.userEmail, "reject")}
-                      className="btn btn-sm bg-red-500 text-white hover:bg-red-600"
-                      disabled={mutation.isLoading}
-                    >
-                      Reject
-                    </button>
+                  <td>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() =>
+                          handleAction(req._id, req.userEmail, "accept")
+                        }
+                        className="btn btn-sm bg-green-500 text-white hover:bg-green-600"
+                        disabled={mutation.isLoading}
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleAction(req._id, req.userEmail, "reject")
+                        }
+                        className="btn btn-sm bg-red-500 text-white hover:bg-red-600"
+                        disabled={mutation.isLoading}
+                      >
+                        Reject
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

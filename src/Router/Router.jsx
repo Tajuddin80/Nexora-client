@@ -12,7 +12,7 @@ import DashboardLayout from "../Layouts/DashboardLayout/DashboardLayout";
 import Announcements from "../Pages/Dashboard/Announcements/Announcements";
 import PaymentHistory from "../Pages/Dashboard/PaymentHistory/PaymentHistory";
 import AdminProfile from "../Pages/Dashboard/AdminProfile/AdminProfile";
-import ManageMembers from "../Pages/Dashboard/ManageMembers/ManageMembers";
+import ManageMembars from "../Pages/Dashboard/ManageMembars/ManageMembars";
 import AgreementRequests from "../Pages/Dashboard/AgreementRequests/AgreementRequests";
 import ManageCoupons from "../Pages/Dashboard/ManageCoupons/ManageCoupons";
 import MyProfile from "../Pages/Dashboard/MyProfile/MyProfile";
@@ -20,6 +20,8 @@ import Apartments from "../Pages/Apartments/Apartments";
 import About from "../Pages/About/About";
 import DashboardHome from "../Pages/Dashboard/DashboardHome/DashboardHome";
 import Payment from "../Pages/Dashboard/Payment/Payment";
+import AdminRoute from "../ProtectedRoutes/AdminRoute";
+import MembarRoute from "../ProtectedRoutes/MembarRoute";
 
 export const router = createBrowserRouter([
   {
@@ -81,14 +83,56 @@ export const router = createBrowserRouter([
       { path: "announcements", element: <Announcements /> },
 
       // MEMBER extra
-      { path: "makepayment", element: <Payment></Payment> },
-      { path: "payment-history", element: <PaymentHistory /> },
+      {
+        path: "makepayment",
+        element: (
+          <MembarRoute>
+            <Payment></Payment>
+          </MembarRoute>
+        ),
+      },
+      {
+        path: "payment-history",
+        element: (
+          <MembarRoute>
+            <PaymentHistory />
+          </MembarRoute>
+        ),
+      },
 
       // ADMIN extra
-      { path: "admin-profile", element: <AdminProfile /> },
-      { path: "manage-members", element: <ManageMembers /> },
-      { path: "agreement-requests", element: <AgreementRequests /> },
-      { path: "manage-coupons", element: <ManageCoupons /> },
+      {
+        path: "admin-profile",
+        element: (
+          <AdminRoute>
+            <AdminProfile />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "manage-members",
+        element: (
+          <AdminRoute>
+            <ManageMembars />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "agreement-requests",
+        element: (
+          <AdminRoute>
+            <AgreementRequests />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "manage-coupons",
+        element: (
+          <AdminRoute>
+            <ManageCoupons />
+          </AdminRoute>
+        ),
+      },
       {
         path: "*",
         element: <ErrorPage />,

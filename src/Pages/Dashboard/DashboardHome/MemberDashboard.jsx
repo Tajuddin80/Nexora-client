@@ -32,14 +32,14 @@ const MemberDashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full ">
         <div
-          className="card bg-primary text-primary-content p-6 cursor-pointer hover:shadow-lg transition"
+          className="card bg-primary-content text-primary p-6 cursor-pointer hover:shadow-lg transition"
           onClick={() => navigate("/dashboard/makepayment")}
         >
           <FaMoneyCheckAlt className="text-3xl mb-2 mx-auto" />
           <h3 className="text-lg font-semibold text-center">Make a Payment</h3>
         </div>
         <div
-          className="card bg-secondary text-base-100 p-6 cursor-pointer hover:shadow-lg transition"
+          className="card bg-primary-content text-primary p-6 cursor-pointer hover:shadow-lg transition"
           onClick={() => navigate("/dashboard/payment-history")}
         >
           <FaClipboardList className="text-3xl mb-2 mx-auto" />

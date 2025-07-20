@@ -26,6 +26,7 @@ const MakePayment = () => {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm();
 
   // ✅ Fetch active agreement
@@ -54,6 +55,7 @@ const MakePayment = () => {
 
   const unpaidMonths = unpaidRents.map((rent) => rent.month);
 
+  // ✅ Handle coupon apply
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
       Swal.fire({ icon: "warning", title: "Please enter a coupon code" });
@@ -351,7 +353,9 @@ const MakePayment = () => {
         {/* Final Rent */}
         <div className="mt-4 p-3 border rounded-lg bg-gray-50">
           <p className="text-sm text-gray-600">Final Rent to Pay</p>
-          <p className="text-xl font-bold text-primary">{discountedRent} Tk</p>
+          <p className="text-xl font-bold text-primary">
+            {discountedRent.toLocaleString()} Tk
+          </p>
           {discountPercent > 0 && (
             <p className="text-green-600 text-sm">
               Coupon applied: -{discountPercent}% off
@@ -363,9 +367,13 @@ const MakePayment = () => {
         <button
           type="submit"
           className="btn btn-primary mt-6 w-full text-lg"
-          disabled={isProcessing || unpaidMonths.length === 0}
+          disabled={
+            isProcessing || unpaidMonths.length === 0 || !stripe || !elements
+          }
         >
-          {isProcessing ? "Processing..." : "Pay Now"}
+          {isProcessing
+            ? "Processing..."
+            : `Pay Now${watch("month") ? ` for ${watch("month")}` : ""}`}
         </button>
       </form>
     </div>

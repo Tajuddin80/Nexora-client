@@ -3,7 +3,7 @@ import useAuth from "../hooks/useAuth";
 import useUserRole from "../hooks/useUserRole";
 import Loader from "../Shared/component/Loader/Loader";
 
-const MemberRoute = ({ children }) => {
+const MembarRoute = ({ children }) => {
   const { user, loading } = useAuth();
   const { role, roleLoading } = useUserRole();
 
@@ -18,4 +18,4 @@ const MemberRoute = ({ children }) => {
   return children;
 };
 
-export default MemberRoute;
+export default MembarRoute;
