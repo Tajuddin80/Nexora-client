@@ -18,7 +18,7 @@ import Loader from "../../Shared/component/Loader/Loader";
 const navLinkClass = ({ isActive }) =>
   `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-300 
    ${
-     isActive ? "bg-primary text-white" : " hover:text-white text-base-content"
+     isActive ? "bg-primary text-white" : " hover:text-white hover:bg-primary text-base-content"
    } text-base md:text-lg font-medium`;
 
 const DashboardLayout = () => {

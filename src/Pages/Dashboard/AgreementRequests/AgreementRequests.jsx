@@ -87,8 +87,8 @@ const AgreementRequests = () => {
         <p>No pending requests found.</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="table w-full">
-            <thead className="bg-gray-100">
+          <table className="table w-full border">
+            <thead className="bg-primary text-white">
               <tr>
                 <th>User Name</th>
                 <th>User Email</th>

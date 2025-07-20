@@ -5,6 +5,7 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { FaEdit, FaTrash, FaCalendarAlt, FaPlus } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Loader from "../../../Shared/component/Loader/Loader";
 
 const ManageCoupons = () => {
   const axiosSecure = useAxiosSecure();
@@ -17,9 +18,10 @@ const ManageCoupons = () => {
     discount: "",
     description: "",
     expiryDate: null,
+    available: true, // ✅ availability toggle
   });
 
-  // fetch coupons
+  // Fetch coupons
   const { data: coupons = [], isLoading, isError, error } = useQuery({
     queryKey: ["coupons"],
     queryFn: async () => {
@@ -28,6 +30,7 @@ const ManageCoupons = () => {
     },
   });
 
+  // Add or update coupon
   const saveCouponMutation = useMutation({
     mutationFn: async (coupon) => {
       if (editCouponId) {
@@ -57,6 +60,7 @@ const ManageCoupons = () => {
     },
   });
 
+  // Delete coupon
   const deleteCouponMutation = useMutation({
     mutationFn: async (id) => {
       const res = await axiosSecure.delete(`/coupons/${id}`);
@@ -83,12 +87,12 @@ const ManageCoupons = () => {
   const resetForm = () => {
     setShowModal(false);
     setEditCouponId(null);
-    setFormData({ code: "", discount: "", description: "", expiryDate: null });
+    setFormData({ code: "", discount: "", description: "", expiryDate: null, available: true });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { code, discount, description, expiryDate } = formData;
+    const { code, discount, description, expiryDate, available } = formData;
     if (!code || !discount || !description || !expiryDate) {
       Swal.fire({
         icon: "warning",
@@ -103,6 +107,7 @@ const ManageCoupons = () => {
       discount: Number(discount),
       description,
       expiryDate,
+      available, // ✅ send availability
       createdAt: editCouponId ? undefined : new Date(),
     });
   };
@@ -114,6 +119,7 @@ const ManageCoupons = () => {
       discount: coupon.discount,
       description: coupon.description,
       expiryDate: coupon.expiryDate ? new Date(coupon.expiryDate) : null,
+      available: coupon.available ?? true, // ✅ load availability
     });
     setShowModal(true);
   };
@@ -134,7 +140,7 @@ const ManageCoupons = () => {
     });
   };
 
-  if (isLoading) return <div className="p-4">Loading coupons...</div>;
+  if (isLoading) return <Loader></Loader>
   if (isError) return <div className="p-4 text-error">Error: {error.message}</div>;
 
   return (
@@ -157,12 +163,13 @@ const ManageCoupons = () => {
       ) : (
         <div className="overflow-x-auto rounded-lg shadow-sm">
           <table className="table w-full border border-primary/40">
-            <thead className="bg-primary/20 text-primary">
+            <thead className="bg-primary text-white">
               <tr>
                 <th>Code</th>
                 <th>Discount (%)</th>
                 <th>Description</th>
                 <th>Expiry Date</th>
+                <th>Available</th> {/* ✅ new column */}
                 <th className="text-center">Actions</th>
               </tr>
             </thead>
@@ -180,17 +187,24 @@ const ManageCoupons = () => {
                       ? new Date(coupon.expiryDate).toLocaleDateString()
                       : "N/A"}
                   </td>
+                  <td
+                    className={`font-bold ${
+                      coupon.available ? "text-green-600" : "text-red-500"
+                    }`}
+                  >
+                    {coupon.available ? "Yes" : "No"}
+                  </td>
                   <td className="flex justify-center gap-3">
                     <button
                       onClick={() => handleEdit(coupon)}
-                      className="btn btn-sm btn-warning flex items-center gap-1 hover:scale-105 transition"
+                      className="btn btn-sm btn-primary text-white flex items-center gap-1 hover:scale-105 transition"
                       title="Edit Coupon"
                     >
                       <FaEdit />
                     </button>
                     <button
                       onClick={() => handleDelete(coupon._id)}
-                      className="btn btn-sm btn-error flex items-center gap-1 hover:scale-105 transition"
+                      className="btn btn-sm btn-primary text-white flex items-center gap-1 hover:scale-105 transition"
                       title="Delete Coupon"
                     >
                       <FaTrash />
@@ -253,6 +267,19 @@ const ManageCoupons = () => {
                 />
               </div>
 
+              {/* ✅ Availability toggle */}
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.available}
+                  onChange={(e) =>
+                    setFormData({ ...formData, available: e.target.checked })
+                  }
+                  className="checkbox checkbox-primary"
+                />
+                <span className="label-text">Available</span>
+              </label>
+
               <div className="flex justify-end gap-4">
                 <button
                   type="button"
@@ -275,7 +302,7 @@ const ManageCoupons = () => {
             </form>
             <button
               onClick={resetForm}
-              className="absolute top-3 right-3 btn text-white  transition"
+              className="absolute top-3 right-3 btn text-white"
               title="Close"
               aria-label="Close"
             >

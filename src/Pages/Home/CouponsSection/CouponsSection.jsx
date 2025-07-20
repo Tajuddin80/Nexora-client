@@ -7,7 +7,8 @@ import Loader from "../../../Shared/component/Loader/Loader";
 
 const CouponsSection = () => {
   const axiosSecure = useAxiosSecure();
-  // ✅ Fetch coupons from backend
+
+  // ✅ Fetch coupons
   const {
     data: coupons = [],
     isLoading,
@@ -21,13 +22,27 @@ const CouponsSection = () => {
     },
   });
 
+  // ✅ Loader state
   if (isLoading) {
-    return <Loader></Loader>;
+    return <Loader />;
   }
+
+  // ✅ Error state
+  if (isError) {
+    return (
+      <section className="my-12 p-6 md:p-10 rounded-2xl shadow-xl bg-base-100">
+        <p className="text-red-500">Failed to load coupons: {error.message}</p>
+      </section>
+    );
+  }
+
+  // ✅ Only show available coupons
+  const availableCoupons = coupons.filter((c) => c.available === true);
+
+  // ✅ Handle copy
   const handleCopy = async (code) => {
     try {
       await navigator.clipboard.writeText(code);
-
       Swal.fire({
         toast: true,
         position: "top-end",
@@ -52,22 +67,6 @@ const CouponsSection = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <section className="my-12 p-6 md:p-10 rounded-2xl shadow-xl bg-base-100">
-        <p>Loading coupons...</p>
-      </section>
-    );
-  }
-
-  if (isError) {
-    return (
-      <section className="my-12 p-6 md:p-10 rounded-2xl shadow-xl bg-base-100">
-        <p className="text-red-500">Failed to load coupons: {error.message}</p>
-      </section>
-    );
-  }
-
   return (
     <section
       className="my-12 p-6 md:p-10 rounded-2xl shadow-xl 
@@ -78,33 +77,40 @@ const CouponsSection = () => {
       <div className="flex items-center gap-3 mb-6">
         <FaGift className="text-4xl text-secondary" />
         <h2 className="text-3xl text-secondary md:text-4xl font-bold">
-          {" "}
           Special Coupons
         </h2>
       </div>
-      {coupons.length === 0 ? (
+
+      {availableCoupons.length === 0 ? (
         <p className="text-center text-base-content">
           No coupons available right now.
         </p>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-          {coupons.map((c) => (
+          {availableCoupons.map((c) => (
             <div
               key={c._id}
               className="
-          p-5 rounded-xl shadow-md hover:shadow-2xl transition-transform transform hover:-translate-y-1
-          bg-white text-primary
-        "
+                p-5 rounded-xl shadow-md hover:shadow-2xl transition-transform transform hover:-translate-y-1
+                bg-white text-primary
+              "
             >
               <h3 className="text-xl font-bold">{c.discount}% OFF</h3>
-              <p className="text-sm mt-1 opacity-90 ">{c.description}</p>
+              <p className="text-sm mt-1 opacity-90">{c.description}</p>
+              <p className="text-xs mt-1 text-gray-500">
+                Expiry:{" "}
+                {c.expiryDate
+                  ? new Date(c.expiryDate).toLocaleDateString()
+                  : "N/A"}
+              </p>
               <button
                 onClick={() => handleCopy(c.code)}
                 className="
-            mt-4 w-full p-2 border-dashed border-2  rounded-md font-mono font-semibold
-            transition-all cursor-pointer
-            bg-primary-content/10 hover:bg-primary-content/20 text-primary
-            border-primary"
+                  mt-4 w-full p-2 border-dashed border-2 rounded-md font-mono font-semibold
+                  transition-all cursor-pointer
+                  bg-primary-content/10 hover:bg-primary-content/20 text-primary
+                  border-primary
+                "
               >
                 {c.code}
               </button>
