@@ -93,19 +93,18 @@ const CouponsSection = () => {
               key={c._id}
               className="
           p-5 rounded-xl shadow-md hover:shadow-2xl transition-transform transform hover:-translate-y-1
-          bg-primary text-primary-content
+          bg-white text-primary
         "
             >
               <h3 className="text-xl font-bold">{c.discount}% OFF</h3>
-              <p className="text-sm mt-1 opacity-90">{c.description}</p>
+              <p className="text-sm mt-1 opacity-90 ">{c.description}</p>
               <button
                 onClick={() => handleCopy(c.code)}
                 className="
-            mt-4 w-full p-2 border-dashed border-2 rounded-md font-mono font-semibold
-            transition-all cursor-copy
-            bg-primary-content/10 hover:bg-primary-content/20
-            border-primary-content text-primary-content
-          "
+            mt-4 w-full p-2 border-dashed border-2  rounded-md font-mono font-semibold
+            transition-all cursor-pointer
+            bg-primary-content/10 hover:bg-primary-content/20 text-primary
+            border-primary"
               >
                 {c.code}
               </button>

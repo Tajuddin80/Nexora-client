@@ -1,4 +1,3 @@
-import React from "react";
 import { createBrowserRouter } from "react-router";
 import HomeLayout from "../Layouts/HomeLayout/HomeLayout";
 import Home from "../Pages/Home/Home";
@@ -11,17 +10,16 @@ import DashboardLayout from "../Layouts/DashboardLayout/DashboardLayout";
 
 // Dashboard pages
 import Announcements from "../Pages/Dashboard/Announcements/Announcements";
-import MakePayment from "../Pages/Dashboard/MakePayment/MakePayment";
 import PaymentHistory from "../Pages/Dashboard/PaymentHistory/PaymentHistory";
 import AdminProfile from "../Pages/Dashboard/AdminProfile/AdminProfile";
 import ManageMembers from "../Pages/Dashboard/ManageMembers/ManageMembers";
-// import MakeAnnouncement from "../Pages/Dashboard/MakeAnnouncement/MakeAnnouncement";
 import AgreementRequests from "../Pages/Dashboard/AgreementRequests/AgreementRequests";
 import ManageCoupons from "../Pages/Dashboard/ManageCoupons/ManageCoupons";
 import MyProfile from "../Pages/Dashboard/MyProfile/MyProfile";
 import Apartments from "../Pages/Apartments/Apartments";
 import About from "../Pages/About/About";
 import DashboardHome from "../Pages/Dashboard/DashboardHome/DashboardHome";
+import Payment from "../Pages/Dashboard/Payment/Payment";
 
 export const router = createBrowserRouter([
   {
@@ -83,7 +81,7 @@ export const router = createBrowserRouter([
       { path: "announcements", element: <Announcements /> },
 
       // MEMBER extra
-      { path: "makepayment", element: <MakePayment /> },
+      { path: "makepayment", element: <Payment></Payment> },
       { path: "payment-history", element: <PaymentHistory /> },
 
       // ADMIN extra

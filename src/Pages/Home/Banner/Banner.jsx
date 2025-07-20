@@ -59,7 +59,7 @@ const Banner = () => {
   const visiblePanels = panels.slice(0, 3);
 
   return (
-    <div className="flex min-w-full h-[60vh] mx-auto overflow-hidden rounded-xl shadow-2xl">
+    <div className="flex min-w-full h-[70vh] mx-auto overflow-hidden rounded-xl shadow-2xl">
       {/* Small & medium screens: show first 3 */}
       <div className="flex w-full lg:hidden">
         {visiblePanels.map((panel, i) => (
