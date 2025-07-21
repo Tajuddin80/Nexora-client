@@ -8,7 +8,7 @@ import {
 } from "react-icons/fa";
 
 const About = () => {
-  return  (
+  return (
     <div className="min-h-[90vh] flex items-center justify-center bg-[color:var(--color-base-100)]">
       <div className="p-6 md:p-12 bg-base-100 text-base-content items-center max-w-7xl w-full">
         {/* Header Section */}
@@ -33,8 +33,8 @@ const About = () => {
             <FaBuilding className="text-4xl text-primary mb-4" />
             <h3 className="text-xl font-bold mb-2">Modern Management</h3>
             <p className="opacity-80 text-sm md:text-base">
-              Manage apartments, agreements, and payments in a modern, digital way
-              that fits your building’s needs.
+              Manage apartments, agreements, and payments in a modern, digital
+              way that fits your building’s needs.
             </p>
           </div>
 
@@ -81,8 +81,8 @@ const About = () => {
             <FaCheckCircle className="text-4xl text-primary mb-4" />
             <h3 className="text-xl font-bold mb-2">Transparent & Trusted</h3>
             <p className="opacity-80 text-sm md:text-base">
-              Every action is recorded and visible to keep both tenants and owners
-              informed and confident.
+              Every action is recorded and visible to keep both tenants and
+              owners informed and confident.
             </p>
           </div>
           <div
@@ -92,15 +92,14 @@ const About = () => {
             <FaBuilding className="text-4xl text-primary mb-4" />
             <h3 className="text-xl font-bold mb-2">Modern Living Spaces</h3>
             <p className="opacity-80 text-sm md:text-base">
-              Designed for comfort and efficiency, NEXORA offers a seamless living
-              experience with top-notch facilities.
+              Designed for comfort and efficiency, NEXORA offers a seamless
+              living experience with top-notch facilities.
             </p>
           </div>
         </div>
       </div>
     </div>
   );
-
 };
 
 export default About;

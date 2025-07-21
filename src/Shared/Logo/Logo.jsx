@@ -9,7 +9,7 @@ export default function Logo() {
   );
 
   useEffect(() => {
-    // Listen for changes when theme is toggled
+  
     const observer = new MutationObserver(() => {
       const current = document.documentElement.getAttribute("data-theme");
       setTheme(current);

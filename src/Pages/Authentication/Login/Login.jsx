@@ -42,11 +42,9 @@ const Login = () => {
             position: "center",
             showConfirmButton: false,
             timer: 1500,
-          });
-
-          setTimeout(() => {
+          }).then(() => {
             navigate(from, { replace: true });
-          }, 1600);
+          });
         } catch (error) {
           console.error(error);
           Swal.fire({
@@ -67,13 +65,16 @@ const Login = () => {
 
   return (
     <div className="shadow-3xl  rounded-xl flex items-center justify-center bg-base-100 p-4">
-      <div className="w-full max-w-md bg-base-100 rounded-xl shadow-lg p-8">
-        <h2 className="text-3xl font-bold mb-6 text-center">{/* inherits theme color */}Welcome Back</h2>
+      <div className="w-full bg-base-100 rounded-xl shadow-lg p-5">
+        <h2 className="text-3xl font-bold mb-6 text-center">Welcome Back</h2>
 
         <form className="space-y-4" onSubmit={handleLogin}>
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-base-content">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-base-content"
+            >
               Email address
             </label>
             <input
@@ -89,7 +90,10 @@ const Login = () => {
           {/* Password */}
           <div>
             <div className="flex justify-between items-center">
-              <label htmlFor="password" className="block text-sm font-medium text-base-content">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-base-content"
+              >
                 Password
               </label>
               <Link
@@ -105,14 +109,14 @@ const Login = () => {
                 id="password"
                 name="password"
                 placeholder="••••••"
-                defaultValue='123456Aa!'
                 className="input input-bordered w-full pr-10 mt-1"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/60 hover:text-base-content"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 z-10"
+                tabIndex={-1}
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
@@ -138,7 +142,7 @@ const Login = () => {
                     />
                   </svg>
                 ) : (
-                  // 🚫 Eye-off Icon
+                  //  Eye-off Icon
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5"

@@ -12,9 +12,7 @@ createRoot(document.getElementById("root")).render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
-          <div className="w-[98vw] mx-auto">
-            <RouterProvider router={router} />
-          </div>
+          <RouterProvider router={router} />
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>

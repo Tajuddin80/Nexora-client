@@ -18,7 +18,9 @@ import Loader from "../../Shared/component/Loader/Loader";
 const navLinkClass = ({ isActive }) =>
   `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-300 
    ${
-     isActive ? "bg-primary text-white" : " hover:text-white hover:bg-primary text-base-content"
+     isActive
+       ? "bg-primary text-white"
+       : " hover:text-white hover:bg-primary text-base-content"
    } text-base md:text-lg font-medium`;
 
 const DashboardLayout = () => {
@@ -66,13 +68,12 @@ const DashboardLayout = () => {
         </div>
       </div>
 
-      {/* Sidebar */}
       <div className="drawer-side">
         <label
           htmlFor="dashboard-drawer"
           className="drawer-overlay lg:hidden"
         ></label>
-        {/* sidebar design */}
+
         <ul
           className="
     menu p-4 gap-3 w-80 min-h-screen shadow-lg

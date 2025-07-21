@@ -6,20 +6,18 @@ import Loader from "../Shared/component/Loader/Loader";
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
-  // console.log(location);
 
+  // Show loader while checking auth
   if (loading) {
-    return <Loader></Loader>;
+    return <Loader />;
   }
 
+  // If not logged in, redirect to /signin with state
   if (!user) {
-    return (
-      <Navigate state={{ from: location.pathname }} to="/signin">
-        {" "}
-      </Navigate>
-    );
+    return <Navigate to="/signin" state={{ from: location.pathname }} replace />;
   }
 
+  // Otherwise, show the protected content
   return children;
 };
 

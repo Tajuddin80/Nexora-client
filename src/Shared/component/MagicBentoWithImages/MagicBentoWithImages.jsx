@@ -4,11 +4,10 @@ import { gsap } from "gsap";
 const DEFAULT_PARTICLE_COUNT = 12;
 const DEFAULT_SPOTLIGHT_RADIUS = 300;
 const MOBILE_BREAKPOINT = 768;
-const PRIMARY_COLOR = "25, 118, 210"; // blue
-const SECONDARY_COLOR = "255, 64, 129"; // pink
+const PRIMARY_COLOR = "25, 118, 210"; 
+const SECONDARY_COLOR = "255, 64, 129"; 
 
-const DEFAULT_GLOW_COLOR = PRIMARY_COLOR; // use primary as glow
-
+const DEFAULT_GLOW_COLOR = PRIMARY_COLOR; 
 const cardData = [
   {
     color: "#060010",

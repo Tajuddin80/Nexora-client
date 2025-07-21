@@ -35,7 +35,7 @@ const RentStatusMonitor = () => {
   //       });
   //       downgradedRef.current = true;
   
-  //       // 🔄 Invalidate relevant queries so UI updates
+  //       //  Invalidate relevant queries so UI updates
   //       queryClient.invalidateQueries({ queryKey: ["unpaid-rents-monitor"] });
   //       queryClient.invalidateQueries({ queryKey: ["accepted-agreement"] });
   //       queryClient.invalidateQueries({ queryKey: ["user-role"] });

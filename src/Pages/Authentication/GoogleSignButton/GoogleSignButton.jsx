@@ -1,4 +1,3 @@
-
 import { useLocation, useNavigate } from "react-router";
 import Swal from "sweetalert2";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
@@ -12,12 +11,11 @@ const GoogleSignButton = () => {
   const from = location.state?.from || "/";
 
   const handleGoogleSignIn = () => {
-    if (loading) return; // prevent double trigger
+    if (loading) return;
     signInWithGoogle()
       .then(async (result) => {
         const user = result.user;
 
-        // Prepare user info for backend
         const userInfo = {
           email: user.email,
           role: "user",
@@ -46,7 +44,6 @@ const GoogleSignButton = () => {
             position: "center",
           });
 
-          // Navigate after short delay (matches toast duration)
           setTimeout(() => {
             navigate(from || "/", { replace: true });
           }, 1600); // a bit more than toast timer

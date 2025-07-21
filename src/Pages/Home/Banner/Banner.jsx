@@ -26,7 +26,7 @@ const panels = [
 ];
 
 const Banner = () => {
-  const [activeIndex, setActiveIndex] = useState(0); // start from first panel
+  const [activeIndex, setActiveIndex] = useState(0); 
   const hoverRef = useRef(false);
   const slideInterval = useRef(null);
 
@@ -49,13 +49,11 @@ const Banner = () => {
 
   const handleMouseLeave = () => {
     hoverRef.current = false;
-    // restart the interval after a short delay to avoid flicker
     slideInterval.current = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % panels.length);
     }, 4000);
   };
 
-  // Show only first 3 on small/medium screens
   const visiblePanels = panels.slice(0, 3);
 
   return (

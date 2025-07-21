@@ -1,4 +1,4 @@
-import React from "react";
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
@@ -8,7 +8,7 @@ const AgreementRequests = () => {
   const axiosSecure = useAxiosSecure();
   const queryClient = useQueryClient();
 
-  // ✅ Fetch pending agreement requests
+  //  Fetch pending agreement requests
   const {
     data: requests = [],
     isLoading,
@@ -22,7 +22,7 @@ const AgreementRequests = () => {
     },
   });
 
-  // ✅ Mutation for accept/reject
+  //  Mutation for accept/reject
   const mutation = useMutation({
     mutationFn: async ({ id, userEmail, action }) => {
       const res = await axiosSecure.patch(`/agreements/${id}`, {
@@ -52,7 +52,7 @@ const AgreementRequests = () => {
   });
 
   const handleAction = (id, userEmail, action) => {
-    // ✅ Show a confirm modal with blur background
+    //  Show a confirm modal with blur background
     Swal.fire({
       title: `Are you sure to ${action}?`,
       text: `This request will be marked as ${action}.`,
@@ -81,7 +81,7 @@ const AgreementRequests = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Agreement Requests</h2>
+      <h2 className="text-3xl font-bold mb-4">Agreement Requests</h2>
 
       {requests.length === 0 ? (
         <p>No pending requests found.</p>

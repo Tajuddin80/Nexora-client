@@ -1,9 +1,8 @@
-
 import React, { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 
 const Loader = ({ loading = true, size = 80 }) => {
-  const [primaryColor, setPrimaryColor] = useState("#B8001F"); // default color
+  const [primaryColor, setPrimaryColor] = useState("#B8001F");
 
   useEffect(() => {
     const root = document.documentElement;
@@ -15,12 +14,13 @@ const Loader = ({ loading = true, size = 80 }) => {
       setPrimaryColor(newColor);
     };
 
-    // initial
     updateColor();
 
-    // observe theme change
     const observer = new MutationObserver(updateColor);
-    observer.observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+    observer.observe(root, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
 
     return () => observer.disconnect();
   }, []);

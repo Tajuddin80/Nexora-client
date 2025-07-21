@@ -17,7 +17,7 @@ const Announcements = () => {
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ title: "", description: "" });
 
-  // ✅ Fetch announcements
+  //  Fetch announcements
   const { data: announcements = [], isLoading } = useQuery({
     queryKey: ["announcements"],
     queryFn: async () => {
@@ -26,11 +26,14 @@ const Announcements = () => {
     },
   });
 
-  // ✅ Add/Edit announcement
+  //  Add/Edit announcement
   const saveMutation = useMutation({
     mutationFn: async (announcement) => {
       if (editingId) {
-        const res = await axiosSecure.patch(`/announcements/${editingId}`, announcement);
+        const res = await axiosSecure.patch(
+          `/announcements/${editingId}`,
+          announcement
+        );
         return res.data;
       } else {
         const res = await axiosSecure.post("/announcements", announcement);
@@ -52,14 +55,16 @@ const Announcements = () => {
     onError: () => {
       Swal.fire({
         icon: "error",
-        title: editingId ? "Could not update announcement" : "Could not add announcement",
+        title: editingId
+          ? "Could not update announcement"
+          : "Could not add announcement",
         timer: 2000,
         showConfirmButton: false,
       });
     },
   });
 
-  // ✅ Delete announcement
+  //  Delete announcement
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
       const res = await axiosSecure.delete(`/announcements/${id}`);
@@ -121,7 +126,10 @@ const Announcements = () => {
 
   const handleEdit = (announcement) => {
     setEditingId(announcement._id);
-    setFormData({ title: announcement.title, description: announcement.description });
+    setFormData({
+      title: announcement.title,
+      description: announcement.description,
+    });
     setShowModal(true);
   };
 
@@ -129,7 +137,7 @@ const Announcements = () => {
     <div className="space-y-6">
       <div className="flex justify-between flex-wrap gap-10 items-center">
         <h2 className="text-3xl font-bold flex items-center gap-2">
-          <FaBullhorn className="text-primary" /> Announcements
+          <FaBullhorn className="" /> Announcements
         </h2>
         {role === "admin" && (
           <button
@@ -158,7 +166,9 @@ const Announcements = () => {
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-lg text-primary font-semibold">{a.title}</h3>
+                  <h3 className="text-lg text-primary font-semibold">
+                    {a.title}
+                  </h3>
                   <p className="mt-1">{a.description}</p>
                   <p className="text-xs mt-2 opacity-70">
                     Announced by {a.announcedBy} on{" "}

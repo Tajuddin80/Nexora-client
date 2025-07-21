@@ -1,4 +1,4 @@
-// src/components/Home/BuildingDetails.jsx
+
 import React from "react";
 import { FaBuilding, FaCheckCircle } from "react-icons/fa";
 
@@ -20,8 +20,8 @@ const BuildingDetails = () => {
       </p>
       <ul className="space-y-3">
         <li className="flex items-center gap-3 text-secondary">
-          <FaCheckCircle className="text-secondary text-xl" /> 24/7 Security with
-          CCTV
+          <FaCheckCircle className="text-secondary text-xl" /> 24/7 Security
+          with CCTV
         </li>
         <li className="flex items-center gap-3 text-secondary">
           <FaCheckCircle className="text-secondary text-xl" /> High-Speed

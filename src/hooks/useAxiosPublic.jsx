@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosPublic = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://nexora-server-nine.vercel.app",
 });
 const useAxiosPublic = () => {
   return axiosPublic;

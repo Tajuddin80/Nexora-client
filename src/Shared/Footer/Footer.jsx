@@ -7,12 +7,15 @@ import {
 } from "react-icons/fa";
 import Logo from "../Logo/Logo";
 import { BiBriefcase } from "react-icons/bi";
+import { Link } from "react-router";
 
 const Footer = () => {
   return (
-    <footer className="px-4 divide-y  shadow-2xl  rounded-xl     bg-[color-mix(in_srgb,var(--color-primary)_10%,var(--color-base-100)_90%)]
+    <footer
+      className="px-4 divide-y  shadow-2xl  rounded-xl     bg-[color-mix(in_srgb,var(--color-primary)_10%,var(--color-base-100)_90%)]
     text-[color:var(--color-base-content)]
-    border-r border-[rgba(0,0,0,0.1)]">
+    border-r border-[rgba(0,0,0,0.1)]"
+    >
       <div className="container flex flex-col justify-between py-10 mx-auto space-y-8 lg:flex-row lg:space-y-0">
         {/* Logo */}
         <Logo></Logo>
@@ -27,20 +30,11 @@ const Footer = () => {
                   Features
                 </a>
               </li>
+
               <li>
-                <a className="link link-hover" href="#">
-                  Integrations
-                </a>
-              </li>
-              <li>
-                <a className="link link-hover" href="#">
+                <Link className="link link-hover" to="apartments">
                   Pricing
-                </a>
-              </li>
-              <li>
-                <a className="link link-hover" href="#">
-                  FAQ
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

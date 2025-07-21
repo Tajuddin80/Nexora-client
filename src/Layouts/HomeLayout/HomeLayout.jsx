@@ -4,16 +4,13 @@ import { Outlet } from "react-router";
 
 const HomeLayout = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Navbar at the top */}
+    <div className="min-h-screen w-[98vw] mx-auto flex flex-col">
       <Navbar />
 
-      {/* Main content should grow and push footer down */}
       <main className="flex-grow">
         <Outlet />
       </main>
 
-      {/* Footer stays at the bottom */}
       <Footer />
     </div>
   );

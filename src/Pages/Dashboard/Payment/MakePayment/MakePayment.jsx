@@ -29,7 +29,7 @@ const MakePayment = () => {
     watch,
   } = useForm();
 
-  // ✅ Fetch active agreement
+  //  Fetch active agreement
   const { data: agreement, isLoading: agreementLoading } = useQuery({
     queryKey: ["accepted-agreement", user?.email],
     queryFn: async () => {
@@ -41,7 +41,7 @@ const MakePayment = () => {
     enabled: !!user?.email,
   });
 
-  // ✅ Fetch unpaid rents
+  //  Fetch unpaid rents
   const { data: unpaidRents = [] } = useQuery({
     queryKey: ["unpaid-rents", user?.email],
     queryFn: async () => {
@@ -55,7 +55,7 @@ const MakePayment = () => {
 
   const unpaidMonths = unpaidRents.map((rent) => rent.month);
 
-  // ✅ Handle coupon apply
+  //  Handle coupon apply
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
       Swal.fire({ icon: "warning", title: "Please enter a coupon code" });
@@ -122,7 +122,7 @@ const MakePayment = () => {
       }
 
       try {
-        // 1️⃣ Create payment method
+        // Create payment method
         const { error, paymentMethod } = await stripe.createPaymentMethod({
           type: "card",
           card,
@@ -134,7 +134,7 @@ const MakePayment = () => {
           return;
         }
 
-        // 2️⃣ Create payment intent on backend
+        //  Create payment intent on backend
         const { data: intentRes } = await axiosSecure.post(
           "/create-payment-intent",
           {
@@ -146,7 +146,7 @@ const MakePayment = () => {
         );
         const clientSecret = intentRes.clientSecret;
 
-        // 3️⃣ Confirm card payment
+        //  Confirm card payment
         const confirmRes = await stripe.confirmCardPayment(clientSecret, {
           payment_method: paymentMethod.id,
         });
@@ -159,7 +159,7 @@ const MakePayment = () => {
         }
 
         if (confirmRes.paymentIntent.status === "succeeded") {
-          // 4️⃣ Mark rent as paid
+          //  Mark rent as paid
           const rentRecord = unpaidRents.find((r) => r.month === data.month);
           if (rentRecord) {
             await axiosSecure.patch(`/rent-payments/${rentRecord._id}`, {
@@ -174,8 +174,8 @@ const MakePayment = () => {
             title: "Rent Paid Successfully",
             html: `<p class="text-lg">Transaction ID:<br/><strong>${confirmRes.paymentIntent.id}</strong></p>`,
             icon: "success",
-            confirmButtonColor: "#3085d6",
-            confirmButtonText: "Go to Dashboard",
+           showConfirmButton: 'false'
+           
           });
           navigate("/dashboard/payment-history");
         }

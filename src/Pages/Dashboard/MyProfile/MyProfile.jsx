@@ -9,41 +9,42 @@ const MyProfile = () => {
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
 
-  // ✅ fetch accepted agreement
- const { data: acceptedAgreement, isLoading } = useQuery({
-  queryKey: ["accepted-agreement", user?.email],
-  queryFn: async () => {
-    const res = await axiosSecure.get(
-      `/agreements/user/${user.email}?status=accepted`
-    );
-    // ✅ never return undefined
-    return res.data.length > 0 ? res.data[0] : null;
-  },
-  enabled: !!user?.email,
-});
+  //  fetch accepted agreement
+  const { data: acceptedAgreement, isLoading } = useQuery({
+    queryKey: ["accepted-agreement", user?.email],
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        `/agreements/user/${user.email}?status=accepted`
+      );
+      //  never return undefined
+      return res.data.length > 0 ? res.data[0] : null;
+    },
+    enabled: !!user?.email,
+  });
 
-  // ✅ fetch role
-const { data: roleData } = useQuery({
-  queryKey: ["user-role", user?.email],
-  queryFn: async () => {
-    const res = await axiosSecure.get(`/users/${user.email}/role`);
-    return res.data?.role ?? "user"; // fallback to "user"
-  },
-  enabled: !!user?.email,
-});
-
+  //  fetch role
+  const { data: roleData } = useQuery({
+    queryKey: ["user-role", user?.email],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/users/${user.email}/role`);
+      return res.data?.role ?? "user"; // fallback to "user"
+    },
+    enabled: !!user?.email,
+  });
 
   if (!user) {
     return <p className="p-4">Please log in to see your profile.</p>;
   }
   if (isLoading) {
-    return <Loader></Loader>
+    return <Loader></Loader>;
   }
 
   // Show apartment details only if there is an accepted agreement
   const floor = acceptedAgreement ? acceptedAgreement.floor : "None";
   const block = acceptedAgreement ? acceptedAgreement.block : "None";
-  const apartmentNo = acceptedAgreement ? acceptedAgreement.apartmentNo : "None";
+  const apartmentNo = acceptedAgreement
+    ? acceptedAgreement.apartmentNo
+    : "None";
   const rent = acceptedAgreement ? acceptedAgreement.rent : "None";
   const acceptDate = acceptedAgreement
     ? new Date(
@@ -57,7 +58,7 @@ const { data: roleData } = useQuery({
 
       <h2 className="text-3xl font-bold mb-6">My Profile</h2>
 
-      {/* 🧑 User Info */}
+      {/*  User Info */}
       <div className="flex items-center gap-6 mb-8">
         <img
           src={user.photoURL || "https://via.placeholder.com/100"}
@@ -72,14 +73,7 @@ const { data: roleData } = useQuery({
         </div>
       </div>
 
-{/*       
-      {roleData === "user" && (
-        <p className="text-red-500 mt-4">
-          Your membership has been downgraded due to unpaid rents.
-        </p>
-      )} */}
-
-      {/* 🏢 Apartment Info */}
+      {/*  Apartment Info */}
       <h3 className="text-2xl font-semibold mb-4">Apartment Details</h3>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         <div className="p-3 border rounded-lg">

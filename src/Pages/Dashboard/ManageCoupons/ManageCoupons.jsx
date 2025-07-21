@@ -18,11 +18,16 @@ const ManageCoupons = () => {
     discount: "",
     description: "",
     expiryDate: null,
-    available: true, // ✅ availability toggle
+    available: true,
   });
 
   // Fetch coupons
-  const { data: coupons = [], isLoading, isError, error } = useQuery({
+  const {
+    data: coupons = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["coupons"],
     queryFn: async () => {
       const res = await axiosSecure.get("/coupons");
@@ -87,7 +92,13 @@ const ManageCoupons = () => {
   const resetForm = () => {
     setShowModal(false);
     setEditCouponId(null);
-    setFormData({ code: "", discount: "", description: "", expiryDate: null, available: true });
+    setFormData({
+      code: "",
+      discount: "",
+      description: "",
+      expiryDate: null,
+      available: true,
+    });
   };
 
   const handleSubmit = (e) => {
@@ -107,7 +118,7 @@ const ManageCoupons = () => {
       discount: Number(discount),
       description,
       expiryDate,
-      available, // ✅ send availability
+      available,
       createdAt: editCouponId ? undefined : new Date(),
     });
   };
@@ -119,7 +130,7 @@ const ManageCoupons = () => {
       discount: coupon.discount,
       description: coupon.description,
       expiryDate: coupon.expiryDate ? new Date(coupon.expiryDate) : null,
-      available: coupon.available ?? true, // ✅ load availability
+      available: coupon.available ?? true,
     });
     setShowModal(true);
   };
@@ -140,13 +151,14 @@ const ManageCoupons = () => {
     });
   };
 
-  if (isLoading) return <Loader></Loader>
-  if (isError) return <div className="p-4 text-error">Error: {error.message}</div>;
+  if (isLoading) return <Loader></Loader>;
+  if (isError)
+    return <div className="p-4 text-error">Error: {error.message}</div>;
 
   return (
     <div className="p-6 bg-base-100 rounded-lg shadow-md">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-extrabold text-primary">Manage Coupons</h2>
+        <h2 className="text-3xl font-bold ">Manage Coupons</h2>
         <button
           onClick={() => {
             resetForm();
@@ -169,7 +181,7 @@ const ManageCoupons = () => {
                 <th>Discount (%)</th>
                 <th>Description</th>
                 <th>Expiry Date</th>
-                <th>Available</th> {/* ✅ new column */}
+                <th>Available</th>
                 <th className="text-center">Actions</th>
               </tr>
             </thead>
@@ -258,7 +270,9 @@ const ManageCoupons = () => {
                 <FaCalendarAlt className="absolute top-3 left-3 text-primary text-lg pointer-events-none" />
                 <DatePicker
                   selected={formData.expiryDate}
-                  onChange={(date) => setFormData({ ...formData, expiryDate: date })}
+                  onChange={(date) =>
+                    setFormData({ ...formData, expiryDate: date })
+                  }
                   className="input input-bordered w-full pl-10"
                   placeholderText="Select expiry date"
                   minDate={new Date()}
@@ -267,7 +281,7 @@ const ManageCoupons = () => {
                 />
               </div>
 
-              {/* ✅ Availability toggle */}
+              {/*  Availability toggle */}
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
@@ -277,14 +291,14 @@ const ManageCoupons = () => {
                   }
                   className="checkbox checkbox-primary"
                 />
-                <span className="label-text">Available</span>
+                <span className="label-text text-primary">Available</span>
               </label>
 
               <div className="flex justify-end gap-4">
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="btn btn-outline hover:text-white"
+                  className="btn  btn-primary hover:text-white"
                   disabled={saveCouponMutation.isLoading}
                 >
                   Cancel

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import { FaStar, FaBath, FaUtensils, FaRulerCombined } from "react-icons/fa";
@@ -54,10 +54,13 @@ const Apartments = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [selectedApt, setSelectedApt] = useState(null);
 
+  const location = useLocation();
+
   const fetchApartments = async ({ queryKey }) => {
     const [_key, page, minRent, maxRent, sortBy, sortOrder] = queryKey;
     const { data } = await axiosPublic.get(
-     `/apartments?page=${page}&limit=8&minRent=${minRent}&maxRent=${maxRent}&sortBy=${sortBy}&sortOrder=${sortOrder}`  );
+      `/apartments?page=${page}&limit=8&minRent=${minRent}&maxRent=${maxRent}&sortBy=${sortBy}&sortOrder=${sortOrder}`
+    );
     return data;
   };
 
@@ -67,7 +70,7 @@ const Apartments = () => {
     placeholderData: (prev) => prev, // keeps previous data while fetching
   });
 
-  // ✅ Fetch user agreements
+  //  Fetch user agreements
   const { data: userAgreements = [] } = useQuery({
     queryKey: ["userAgreements", user?.email],
     queryFn: async () => {
@@ -77,10 +80,10 @@ const Apartments = () => {
     enabled: !!user?.email,
   });
 
-  // ✅ Handle Agreement
+  //  Handle Agreement
   const handleAgreement = async (apt) => {
     if (!user) {
-      navigate("/login");
+      navigate("/login", { state: { from: location.pathname }, replace: true });
       return;
     }
 
@@ -97,7 +100,7 @@ const Apartments = () => {
     }).then(async (result) => {
       if (!result.isConfirmed) return;
 
-      // ✅ Check if user already has active or checked agreement
+      //  Check if user already has active or checked agreement
       const activeAgreements = (userAgreements || []).filter(
         (a) =>
           a.status === "pending" ||
@@ -171,7 +174,7 @@ const Apartments = () => {
       <div className="p-4">
         <h1 className="text-2xl font-bold mb-4 text-primary">Apartments</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {[...Array(8)].map((_, index) => (
+          {[...Array(8)].map((_, index) => (
             <div
               key={index}
               className="rounded-xl shadow-md animate-pulse p-2 bg-secondary/10"
@@ -259,7 +262,7 @@ const Apartments = () => {
       </div>
 
       {/* Apartments */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-4 gap-6">
         {data.apartments.map((apt) => (
           <motion.div
             key={apt._id}
@@ -304,21 +307,20 @@ const Apartments = () => {
                     <span className="font-semibold">{apt.apartmentNo}</span>
                   </p>
                 </div>
-              <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 text-secondary text-sm">
-  <div className="flex items-center gap-1">
-    <FaBath className="text-lg sm:text-xl" />
-    <span className="font-medium">{apt.washroomCount}</span>
-  </div>
-  <div className="flex items-center gap-1">
-    <FaUtensils className="text-lg sm:text-xl" />
-    <span className="font-medium">{apt.kitchenCount}</span>
-  </div>
-  <div className="flex items-center gap-1">
-    <FaRulerCombined className="text-lg sm:text-xl" />
-    <span className="font-medium">{apt.squareFeet} sqft</span>
-  </div>
-</div>
-
+                <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 text-secondary text-sm">
+                  <div className="flex items-center gap-1">
+                    <FaBath className="text-lg sm:text-xl" />
+                    <span className="font-medium">{apt.washroomCount}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <FaUtensils className="text-lg sm:text-xl" />
+                    <span className="font-medium">{apt.kitchenCount}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <FaRulerCombined className="text-lg sm:text-xl" />
+                    <span className="font-medium">{apt.squareFeet} sqft</span>
+                  </div>
+                </div>
               </div>
               <div className="flex items-center gap-2 mt-3">
                 <span className="text-gray-500 line-through text-sm">
@@ -330,7 +332,7 @@ const Apartments = () => {
               </div>
               <button
                 onClick={() => handleDetails(apt)}
-                className="w-full mt-4 bg-primary hover:bg-primary/80 text-white py-2 rounded-lg font-medium shadow-md transition-colors"
+                className="w-full mt-4 bg-primary hover:bg-primary/80 cursor-pointer text-white py-2 rounded-lg font-medium shadow-md transition-colors"
               >
                 Check Now
               </button>
@@ -404,7 +406,10 @@ const Apartments = () => {
               <div className="flex justify-between w-full">
                 <button
                   onClick={() => {
-                    if (!selectedApt.available) {
+                    if (!user) {
+                      navigate("/login");
+                    }
+                    if (user && !selectedApt.available) {
                       Swal.fire({
                         icon: "error",
                         title: "Apartment Unavailable",

@@ -3,14 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useAuth from "../../../hooks/useAuth";
 import Loader from "../../../Shared/component/Loader/Loader";
-// ✅ React icon
 import { FaListAlt } from "react-icons/fa";
 
 const PaymentHistory = () => {
   const axiosSecure = useAxiosSecure();
   const { user } = useAuth();
 
-  // ✅ Fetch paid rents
+  //  Fetch paid rents
   const {
     data: paidRents = [],
     isLoading,

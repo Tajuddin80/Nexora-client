@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import useAuth from "./useAuth";
 
 const axiosSecure = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://nexora-server-nine.vercel.app",
 });
 
 const useAxiosSecure = () => {
@@ -28,7 +28,9 @@ const useAxiosSecure = () => {
         const status = error?.response?.status;
         if (status === 403) navigate("/forbidden");
         else if (status === 401) {
-          logOut().then(() => navigate("/signin")).catch(console.log);
+          logOut()
+            .then(() => navigate("/signin"))
+            .catch(console.log);
         }
         return Promise.reject(error);
       }

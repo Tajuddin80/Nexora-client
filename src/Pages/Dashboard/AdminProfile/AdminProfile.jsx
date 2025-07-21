@@ -13,7 +13,7 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import Loader from "../../../Shared/component/Loader/Loader";
 
 const AdminProfile = () => {
-  const { user } = useAuth(); // admin info
+  const { user } = useAuth(); 
   const axiosSecure = useAxiosSecure();
 
   const {
@@ -50,7 +50,7 @@ const AdminProfile = () => {
             className="w-24 h-24 rounded-full border-4 border-primary shadow-md object-cover"
           />
           <div>
-            {/* 👇 use theme-aware text */}
+            {/*  use theme-aware text */}
             <h2 className="text-3xl font-bold text-base-content">
               {user?.displayName || "Admin"}
             </h2>

@@ -22,6 +22,7 @@ import DashboardHome from "../Pages/Dashboard/DashboardHome/DashboardHome";
 import Payment from "../Pages/Dashboard/Payment/Payment";
 import AdminRoute from "../ProtectedRoutes/AdminRoute";
 import MembarRoute from "../ProtectedRoutes/MembarRoute";
+import PrivateRoute from "../ProtectedRoutes/PrivateRoute";
 
 export const router = createBrowserRouter([
   {
@@ -74,13 +75,31 @@ export const router = createBrowserRouter([
   },
   {
     path: "dashboard",
-    element: <DashboardLayout />,
+    element: (
+      <PrivateRoute>
+        <DashboardLayout />
+      </PrivateRoute>
+    ),
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <DashboardHome></DashboardHome> },
       // USER & MEMBER common
-      { path: "my-profile", element: <MyProfile /> },
-      { path: "announcements", element: <Announcements /> },
+      {
+        path: "my-profile",
+        element: (
+          <PrivateRoute>
+            <MyProfile />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "announcements",
+        element: (
+          <PrivateRoute>
+            <Announcements />
+          </PrivateRoute>
+        ),
+      },
 
       // MEMBER extra
       {

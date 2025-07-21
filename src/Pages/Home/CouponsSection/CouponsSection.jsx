@@ -8,7 +8,7 @@ import Loader from "../../../Shared/component/Loader/Loader";
 const CouponsSection = () => {
   const axiosSecure = useAxiosSecure();
 
-  // ✅ Fetch coupons
+  //  Fetch coupons
   const {
     data: coupons = [],
     isLoading,
@@ -22,12 +22,12 @@ const CouponsSection = () => {
     },
   });
 
-  // ✅ Loader state
+  //  Loader state
   if (isLoading) {
     return <Loader />;
   }
 
-  // ✅ Error state
+  //  Error state
   if (isError) {
     return (
       <section className="my-12 p-6 md:p-10 rounded-2xl shadow-xl bg-base-100">
@@ -36,10 +36,10 @@ const CouponsSection = () => {
     );
   }
 
-  // ✅ Only show available coupons
+  //  Only show available coupons
   const availableCoupons = coupons.filter((c) => c.available === true);
 
-  // ✅ Handle copy
+  //  Handle copy
   const handleCopy = async (code) => {
     try {
       await navigator.clipboard.writeText(code);
@@ -92,12 +92,12 @@ const CouponsSection = () => {
               key={c._id}
               className="
                 p-5 rounded-xl shadow-md hover:shadow-2xl transition-transform transform hover:-translate-y-1
-                bg-white text-primary
+                  bg-[color:var(--color-base-100)] text-base-content
               "
             >
               <h3 className="text-xl font-bold">{c.discount}% OFF</h3>
               <p className="text-sm mt-1 opacity-90">{c.description}</p>
-              <p className="text-xs mt-1 text-gray-500">
+              <p className="text-xs mt-1 text-base-content">
                 Expiry:{" "}
                 {c.expiryDate
                   ? new Date(c.expiryDate).toLocaleDateString()
@@ -108,7 +108,7 @@ const CouponsSection = () => {
                 className="
                   mt-4 w-full p-2 border-dashed border-2 rounded-md font-mono font-semibold
                   transition-all cursor-pointer
-                  bg-primary-content/10 hover:bg-primary-content/20 text-primary
+                  bg-primary-content/10 hover:bg-primary-content/20 text-base-content
                   border-primary
                 "
               >

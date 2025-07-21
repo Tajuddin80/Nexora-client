@@ -58,7 +58,7 @@ export default function ManageMembars() {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl mb-4">Manage Members</h2>
+      <h2 className="text-3xl font-bold mb-4">Manage Members</h2>
       <table className="table-auto w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-primary">
@@ -75,7 +75,7 @@ export default function ManageMembars() {
               <td className="border p-2">{m.email}</td>
               <td className="border p-2">{m.apartmentNo}</td>
 
-              <td className="border p-2 space-x-2">
+              <td className="border p-2 text-center space-x-2">
                 <button
                   onClick={() => handleShowDue(m.email)}
                   className="bg-blue-500 text-white px-2 py-1 rounded"

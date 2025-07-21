@@ -54,7 +54,8 @@ const FAQSection = () => {
           Frequently Asked Questions
         </h2>
         <p className="mt-4 opacity-80 mx-auto max-w-2xl text-sm sm:text-base">
-          Find answers to common questions about living in NEXORA, your trusted building management system.
+          Find answers to common questions about living in NEXORA, your trusted
+          building management system.
         </p>
       </div>
 
@@ -99,7 +100,10 @@ const FAQSection = () => {
           "
         >
           {showAll ? "Show Less" : "See More FAQ’s"}{" "}
-          <FaArrowRight className="text-lg transition-transform" style={{ transform: showAll ? "rotate(180deg)" : "rotate(0deg)" }} />
+          <FaArrowRight
+            className="text-lg transition-transform"
+            style={{ transform: showAll ? "rotate(180deg)" : "rotate(0deg)" }}
+          />
         </button>
       </div>
     </section>

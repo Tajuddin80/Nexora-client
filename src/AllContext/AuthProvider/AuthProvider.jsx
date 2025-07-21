@@ -10,11 +10,12 @@ import {
 } from "firebase/auth";
 import { AuthContext } from "../AuthContext/AuthContext";
 import { auth } from "../../Firebase/firebase.init";
+import Loader from "../../Shared/component/Loader/Loader";
 const AuthProvider = ({ children }) => {
   const provider = new GoogleAuthProvider();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  
+
   const createUser = (email, password) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
@@ -30,12 +31,11 @@ const AuthProvider = ({ children }) => {
     return signOut(auth);
   };
 
-  
   const signInWithGoogle = () => {
     setLoading(true);
     return signInWithPopup(auth, provider);
   };
-  
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
@@ -43,7 +43,6 @@ const AuthProvider = ({ children }) => {
     });
     return () => unsubscribe();
   }, []);
-
 
   const authInfo = {
     createUser,

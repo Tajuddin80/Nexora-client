@@ -10,7 +10,7 @@ const ErrorPage = () => {
       <div>
         <Link
           to="/"
-          className="btn rounded-lg px-6 py-3 text-lg font-semibold  transition"
+          className="btn bg-primary text-white rounded-lg px-6 py-3 text-lg font-semibold  transition"
         >
           Go to Home
         </Link>
