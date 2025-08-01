@@ -29,7 +29,7 @@ const MakePayment = () => {
     watch,
   } = useForm();
 
-  //  Fetch active agreement
+  // Fetch active agreement for the logged-in user
   const { data: agreement, isLoading: agreementLoading } = useQuery({
     queryKey: ["accepted-agreement", user?.email],
     queryFn: async () => {
@@ -41,7 +41,7 @@ const MakePayment = () => {
     enabled: !!user?.email,
   });
 
-  //  Fetch unpaid rents
+  // Fetch unpaid rent payments for the user
   const { data: unpaidRents = [] } = useQuery({
     queryKey: ["unpaid-rents", user?.email],
     queryFn: async () => {
@@ -55,7 +55,7 @@ const MakePayment = () => {
 
   const unpaidMonths = unpaidRents.map((rent) => rent.month);
 
-  //  Handle coupon apply
+  // Apply coupon code and set discount percent
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
       Swal.fire({ icon: "warning", title: "Please enter a coupon code" });
@@ -63,7 +63,7 @@ const MakePayment = () => {
     }
     try {
       const res = await axiosSecure.post("/coupons/validate", {
-        code: couponCode,
+        code: couponCode.trim(),
       });
       if (res.data.valid) {
         setDiscountPercent(res.data.discountPercent);
@@ -99,6 +99,7 @@ const MakePayment = () => {
     }
     if (!stripe || !elements) return;
 
+    // Calculate final amount with discount
     const finalAmount = Math.round(
       agreement.rent - (agreement.rent * discountPercent) / 100
     );
@@ -114,6 +115,7 @@ const MakePayment = () => {
 
       setIsProcessing(true);
       setMessage(null);
+      setIsError(false);
 
       const card = elements.getElement(CardElement);
       if (!card) {
@@ -134,19 +136,21 @@ const MakePayment = () => {
           return;
         }
 
-        //  Create payment intent on backend
+        // Create payment intent on backend with coupon and discount info
         const { data: intentRes } = await axiosSecure.post(
           "/create-payment-intent",
           {
-            amountInCents: finalAmount * 100,
             userEmail: user.email,
             apartmentNo: agreement.apartmentNo,
             fullName: user.displayName || "",
+            couponCode: couponCode.trim() || null,
+            discountPercent,
           }
         );
+
         const clientSecret = intentRes.clientSecret;
 
-        //  Confirm card payment
+        // Confirm card payment
         const confirmRes = await stripe.confirmCardPayment(clientSecret, {
           payment_method: paymentMethod.id,
         });
@@ -159,12 +163,13 @@ const MakePayment = () => {
         }
 
         if (confirmRes.paymentIntent.status === "succeeded") {
-          //  Mark rent as paid
+          // Mark rent as paid on backend
           const rentRecord = unpaidRents.find((r) => r.month === data.month);
           if (rentRecord) {
             await axiosSecure.patch(`/rent-payments/${rentRecord._id}`, {
               status: "paid",
               transactionId: confirmRes.paymentIntent.id,
+              apartmentId: agreement.apartmentNo,
             });
           }
 
@@ -174,15 +179,18 @@ const MakePayment = () => {
             title: "Rent Paid Successfully",
             html: `<p class="text-lg">Transaction ID:<br/><strong>${confirmRes.paymentIntent.id}</strong></p>`,
             icon: "success",
-           showConfirmButton: 'false'
-           
+            showConfirmButton: true,
           });
           navigate("/dashboard/payment-history");
         }
       } catch (err) {
-        console.error(err);
+        console.error("Payment error:", err);
+        const errMsg =
+          err?.response?.data?.message ||
+          err?.message ||
+          "Unexpected error occurred.";
         setIsError(true);
-        setMessage("Unexpected error occurred.");
+        setMessage(errMsg);
       } finally {
         setIsProcessing(false);
       }
@@ -190,6 +198,7 @@ const MakePayment = () => {
   };
 
   if (agreementLoading) return <Loader />;
+
   if (!agreement)
     return (
       <div className="p-6">
@@ -340,10 +349,15 @@ const MakePayment = () => {
                 style: {
                   base: {
                     fontSize: "16px",
-                    color: "#374151",
-                    "::placeholder": { color: "#9CA3AF" },
+                    color: "green", // Light gray/white text (visible in dark mode)
+                    "::placeholder": {
+                      color: "#D1D5DB", // Neutral placeholder
+                    },
+                    iconColor: "#D1D5DB",
                   },
-                  invalid: { color: "#DC2626" },
+                  invalid: {
+                    color: "#EF4444", // red-500
+                  },
                 },
               }}
             />
