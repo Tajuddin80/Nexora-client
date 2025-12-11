@@ -1,56 +1,101 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-/* mycustomlight theme */
-[data-theme="mycustomlight"] {
-  --color-base-100: #fcfaee; /* app background */
-  --color-base-content: #000000; /* main text black */
-  --color-primary: #b8001f; /* buttons or secondary background */
-  --color-primary-content: #ffffff; /* button text white */
 
-  --color-secondary: #b8001f;
-  --color-accent: #b8001f;
-  --color-neutral: #000000;
-  --color-info: #3abff8;
-  --color-success: #36d399;
-  --color-warning: #fbbf24;
-  --color-error: #f87272;
+ [data-theme="mycustomlight"] {
+  --color-base-100: #EEF1F6;     
+  --color-base-content: #111521; 
 
-  --radius-selector: 1rem;
-  --radius-field: 0.25rem;
-  --radius-box: 0.5rem;
-}
+  --color-primary: #1e3a8a;     
+  --color-primary-content: #FFFFFF;
 
-/* mycustomdark theme */
-[data-theme="mycustomdark"] {
-  /* dark background */
-  --color-base-100: #00032e;
-  /* --color-base-100: #030637;       */
-  --color-base-content: #ffffff; /* text white */
-  --color-primary: #433d8b; /* buttons background */
-  --color-primary-content: #ffffff; /* button text white */
+  --color-secondary: #4E5D78;    
+  --color-accent: #90A7D1;       
+  --color-neutral: #2C3340;      
 
-  --color-secondary: #f5f5f5;
-  --color-accent: #fbbf24;
-  --color-neutral: #1f2937;
-  --color-info: #3abff8;
-  --color-success: #36d399;
-  --color-warning: #a0153e;
-  --color-error: #f87272;
+  --color-info: #38BDF8;
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-error: #DC2626;
 
   --radius-selector: 1rem;
   --radius-field: 0.25rem;
   --radius-box: 0.5rem;
+} 
+
+
+
+
+
+
+[data-theme="mycustomdark2"] {
+  --color-base-100: #0B0C10;
+  --color-base-content: #E5E5E5;
+
+  --color-primary: #66FCF1;
+  --color-primary-content: #0B0C10;
+
+  --color-secondary: #45A29E;
+  --color-secondary-content: #FFFFFF;
+
+  --color-accent: #C5C6C7;
+  --color-accent-content: #0B0C10;
+
+  --color-neutral: #1F2833;
+
+  --color-info: #3ABFF8;
+  --color-success: #36D399;
+  --color-warning: #FBBF24;
+  --color-error: #F87272;
+
+  --radius-selector: 1rem;
+  --radius-field: 0.3rem;
+  --radius-box: 0.6rem;
+
+  --badge-available: #16A340;
+  --badge-unavailable: #E11D48;
 }
 
+
+
+
+[data-theme="mycustomdark"] {
+  --color-base-100: #10141A; /* cold midnight */
+  --color-base-content: #DCEAF7;
+
+  --color-primary: #4BB9F7; /* cold blue */
+  --color-primary-content: #071017;
+
+  --color-secondary: #2C89C6; /* steel blue */
+  --color-secondary-content: #FFFFFF;
+
+  --color-accent: #74F0DF; /* icy mint */
+  --color-accent-content: #000000;
+
+  --color-neutral: #1C242D;
+
+  --color-info: #3CA7FF;
+  --color-success: #21D88C;
+  --color-warning: #E2A83B;
+  --color-error: #F25555;
+
+  --radius-selector: 1rem;
+  --radius-field: 0.3rem;
+  --radius-box: 0.6rem;
+
+  --badge-available: #1FD889;
+  --badge-unavailable: #EF3B4C;
+}
+
+
 [data-theme="mycustomlight"] {
-  --badge-available: #16a340; /* Tailwind emerald-600 */
-  --badge-unavailable: #e11d48; /* Tailwind rose-600 */
+  --badge-available: #1E3A8A; /* Tailwind emerald-600 */
+  --badge-unavailable: #cd2a46; /* Tailwind rose-600 */
 }
 
 [data-theme="mycustomdark"] {
-  --badge-available: #22c55e; /* Slightly brighter green for dark */
-  --badge-unavailable: #f43f5e; /* Slightly brighter rose for dark */
+  --badge-available: #4BB9F7; /* Slightly brighter green for dark */
+  --badge-unavailable: #cd2a46; /* Slightly brighter rose for dark */
 }
 
 /* In your style tag or Tailwind classes */

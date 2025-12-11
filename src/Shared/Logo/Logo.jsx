@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import logoLight from "../../assets/logowhite.png";
-import logoDark from "../../assets/logodark.png";
+import logoLight from "../../assets/whiteLogo.png";
+import logoDark from "../../assets/darkLogo.png";
 
 export default function Logo() {
   const [theme, setTheme] = useState(

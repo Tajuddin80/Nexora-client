@@ -1,4 +1,3 @@
-// src/utils/imageUpload.js
 import axios from "axios";
 
 export const imageUpload = async (imageFile) => {

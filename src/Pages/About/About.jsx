@@ -9,7 +9,7 @@ import {
 
 const About = () => {
   return (
-    <div className="min-h-[90vh] flex items-center justify-center bg-[color:var(--color-base-100)]">
+    <div className="min-h-[70vh] flex items-center justify-center bg-[color:var(--color-base-100)]">
       <div className="p-6 md:p-12 bg-base-100 text-base-content items-center max-w-7xl w-full">
         {/* Header Section */}
         <div className="text-center mb-12">
