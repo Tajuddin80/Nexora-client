@@ -2,7 +2,6 @@ import React, { useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
-import { updateProfile } from "firebase/auth";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import ImageUpload from "../ImageUpload/ImageUpload";
@@ -49,11 +48,11 @@ const Register = () => {
         return;
       }
 
-      const result = await createUser(data.email, data.password);
-      const user = result.user;
+      await createUser(data.email, data.password, data.displayName, imageUrl);
 
       const userInfo = {
         email: data.email,
+        password: data.password,
         role: "user",
         last_log_in: new Date().toISOString(),
         created_at: new Date().toISOString(),
@@ -62,23 +61,7 @@ const Register = () => {
 
       Swal.fire({
         icon: "success",
-        title: userRes.data.inserted
-          ? "Welcome to Parcel Point"
-          : "Welcome back!",
-        showConfirmButton: false,
-        timer: 1500,
-        toast: true,
-        position: "center",
-      });
-
-      await updateProfile(user, {
-        displayName: data.displayName,
-        photoURL: imageUrl,
-      });
-
-      Swal.fire({
-        icon: "success",
-        title: "Registration successful!",
+        title: userRes.data.inserted ? "Welcome to NEXORA!" : "Welcome back!",
         showConfirmButton: false,
         timer: 1500,
         toast: true,
@@ -87,13 +70,13 @@ const Register = () => {
 
       navigate(from, { replace: true });
     } catch (error) {
-      Swal.fire("Error", error.message, "error");
+      Swal.fire("Error", error.message || "Registration failed", "error");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-100 p-4">
-      <div className="w-full  bg-base-100 rounded-xl shadow-lg p-8">
+      <div className="w-full bg-base-100 rounded-xl shadow-lg p-8">
         <h2 className="text-3xl font-bold mb-6 text-start">
           Create an Account
         </h2>
@@ -168,10 +151,9 @@ const Register = () => {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 z-10"
-                tabIndex={-1} // optional, so button doesn't steal focus
+                tabIndex={-1}
               >
                 {showPassword ? (
-                  // 👁 Eye Open
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5"
@@ -193,7 +175,6 @@ const Register = () => {
                     />
                   </svg>
                 ) : (
-                  // 🚫 Eye Off
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5"

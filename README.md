@@ -1,119 +1,97 @@
 # 🌟 Nexora Frontend
 
-Welcome to **Nexora Frontend**, the client-side application for the Nexora Apartment Management & Rental Platform.  
-This frontend is built with **React 19**, **Vite**, **Tailwind CSS 4**, **DaisyUI 5**, and **TanStack Query 5**, delivering a blazing‑fast, responsive, and interactive experience.
+Welcome to **Nexora Frontend**, the client-side web application for the **Nexora Apartment Management & Rental Platform**.  
+Built with **React 19**, **Vite 7**, **Better Auth**, **Tailwind CSS 4**, **DaisyUI 5**, **TanStack Query 5**, and **Stripe**, it delivers a responsive, interactive, and modern user experience.
 
 ---
 
 ![React](https://img.shields.io/badge/React-19-blue?logo=react)
 ![Vite](https://img.shields.io/badge/Vite-7-purple?logo=vite)
+![Better Auth](https://img.shields.io/badge/Better_Auth-1.x-purple)
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.1.11-06B6D4?logo=tailwindcss)
 ![DaisyUI](https://img.shields.io/badge/DaisyUI-5-FF69B4?logo=daisyui)
 ![TanStack Query](https://img.shields.io/badge/TanStack_Query-5-red?logo=react-query)
+![Stripe](https://img.shields.io/badge/Stripe-Payments-blue?logo=stripe)
 ![License](https://img.shields.io/badge/License-MIT-green)
-![Build](https://img.shields.io/badge/Build-Passing-brightgreen)
 
 ---
 
 ## ✨ Features
 
-✅ **Authentication with Firebase** (login, signup, role-based access)  
-✅ **Admin Dashboard** with real-time stats & charts (Recharts)  
-✅ **Manage Apartments** – add, edit, and track availability  
-✅ **Manage Coupons** – add/edit/delete and toggle availability  
-✅ **Interactive Map** (React Leaflet) for warehouse/coverage areas  
-✅ **Stripe Payment Integration** for secure payments  
-✅ **Responsive UI** with Tailwind CSS & DaisyUI  
-✅ **Real-time data fetching & caching** using TanStack Query  
-✅ **Beautiful modals & alerts** with SweetAlert2  
-✅ **Animations** with Framer Motion & GSAP  
+✅ **Authentication via Better Auth** (`better-auth/react` & email/password & JWT authorization)  
+✅ **Role-Based Access Control** (User / Member / Admin)  
+✅ **Apartment Listings** – Browse, filter by rent range, search, and pagination  
+✅ **Agreements Workflow** – Request apartment agreements and track status  
+✅ **Coupons System** – Validate coupons for rent discounts  
+✅ **Stripe Rent Payments** – Secure online payment processing  
+✅ **Admin Dashboard** – Real-time stats & charts (Recharts), member management, announcements, and coupon controls  
+✅ **Interactive Maps** (React Leaflet) for property locations  
+✅ **Real-time Data Fetching & Caching** using TanStack Query  
+✅ **Smooth Animations** with Framer Motion & GSAP  
 
 ---
 
 ## 🛠️ Tech Stack
 
 | Tech | Purpose |
-|------|---------|
-| ⚛️ React 19 | UI Framework |
-| ⚡ Vite 7 | Build tool & dev server |
-| 🎨 TailwindCSS 4 | Utility-first styling |
-| 🌸 DaisyUI 5 | Prebuilt Tailwind components |
-| 🔄 TanStack Query 5 | Data fetching & caching |
-| 📡 Axios | HTTP client |
-| 🔥 Firebase | Authentication |
-| 💳 Stripe | Payments |
-| 📊 Recharts | Charts & graphs |
-| 🗺️ React Leaflet | Interactive maps |
-| 🗓️ Date-Fns / React Datepicker | Date handling |
-| ✨ SweetAlert2 | Alerts & confirmations |
+| :--- | :--- |
+| ⚛️ **React 19** | UI Framework |
+| ⚡ **Vite 7** | Development Server & Build Tool |
+| 🔐 **Better Auth Client** | Authentication & Session Management |
+| 🎨 **TailwindCSS 4** | Utility-first Styling |
+| 🌸 **DaisyUI 5** | UI Component Library |
+| 🔄 **TanStack Query 5** | Client-side Data Caching & Fetching |
+| 📡 **Axios** | HTTP Client with Bearer Token Interceptors |
+| 💳 **Stripe React SDK** | Secure Payment Processing |
+| 📊 **Recharts** | Interactive Analytics & Dashboard Charts |
+| 🗺️ **React Leaflet** | Interactive Property Maps |
 
 ---
 
-## 📦 Installation
+## 📦 Installation & Development
 
 1. **Clone the repository**
 ```bash
 git clone https://github.com/Programming-Hero-Web-Course4/b11a12-client-side-Tajuddin80.git
-cd nexora-client
+cd Nexora-client
+```
 
-
-
-2. Install dependencies
-
+2. **Install dependencies**
+```bash
 npm install
+```
 
-
-⚙️ Environment Variables
-Create a .env.local file in the root and add:
-
-🚀 Development
-Run locally with:
+3. **Run development server**
+```bash
 npm run dev
-App will be served on http://localhost:5173.
+```
+The application will be served on `http://localhost:5173`.
 
-🏗️ Production Build
-To build the production-ready files:
+4. **Production Build**
+```bash
 npm run build
-
-
-Preview production build locally:
 npm run preview
-
-
-📊 Admin Dashboard
-On the admin dashboard, you can view:
-
-👤 Admin Profile (name, image, email)
-🏠 Total Rooms in the database
-📈 % Available Rooms
-📉 % Unavailable/Agreement Rooms
-👥 Total Users
-🧑‍🤝‍🧑 Total Members
-🎟️ Coupon Management
-These stats are visualized with charts for better insights.
-
-
-
-
-🤝 Contributing
-Contributions are welcome!
-Fork the repo
-Create a new branch (git checkout -b feature/new-feature)
-Commit changes (git commit -m "Add new feature")
-Push to your branch and open a Pull Request.
-
-
-
-📜 License
-This project is licensed under the MIT License.
-Feel free to use and modify as per your needs.
-
-
-
-💡 About
-Nexora is designed to simplify apartment management for owners, admins, and tenants, combining modern web tech and a sleek UI.
-
-💻 Frontend built with ❤️ by Taj Uddin.
+```
 
 ---
 
+## 📊 Admin Dashboard Features
+
+On the Admin Dashboard, authorized administrators can:
+
+- 👤 View Admin Profile details
+- 🏠 Track Total Rooms & Availability %
+- 📉 Track Unavailable / Rented Rooms
+- 👥 Monitor Total Registered Users & Members
+- 🎟️ Create, Update, & Delete Promotional Coupons
+- 📢 Post & Manage System Announcements
+- 🧑‍🤝‍🧑 Manage Members & Unpaid Rent Months
+
+---
+
+## 📜 License
+
+This project is licensed under the **MIT License**.
+
+Built with ❤️ by **Taj Uddin**  
+📧 Contact: `tajuddin.cse.dev@gmail.com`

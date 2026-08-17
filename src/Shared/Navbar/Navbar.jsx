@@ -65,9 +65,9 @@ const Navbar = () => {
 
   return (
     <div
-      className="navbar   sticky top-0 z-[70] shadow-2xl  rounded-xl   bg-[color-mix(in_srgb,var(--color-primary)_10%,var(--color-base-100)_90%)]
-    text-[color:var(--color-base-content)]
-    border-r border-[rgba(0,0,0,0.1)]"
+      className="navbar sticky top-0 z-[70] shadow-md rounded-none w-full px-4 md:px-10 border-b-2 border-base-300
+    bg-[color-mix(in_srgb,var(--color-primary)_10%,var(--color-base-100)_90%)]
+    text-[color:var(--color-base-content)]"
     >
       {/* Left: mobile menu & logo */}
       <div className="navbar-start">

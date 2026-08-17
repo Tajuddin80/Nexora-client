@@ -15,11 +15,12 @@
     "@tailwindcss/vite": "^4.1.11",
     "@tanstack/react-query": "^5.83.0",
     "axios": "^1.10.0",
+    "better-auth": "^1.1.0",
     "date-fns": "^4.1.0",
-    "firebase": "^11.10.0",
     "framer-motion": "^12.23.5",
     "gsap": "^3.13.0",
     "leaflet": "^1.9.4",
+    "lenis": "^1.1.18",
     "lottie-react": "^2.4.1",
     "react": "^19.1.0",
     "react-datepicker": "^8.4.0",
@@ -32,6 +33,7 @@
     "recharts": "^3.1.0",
     "rollup": "^4.45.1",
     "sweetalert2": "^11.22.2",
+    "socket.io-client": "^4.8.1",
     "tailwindcss": "^4.1.11"
   },
   "devDependencies": {

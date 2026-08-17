@@ -20,6 +20,8 @@ import Apartments from "../Pages/Apartments/Apartments";
 import About from "../Pages/About/About";
 import DashboardHome from "../Pages/Dashboard/DashboardHome/DashboardHome";
 import Payment from "../Pages/Dashboard/Payment/Payment";
+import AddApartment from "../Pages/Dashboard/AddApartment/AddApartment";
+import Chat from "../Pages/Dashboard/Chat/Chat";
 import AdminRoute from "../ProtectedRoutes/AdminRoute";
 import MembarRoute from "../ProtectedRoutes/MembarRoute";
 import PrivateRoute from "../ProtectedRoutes/PrivateRoute";
@@ -100,6 +102,14 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+      {
+        path: "chat",
+        element: (
+          <PrivateRoute>
+            <Chat />
+          </PrivateRoute>
+        ),
+      },
 
       // MEMBER extra
       {
@@ -125,6 +135,14 @@ export const router = createBrowserRouter([
         element: (
           <AdminRoute>
             <AdminProfile />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "add-apartment",
+        element: (
+          <AdminRoute>
+            <AddApartment />
           </AdminRoute>
         ),
       },

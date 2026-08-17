@@ -6,7 +6,7 @@ import useAuth from "../../../hooks/useAuth";
 import GoogleSignButton from "../GoogleSignButton/GoogleSignButton";
 
 const Login = () => {
-  const { signIn } = useAuth();
+  const { signIn, setUser } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
   const location = useLocation();
@@ -14,57 +14,50 @@ const Login = () => {
   const axiosPublic = useAxiosPublic();
   const from = location.state?.from || "/";
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    signIn(email, password)
-      .then(async (result) => {
-        const user = result.user;
-        const userInfo = {
-          email: user.email,
-          role: "user",
-          last_log_in: new Date().toISOString(),
-          created_at: new Date().toISOString(),
+    try {
+      // 1. Authenticate user via backend login endpoint
+      const loginRes = await axiosPublic.post("/users/login", { email, password });
+
+      // 2. Also authenticate with Better Auth client session
+      try {
+        await signIn(email, password);
+      } catch (err) {
+        // Fallback if better-auth session uses custom response
+        const userObj = {
+          email,
+          role: loginRes.data.user?.role || "user",
+          accessToken: loginRes.data.token || "",
         };
+        setUser(userObj);
+      }
 
-        try {
-          const userRes = await axiosPublic.post("/users", userInfo);
-          let title = "Already logged in";
-          if (userRes.data.inserted) title = "Welcome!";
-          else if (userRes.data.updated) title = "Welcome back!";
-
-          Swal.fire({
-            icon: "success",
-            title,
-            toast: true,
-            position: "center",
-            showConfirmButton: false,
-            timer: 1500,
-          }).then(() => {
-            navigate(from, { replace: true });
-          });
-        } catch (error) {
-          console.error(error);
-          Swal.fire({
-            icon: "error",
-            title: "Something went wrong",
-            text: error.message,
-          });
-        }
-      })
-      .catch((error) => {
-        Swal.fire({
-          icon: "error",
-          title: "Login Failed",
-          text: error.message,
-        });
+      Swal.fire({
+        icon: "success",
+        title: "Welcome back!",
+        toast: true,
+        position: "center",
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(() => {
+        navigate(from, { replace: true });
       });
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: error.response?.data?.message || error.message || "Invalid email or password",
+      });
+    }
   };
 
   return (
-    <div className="shadow-3xl  rounded-xl flex items-center justify-center bg-base-100 p-4">
+    <div className="shadow-3xl rounded-xl flex items-center justify-center bg-base-100 p-4">
       <div className="w-full bg-base-100 rounded-xl shadow-lg p-5">
         <h2 className="text-3xl font-bold mb-6 text-center">Welcome Back</h2>
 
@@ -120,7 +113,6 @@ const Login = () => {
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
-                  // 👁 Eye Icon
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5"
@@ -142,7 +134,6 @@ const Login = () => {
                     />
                   </svg>
                 ) : (
-                  //  Eye-off Icon
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5"

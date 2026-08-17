@@ -4,7 +4,8 @@ import { useNavigate } from "react-router";
 import useAuth from "./useAuth";
 
 const axiosSecure = axios.create({
-  baseURL: "https://nexora-server-nine.vercel.app",
+  baseURL: import.meta.env.VITE_SERVER_URL || "http://localhost:5000",
+  withCredentials: true,
 });
 
 const useAxiosSecure = () => {
@@ -14,8 +15,12 @@ const useAxiosSecure = () => {
   useEffect(() => {
     const requestInterceptor = axiosSecure.interceptors.request.use(
       (config) => {
-        if (user?.accessToken) {
-          config.headers.Authorization = `Bearer ${user.accessToken}`;
+        const token = user?.accessToken;
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        if (user?.email) {
+          config.headers["x-user-email"] = user.email;
         }
         return config;
       },

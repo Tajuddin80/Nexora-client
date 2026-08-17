@@ -6,6 +6,7 @@ import useUserRole from "../../../hooks/useUserRole";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useAuth from "../../../hooks/useAuth";
 import Loader from "../../../Shared/component/Loader/Loader";
+import EmptyState from "../../../Shared/component/EmptyState/EmptyState";
 
 const Announcements = () => {
   const axiosSecure = useAxiosSecure();
@@ -17,7 +18,6 @@ const Announcements = () => {
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ title: "", description: "" });
 
-  //  Fetch announcements
   const { data: announcements = [], isLoading } = useQuery({
     queryKey: ["announcements"],
     queryFn: async () => {
@@ -26,7 +26,6 @@ const Announcements = () => {
     },
   });
 
-  //  Add/Edit announcement
   const saveMutation = useMutation({
     mutationFn: async (announcement) => {
       if (editingId) {
@@ -64,7 +63,6 @@ const Announcements = () => {
     },
   });
 
-  //  Delete announcement
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
       const res = await axiosSecure.delete(`/announcements/${id}`);
@@ -137,7 +135,7 @@ const Announcements = () => {
     <div className="space-y-6">
       <div className="flex justify-between flex-wrap gap-10 items-center">
         <h2 className="text-3xl font-bold flex items-center gap-2">
-          <FaBullhorn className="" /> Announcements
+          <FaBullhorn /> Announcements
         </h2>
         {role === "admin" && (
           <button
@@ -156,7 +154,17 @@ const Announcements = () => {
       {isLoading ? (
         <Loader />
       ) : announcements.length === 0 ? (
-        <p className="text-gray-500">No announcements yet.</p>
+        <EmptyState
+          icon="📢"
+          title="No Announcements Yet"
+          message="Check back later for community updates, building notices, and property news."
+          actionText={role === "admin" ? "Create First Announcement" : null}
+          onAction={() => {
+            setEditingId(null);
+            setFormData({ title: "", description: "" });
+            setShowModal(true);
+          }}
+        />
       ) : (
         <div className="space-y-4">
           {announcements.map((a) => (

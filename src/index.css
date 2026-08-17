@@ -18,9 +18,9 @@
   --color-warning: #F59E0B;
   --color-error: #DC2626;
 
-  --radius-selector: 1rem;
-  --radius-field: 0.25rem;
-  --radius-box: 0.5rem;
+  --radius-selector: 0px;
+  --radius-field: 0px;
+  --radius-box: 0px;
 } 
 
 
@@ -106,4 +106,24 @@
 
 .overflow-hidden.rounded-xl img:hover {
   transform: scale(1.05);
+}
+
+/* Global Architectural Box Design System */
+*,
+*::before,
+*::after {
+  border-radius: 0px !important;
+}
+
+.btn,
+.card,
+.input,
+.select,
+.badge,
+.modal-box,
+.dropdown-content,
+.navbar,
+.drawer-side ul,
+.avatar img {
+  border-radius: 0px !important;
 }

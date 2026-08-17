@@ -10,6 +10,8 @@ import {
   FaClipboardList,
   FaUsersCog,
   FaPlus,
+  FaComments,
+  FaBuilding,
 } from "react-icons/fa";
 import useUserRole from "../../hooks/useUserRole";
 import Logo from "../../Shared/Logo/Logo";
@@ -25,7 +27,6 @@ const navLinkClass = ({ isActive }) =>
 
 const DashboardLayout = () => {
   const { role, roleLoading } = useUserRole();
-  console.log(role);
 
   if (roleLoading) {
     return <Loader></Loader>;
@@ -106,6 +107,11 @@ const DashboardLayout = () => {
                   <FaBullhorn /> Announcements
                 </NavLink>
               </li>
+              <li>
+                <NavLink to="/dashboard/chat" className={navLinkClass}>
+                  <FaComments /> Admin Chat
+                </NavLink>
+              </li>
             </>
           )}
 
@@ -135,6 +141,11 @@ const DashboardLayout = () => {
                   <FaBullhorn /> Announcements
                 </NavLink>
               </li>
+              <li>
+                <NavLink to="/dashboard/chat" className={navLinkClass}>
+                  <FaComments /> Admin Chat
+                </NavLink>
+              </li>
             </>
           )}
 
@@ -144,6 +155,11 @@ const DashboardLayout = () => {
               <li>
                 <NavLink to="/dashboard/admin-profile" className={navLinkClass}>
                   <FaUserShield /> Admin Profile
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/add-apartment" className={navLinkClass}>
+                  <FaBuilding /> Add Apartment
                 </NavLink>
               </li>
               <li>
@@ -173,6 +189,11 @@ const DashboardLayout = () => {
                   className={navLinkClass}
                 >
                   <FaPlus /> Manage Coupons
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/dashboard/chat" className={navLinkClass}>
+                  <FaComments /> Member Messages
                 </NavLink>
               </li>
             </>
