@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate, useLocation } from "react-router";
 import { io } from "socket.io-client";
-import Swal from "sweetalert2";
+import showToast from "../../../lib/toast";
 import useAuth from "../../../hooks/useAuth";
 import useUserRole from "../../../hooks/useUserRole";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
@@ -40,6 +41,7 @@ const Chat = () => {
   const [recording, setRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [uploadingChatImage, setUploadingChatImage] = useState(false);
+  const [previewModalImage, setPreviewModalImage] = useState(null);
   const timerRef = useRef(null);
 
   // Initialize Socket.IO connection
@@ -96,6 +98,18 @@ const Chat = () => {
       console.error("Fetch conversations error:", err);
     }
   };
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.email) {
+      setActiveRecipient({
+        email: location.state.email,
+        userName: location.state.userName || location.state.email,
+        apartmentNo: location.state.apartmentNo || "Member",
+      });
+    }
+  }, [location.state]);
 
   useEffect(() => {
     if (role === "admin") {
@@ -156,11 +170,7 @@ const Chat = () => {
     if (!file) return;
 
     if (file.size > 1 * 1024 * 1024) {
-      Swal.fire({
-        icon: "error",
-        title: "File Too Large",
-        text: "Image file size must be less than 1 MB.",
-      });
+      showToast.error("Image file size must be less than 1 MB.");
       e.target.value = "";
       return;
     }
@@ -176,14 +186,11 @@ const Chat = () => {
 
       if (res.data?.success && res.data?.url) {
         handleSendMessage("image", res.data.url);
+        showToast.success("Image attached!");
       }
     } catch (err) {
       console.error("Chat image upload error:", err);
-      Swal.fire({
-        icon: "error",
-        title: "Upload Failed",
-        text: err?.response?.data?.message || "Failed to upload image.",
-      });
+      showToast.error(err?.response?.data?.message || "Failed to upload image.");
     } finally {
       setUploadingChatImage(false);
       e.target.value = "";
@@ -246,53 +253,63 @@ const Chat = () => {
 
   return (
     <div className="h-[calc(100vh-6rem)] p-2 md:p-6">
-      <div className="bg-base-100 rounded-none border-2 border-base-300 shadow-2xl h-full flex flex-col md:flex-row overflow-hidden">
-        {/* Sidebar (Admin view) */}
+      <div className="bg-base-100 rounded-none border border-base-200 shadow-xl h-full flex flex-col md:flex-row overflow-hidden">
+        {/* Sidebar (Admin view - Bright, High Contrast) */}
         {role === "admin" && (
-          <div className="w-full md:w-80 bg-base-200/50 border-r-2 border-base-300 flex flex-col h-1/3 md:h-full">
-            <div className="p-4 border-b-2 border-base-300">
-              <h2 className="font-black text-base uppercase tracking-wider mb-3 flex items-center gap-2 text-base-content">
-                <FaBuilding className="text-primary" /> Member Messages
+          <div className="w-full md:w-80 bg-base-100 border-r border-base-200 flex flex-col h-1/3 md:h-full">
+            <div className="p-4 border-b border-base-200 bg-base-100">
+              <h2 className="font-extrabold text-sm uppercase tracking-wider mb-3 flex items-center gap-2 text-base-content">
+                <FaBuilding className="text-primary" /> Member Conversations
               </h2>
 
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Search apartment (e.g. A-101)..."
+                  placeholder="Search user, email or Apt A-101..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="input input-sm input-bordered rounded-none border-2 border-base-300 w-full pl-9 font-bold"
+                  className="input input-sm input-bordered rounded-none border border-base-200 bg-base-200/50 w-full pl-9 font-bold text-xs"
                 />
-                <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40 text-xs" />
+                <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/50 text-xs" />
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto divide-y border-base-300">
+            <div className="flex-1 overflow-y-auto divide-y divide-base-200/60 bg-base-100">
               {filteredConversations.length === 0 ? (
-                <div className="p-4 text-center text-xs text-base-content/60 font-bold">No members found.</div>
+                <div className="p-4 text-center text-xs text-base-content/60 font-bold">No active conversations found.</div>
               ) : (
                 filteredConversations.map((c) => (
                   <div
                     key={c.email}
                     onClick={() => setActiveRecipient(c)}
-                    className={`p-3 cursor-pointer transition-colors flex items-center justify-between ${
-                      activeRecipient?.email === c.email ? "bg-primary/10 border-l-4 border-primary" : "hover:bg-base-200"
+                    className={`p-3.5 cursor-pointer transition-all flex items-center justify-between ${
+                      activeRecipient?.email === c.email
+                        ? "bg-primary/10 border-l-4 border-primary"
+                        : "hover:bg-base-200/40"
                     }`}
                   >
                     <div className="flex items-center gap-3 overflow-hidden">
-                      <FaUserCircle className="text-3xl text-primary shrink-0" />
+                      <img
+                        src={c.photoURL || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                        }}
+                        alt={c.userName || c.email}
+                        className="w-10 h-10 object-cover shrink-0 rounded-none border border-base-content/20 shadow-xs"
+                      />
                       <div className="truncate">
-                        <div className="font-bold text-sm truncate text-base-content">{c.userName || c.email}</div>
-                        <div className="text-xs text-base-content/70 truncate">{c.email}</div>
-                        <div className="text-xs text-primary font-black flex items-center gap-1 mt-0.5">
+                        <div className="font-extrabold text-sm truncate text-base-content">{c.userName || c.email}</div>
+                        <div className="text-[11px] text-base-content/70 truncate font-mono">{c.email}</div>
+                        <div className="text-[11px] text-base-content font-bold flex items-center gap-1 mt-0.5">
                           <FaBuilding className="text-[10px]" /> Apt: {c.apartmentNo} {c.blockName && `(${c.blockName})`}
                         </div>
-                        <div className="text-xs text-base-content/60 truncate mt-0.5">{c.lastMessage || "No messages yet"}</div>
+                        <div className="text-xs text-base-content/60 truncate mt-0.5 font-medium">{c.lastMessage || "No messages yet"}</div>
                       </div>
                     </div>
 
                     {c.unreadCount > 0 && (
-                      <span className="badge badge-error badge-sm text-white font-black rounded-none ml-2 shrink-0">
+                      <span className="badge badge-error badge-sm text-white font-black rounded-none ml-2 shrink-0 px-2 py-1">
                         {c.unreadCount}
                       </span>
                     )}
@@ -306,15 +323,23 @@ const Chat = () => {
         {/* Main Chat Area */}
         <div className="flex-1 flex flex-col h-full bg-base-100">
           {/* Header */}
-          <div className="p-4 border-b-2 border-base-300 flex items-center justify-between bg-base-100 shadow-sm">
+          <div className="p-4 border-b border-base-200 flex items-center justify-between bg-base-100 shadow-xs">
             <div className="flex items-center gap-3">
-              <FaUserCircle className="text-3xl text-primary" />
+              <img
+                src={activeRecipient?.photoURL || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                }}
+                alt="Recipient profile"
+                className="w-10 h-10 object-cover rounded-none border border-base-content/20"
+              />
               <div>
-                <h3 className="font-black text-base md:text-lg text-base-content uppercase tracking-wider">
+                <h3 className="font-extrabold text-base md:text-lg text-base-content uppercase tracking-wider">
                   {role === "admin" ? activeRecipient?.userName || activeRecipient?.email || "Select a member" : "Admin Support"}
                 </h3>
                 {activeRecipient?.apartmentNo && (
-                  <p className="text-xs text-primary font-black flex items-center gap-1">
+                  <p className="text-xs text-primary font-bold flex items-center gap-1">
                     <FaBuilding /> Apartment: {activeRecipient.apartmentNo}
                   </p>
                 )}
@@ -322,24 +347,31 @@ const Chat = () => {
             </div>
           </div>
 
-          {/* Messages Area */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-base-200/30">
+          {/* Messages Canvas - High Contrast Bubbles */}
+          <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-base-200/20">
             {messages.map((msg, idx) => {
               const isMe = msg.senderEmail === user?.email;
               return (
                 <div key={msg._id || idx} className={`chat ${isMe ? "chat-end" : "chat-start"}`}>
-                  <div className="chat-header text-[10px] font-bold opacity-60 mb-1">
+                  <div className="chat-header text-[11px] font-bold text-base-content/70 mb-1">
                     {msg.senderEmail} • {new Date(msg.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
 
-                  <div className={`chat-bubble rounded-none text-sm font-medium ${isMe ? "chat-bubble-primary text-white" : "bg-base-200 text-base-content border border-base-300"}`}>
+                  {/* High Contrast Chat Bubble Styling */}
+                  <div
+                    className={`chat-bubble rounded-none text-sm font-semibold p-3 shadow-xs ${
+                      isMe
+                        ? "bg-primary text-primary-content border border-primary"
+                        : "bg-base-100 text-base-content border border-base-300"
+                    }`}
+                  >
                     {msg.type === "image" && msg.mediaUrl && (
-                      <div className="mb-2">
+                      <div className="mb-2 max-w-full overflow-hidden">
                         <img
                           src={msg.mediaUrl}
                           alt="Shared attachment"
-                          className="max-w-xs max-h-60 rounded-none object-cover border border-white/20 cursor-pointer hover:opacity-90 transition-opacity"
-                          onClick={() => window.open(msg.mediaUrl, "_blank")}
+                          className="w-full max-w-[70vw] sm:max-w-xs md:max-w-sm max-h-64 sm:max-h-80 rounded-none object-cover border border-base-300 cursor-pointer hover:opacity-90 transition-all duration-200"
+                          onClick={() => setPreviewModalImage(msg.mediaUrl)}
                         />
                       </div>
                     )}
@@ -350,10 +382,10 @@ const Chat = () => {
                       </div>
                     )}
 
-                    {msg.message && <p>{msg.message}</p>}
+                    {msg.message && <p className="leading-relaxed whitespace-pre-wrap">{msg.message}</p>}
                   </div>
 
-                  <div className="chat-footer opacity-50 text-[10px] flex items-center gap-1 mt-1">
+                  <div className="chat-footer opacity-70 text-[10px] flex items-center gap-1 mt-1 font-bold text-base-content/70">
                     {isMe && <FaCheckDouble className={msg.read ? "text-info" : "text-base-content/40"} />}
                   </div>
                 </div>
@@ -364,13 +396,13 @@ const Chat = () => {
 
           {/* Image Input URL Bar (Toggleable fallback) */}
           {showImageInput && (
-            <div className="p-3 bg-base-200 border-t-2 border-base-300 flex items-center gap-2">
+            <div className="p-3 bg-base-100 border-t border-base-200 flex items-center gap-2">
               <input
                 type="url"
                 placeholder="Or paste image URL (e.g. https://images.unsplash.com/...)"
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
-                className="input input-sm input-bordered rounded-none border-2 border-base-300 flex-1 font-mono text-xs"
+                className="input input-sm input-bordered rounded-none border border-base-200 flex-1 font-mono text-xs"
               />
               <button
                 onClick={() => {
@@ -401,7 +433,7 @@ const Chat = () => {
           />
 
           {/* Message Input Footer */}
-          <div className="p-3 md:p-4 border-t-2 border-base-300 bg-base-100 flex items-center gap-2">
+          <div className="p-3 md:p-4 border-t border-base-200 bg-base-100 flex items-center gap-2">
             {/* Direct Image File Upload Button */}
             <button
               onClick={() => imageFileRef.current?.click()}
@@ -459,7 +491,7 @@ const Chat = () => {
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleSendMessage("text");
               }}
-              className="input input-bordered rounded-none border-2 border-base-300 flex-1 font-medium"
+              className="input input-bordered rounded-none border border-base-200 flex-1 font-medium text-sm"
             />
 
             <button
@@ -472,6 +504,32 @@ const Chat = () => {
           </div>
         </div>
       </div>
+
+      {/* Image Lightbox Modal - Fully Responsive on Mobile */}
+      {previewModalImage && (
+        <div
+          className="fixed inset-0 z-[999] bg-black/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6"
+          onClick={() => setPreviewModalImage(null)}
+        >
+          <div
+            className="relative w-full max-w-4xl max-h-[90vh] bg-base-100 p-2 border border-base-300 shadow-2xl flex flex-col items-center justify-center overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setPreviewModalImage(null)}
+              className="absolute top-3 right-3 btn btn-square btn-sm bg-black text-white hover:bg-red-600 border-none font-bold z-20"
+            >
+              <FaTimes />
+            </button>
+
+            <img
+              src={previewModalImage}
+              alt="Enlarged chat image preview"
+              className="w-full h-auto max-w-full max-h-[80vh] object-contain mx-auto"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -21,6 +21,7 @@ import About from "../Pages/About/About";
 import DashboardHome from "../Pages/Dashboard/DashboardHome/DashboardHome";
 import Payment from "../Pages/Dashboard/Payment/Payment";
 import AddApartment from "../Pages/Dashboard/AddApartment/AddApartment";
+import EditApartment from "../Pages/Dashboard/EditApartment/EditApartment";
 import Chat from "../Pages/Dashboard/Chat/Chat";
 import AdminRoute from "../ProtectedRoutes/AdminRoute";
 import MembarRoute from "../ProtectedRoutes/MembarRoute";
@@ -143,6 +144,14 @@ export const router = createBrowserRouter([
         element: (
           <AdminRoute>
             <AddApartment />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "edit-apartment/:id",
+        element: (
+          <AdminRoute>
+            <EditApartment />
           </AdminRoute>
         ),
       },

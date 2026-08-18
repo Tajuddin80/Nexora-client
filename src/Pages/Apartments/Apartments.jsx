@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router";
-import { motion } from "framer-motion";
-import Swal from "sweetalert2";
 import {
   FaStar,
   FaBath,
@@ -17,12 +15,39 @@ import {
   FaShieldAlt,
   FaTimes,
   FaSearch,
+  FaChevronLeft,
+  FaChevronRight,
+  FaExclamationTriangle,
+  FaVideo,
 } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
 import useUserRole from "../../hooks/useUserRole";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import EmptyState from "../../Shared/component/EmptyState/EmptyState";
+import showToast from "../../lib/toast";
+import LeasingBenefits from "./components/LeasingBenefits";
+import FloorPlanFeatures from "./components/FloorPlanFeatures";
+import LeasingFAQCTA from "./components/LeasingFAQCTA";
+
+import building3Img from "../../assets/building-3.jpg";
+import building4Img from "../../assets/building-4.jpg";
+import building5Img from "../../assets/building-5.jpg";
+import building6Img from "../../assets/building-6.jpg";
+
+const buildingFallbacks = [building6Img, building5Img, building4Img, building3Img];
+
+const getApartmentCardImage = (apt, index) => {
+  if (Array.isArray(apt.images) && apt.images.length > 0 && apt.images[0]) {
+    return apt.images[0];
+  }
+  if (apt.image && typeof apt.image === "string" && apt.image.trim() !== "") {
+    return apt.image;
+  }
+  return buildingFallbacks[index % buildingFallbacks.length];
+};
+
+
 
 function generatePageNumbers(currentPage, totalPages) {
   const delta = 2;
@@ -71,6 +96,7 @@ const Apartments = () => {
   const [sortBy, setSortBy] = useState("rent");
   const [sortOrder, setSortOrder] = useState("asc");
   const [selectedApt, setSelectedApt] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -99,6 +125,7 @@ const Apartments = () => {
 
   const handleOpenDetails = (apt) => {
     setSelectedApt(apt);
+    setCurrentImageIndex(0);
     setTermsAccepted(false);
     const modal = document.getElementById("apt_details_modal");
     if (modal) {
@@ -123,20 +150,12 @@ const Apartments = () => {
     }
 
     if (!apt.available) {
-      Swal.fire({
-        icon: "error",
-        title: "Apartment Unavailable",
-        text: "Sorry, this apartment is no longer available for booking.",
-      });
+      showToast.error("Sorry, this apartment is no longer available for booking.");
       return;
     }
 
     if (!termsAccepted) {
-      Swal.fire({
-        icon: "warning",
-        title: "Agreement Terms Required",
-        text: "Please read and accept the agreement terms checklist before fulfilling the application.",
-      });
+      showToast.error("Please confirm and accept the agreement checklist terms before fulfilling application.");
       return;
     }
 
@@ -145,11 +164,7 @@ const Apartments = () => {
     );
 
     if (activeAgreements.length > 0) {
-      Swal.fire({
-        icon: "info",
-        title: "Pending / Active Application Exists",
-        text: "You already have a pending or checked agreement request.",
-      });
+      showToast.info("You already have an active or pending agreement application.");
       return;
     }
 
@@ -170,18 +185,10 @@ const Apartments = () => {
       const modal = document.getElementById("apt_details_modal");
       if (modal) modal.close();
 
-      Swal.fire({
-        icon: "success",
-        title: "Agreement Request Submitted!",
-        text: `Your agreement application for Apartment ${apt.apartmentNo} has been submitted for Admin review. You can chat directly with the admin anytime!`,
-      });
+      showToast.success(`Agreement request for Apt ${apt.apartmentNo} submitted for Admin review!`);
     } catch (err) {
       console.error("Submit agreement error:", err);
-      Swal.fire({
-        icon: "error",
-        title: "Submission Failed",
-        text: err?.response?.data?.message || "Failed to submit agreement request.",
-      });
+      showToast.error(err?.response?.data?.message || "Failed to submit agreement request.");
     } finally {
       setSubmitting(false);
     }
@@ -212,7 +219,7 @@ const Apartments = () => {
   if (isError) {
     return (
       <EmptyState
-        icon="⚠️"
+        icon={<FaExclamationTriangle className="text-3xl text-error" />}
         title="Unable to Load Apartments"
         message="There was an error connecting to the server. Please verify your connection or try again."
         actionText="Try Again"
@@ -224,56 +231,57 @@ const Apartments = () => {
   const apartmentsList = data?.apartments || [];
 
   return (
-    <div className="w-full px-4 md:px-10 py-8">
+    <div className="w-full px-4 md:px-8 lg:px-12 py-8">
       {/* Subtle Boxed Architectural Header */}
-      <div className="mb-8 p-6 bg-base-100 border border-base-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="mb-8 p-6 bg-base-100 border border-base-content/25 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-5xl font-black text-base-content uppercase tracking-widest">
             Apartment Listings
           </h1>
-          <p className="text-base-content/70 mt-1 text-sm md:text-base font-medium">
+          <p className="text-base-content/75 mt-1 text-sm md:text-base font-medium">
             Clean architectural layout • Full apartment specifications & direct pre-booking chat.
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="px-4 py-2 bg-primary text-primary-content text-xs font-black uppercase tracking-widest border border-primary">
+          <span className="px-4 py-2 bg-base-content/10 text-base-content text-xs font-black uppercase tracking-widest border border-base-content/20">
             {data?.total || apartmentsList.length} Total Residences
           </span>
         </div>
       </div>
 
-      {/* Filter & Search Bar - Elegant 1px Border Design */}
-      <div className="bg-base-100 p-6 border border-base-200 mb-8 space-y-4 shadow-sm">
+
+      {/* Filter & Search Bar - Subtle Border Design */}
+      <div className="bg-base-100 p-6 border border-base-content/25 mb-8 space-y-4 shadow-xs">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <label className="text-xs font-bold text-base-content/70 uppercase tracking-wider mb-2 block">Min Rent ($)</label>
+            <label className="text-xs font-bold text-base-content uppercase tracking-wider mb-2 block">Min Rent ($)</label>
             <input
               type="number"
               value={minRentInput}
               onChange={(e) => setMinRentInput(e.target.value)}
-              className="input input-bordered rounded-none border border-base-200 w-full focus:outline-none focus:border-primary font-bold"
+              className="input input-bordered rounded-none border border-base-content/20 bg-base-100 text-base-content w-full focus:outline-none focus:border-base-content font-bold"
               placeholder="e.g. 500"
             />
           </div>
           <div>
-            <label className="text-xs font-bold text-base-content/70 uppercase tracking-wider mb-2 block">Max Rent ($)</label>
+            <label className="text-xs font-bold text-base-content uppercase tracking-wider mb-2 block">Max Rent ($)</label>
             <input
               type="number"
               value={maxRentInput}
               onChange={(e) => setMaxRentInput(e.target.value)}
-              className="input input-bordered rounded-none border border-base-200 w-full focus:outline-none focus:border-primary font-bold"
+              className="input input-bordered rounded-none border border-base-content/20 bg-base-100 text-base-content w-full focus:outline-none focus:border-base-content font-bold"
               placeholder="e.g. 5000"
             />
           </div>
           <div>
-            <label className="text-xs font-bold text-base-content/70 uppercase tracking-wider mb-2 block">Sort By</label>
+            <label className="text-xs font-bold text-base-content uppercase tracking-wider mb-2 block">Sort By</label>
             <select
               value={sortBy}
               onChange={(e) => {
                 setSortBy(e.target.value);
                 setPage(1);
               }}
-              className="select select-bordered rounded-none border border-base-200 w-full focus:outline-none focus:border-primary font-bold"
+              className="select select-bordered rounded-none border border-base-content/20 bg-base-100 text-base-content w-full focus:outline-none focus:border-base-content font-bold"
             >
               <option value="rent">Rent Price</option>
               <option value="floorNo">Floor Level</option>
@@ -281,14 +289,14 @@ const Apartments = () => {
             </select>
           </div>
           <div>
-            <label className="text-xs font-bold text-base-content/70 uppercase tracking-wider mb-2 block">Order</label>
+            <label className="text-xs font-bold text-base-content uppercase tracking-wider mb-2 block">Order</label>
             <select
               value={sortOrder}
               onChange={(e) => {
                 setSortOrder(e.target.value);
                 setPage(1);
               }}
-              className="select select-bordered rounded-none border border-base-200 w-full focus:outline-none focus:border-primary font-bold"
+              className="select select-bordered rounded-none border border-base-content/20 bg-base-100 text-base-content w-full focus:outline-none focus:border-base-content font-bold"
             >
               <option value="asc">Ascending</option>
               <option value="desc">Descending</option>
@@ -303,7 +311,7 @@ const Apartments = () => {
               setMaxRent(Number(maxRentInput) || 9999999);
               setPage(1);
             }}
-            className="btn btn-primary rounded-none font-bold uppercase tracking-wider gap-2 w-full md:w-auto px-8"
+            className="btn bg-base-content text-base-100 hover:bg-base-content/80 rounded-none font-bold uppercase tracking-wider gap-2 w-full md:w-auto px-8 border-none"
           >
             <FaSearch /> Apply Filter
           </button>
@@ -313,7 +321,7 @@ const Apartments = () => {
       {/* Apartments Grid - Architectural Clean Cards */}
       {apartmentsList.length === 0 ? (
         <EmptyState
-          icon="🏢"
+          icon={<FaBuilding className="text-3xl text-base-content" />}
           title="No Apartments Available"
           message="No apartments match your current criteria. Try resetting filters."
           actionText="Reset Filters"
@@ -327,15 +335,16 @@ const Apartments = () => {
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {apartmentsList.map((apt) => (
+
+          {apartmentsList.map((apt, index) => (
             <div
               key={apt._id}
-              className="bg-base-100 border border-base-200 shadow-sm hover:shadow-md hover:border-primary/60 transition-all duration-200 flex flex-col justify-between"
+              className="bg-base-100 border border-base-content/25 shadow-xs hover:border-base-content/70 transition-all duration-200 flex flex-col justify-between"
             >
               {/* Image Banner */}
-              <div className="relative overflow-hidden h-56 border-b border-base-200">
+              <div className="relative overflow-hidden h-56 border-b border-base-content/20">
                 <img
-                  src={apt.image || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"}
+                  src={getApartmentCardImage(apt, index)}
                   alt={`Apartment ${apt.apartmentNo}`}
                   className="w-full h-full object-cover rounded-none hover:scale-105 transition-transform duration-300"
                 />
@@ -343,8 +352,8 @@ const Apartments = () => {
                 {/* Status Badge */}
                 <div className="absolute top-0 left-0">
                   <span
-                    className={`inline-block px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-white ${
-                      apt.available ? "bg-emerald-600" : "bg-rose-600"
+                    className={`inline-block px-3 py-1 text-xs font-black uppercase tracking-wider text-base-100 ${
+                      apt.available ? "bg-base-content" : "bg-base-content/60"
                     }`}
                   >
                     {apt.available ? "Available" : "Occupied"}
@@ -352,64 +361,71 @@ const Apartments = () => {
                 </div>
 
                 {/* Rating Badge */}
-                <div className="absolute top-0 right-0 bg-black/70 text-yellow-400 text-xs font-bold px-2.5 py-1 flex items-center gap-1">
-                  <FaStar />
-                  <span className="text-white">4.9</span>
+                <div className="absolute top-0 right-0 bg-base-content text-base-100 text-xs font-bold px-2.5 py-1 flex items-center gap-1">
+                  <FaStar className="text-base-100" />
+                  <span className="text-base-100">4.9</span>
                 </div>
 
                 {/* Price Banner */}
-                <div className="absolute bottom-0 left-0 right-0 bg-black/85 text-white px-4 py-2 flex justify-between items-center backdrop-blur-xs">
-                  <span className="text-xs font-bold uppercase tracking-wider text-gray-300">Monthly Rent</span>
-                  <span className="text-xl font-black text-emerald-400">${apt.rent}</span>
+                <div className="absolute bottom-0 left-0 right-0 bg-base-content text-base-100 px-4 py-2 flex justify-between items-center">
+                  <span className="text-xs font-bold uppercase tracking-wider text-base-100/80">Monthly Rent</span>
+                  <span className="text-xl font-black text-base-100">${apt.rent}</span>
                 </div>
               </div>
 
               {/* Box Card Content */}
               <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                 <div>
-                  <div className="flex justify-between items-center mb-2 pb-2 border-b border-base-200">
-                    <h3 className="text-xl font-extrabold text-base-content uppercase tracking-wide">
+                  <div className="flex justify-between items-center mb-2 pb-2 border-b border-base-content/15">
+                    <h3 className="text-xl font-black text-base-content uppercase tracking-wide">
                       Apt {apt.apartmentNo}
                     </h3>
-                    <span className="text-xs font-bold text-base-content/80 px-2 py-0.5 uppercase tracking-wider">
+                    <span className="text-xs font-bold text-base-content border border-base-content/20 px-2 py-0.5 uppercase tracking-wider">
                       {apt.blockName || apt.block || "Block A"}
                     </span>
                   </div>
 
-                  <p className="text-xs font-bold text-base-content/70 flex items-center gap-2 mb-3">
-                    <FaLayerGroup className="text-primary" /> Floor {apt.floorNo || apt.floor || 1}
+                  <p className="text-xs font-bold text-base-content flex items-center gap-2 mb-3">
+                    <FaLayerGroup className="text-base-content" /> Floor {apt.floorNo || apt.floor || 1}
                   </p>
 
                   {/* Clean Spec Box */}
-                  <div className="grid grid-cols-3 gap-2 text-center text-xs font-semibold text-base-content/80 bg-base-200/30 p-2.5 border border-base-200">
+                  <div className="grid grid-cols-3 gap-2 text-center text-xs font-bold text-base-content bg-base-content/5 p-2.5 border border-base-content/20 shadow-xs">
                     <div>
-                      <FaBath className="mx-auto text-primary mb-1 text-sm" />
+                      <FaBath className="mx-auto text-base-content mb-1 text-sm" />
                       <span>{apt.washroomCount || 2} Baths</span>
                     </div>
                     <div>
-                      <FaUtensils className="mx-auto text-primary mb-1 text-sm" />
+                      <FaUtensils className="mx-auto text-base-content mb-1 text-sm" />
                       <span>{apt.kitchenCount || 1} Kitchen</span>
                     </div>
                     <div>
-                      <FaRulerCombined className="mx-auto text-primary mb-1 text-sm" />
+                      <FaRulerCombined className="mx-auto text-base-content mb-1 text-sm" />
                       <span>{apt.squareFeet || 1200} sqft</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Action Buttons - Chat with Owner hidden for Admin */}
+                {/* Action Buttons */}
                 <div className="space-y-2 pt-2">
                   <button
                     onClick={() => handleOpenDetails(apt)}
-                    className="btn btn-primary rounded-none w-full gap-2 text-white font-bold uppercase text-xs tracking-wider"
+                    className="btn bg-base-content text-base-100 hover:bg-base-content/80 rounded-none w-full gap-2 font-bold uppercase text-xs tracking-wider border-none"
                   >
                     <FaFileContract /> View Details & Agreement
                   </button>
 
-                  {role !== "admin" && (
+                  {role === "admin" ? (
+                    <button
+                      onClick={() => navigate(`/dashboard/edit-apartment/${apt._id}`)}
+                      className="btn border border-base-content bg-transparent text-base-content hover:opacity-80 rounded-none btn-sm w-full font-bold uppercase text-xs tracking-wider gap-2"
+                    >
+                      <FaBuilding /> Edit Specifications
+                    </button>
+                  ) : (
                     <button
                       onClick={handleChatWithOwner}
-                      className="btn btn-outline btn-primary rounded-none btn-sm w-full font-bold uppercase text-xs tracking-wider"
+                      className="btn border border-base-content bg-transparent text-base-content hover:opacity-80 rounded-none btn-sm w-full font-bold uppercase text-xs tracking-wider"
                     >
                       <FaComments /> Chat with Owner
                     </button>
@@ -421,183 +437,8 @@ const Apartments = () => {
         </div>
       )}
 
-      {/* Architectural Box Modal */}
-      <dialog id="apt_details_modal" className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box max-w-4xl p-0 rounded-none bg-base-100 border border-base-300 shadow-2xl">
-          {selectedApt && (
-            <div>
-              {/* Modal Banner */}
-              <div className="relative h-64 md:h-80 bg-base-300 border-b border-base-200">
-                <img
-                  src={selectedApt.image || "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80"}
-                  alt={`Apartment ${selectedApt.apartmentNo}`}
-                  className="w-full h-full object-cover rounded-none"
-                />
-
-                <form method="dialog" className="absolute top-3 right-3">
-                  <button className="btn btn-square btn-sm bg-black text-white border-none rounded-none hover:bg-red-600 font-bold">
-                    <FaTimes />
-                  </button>
-                </form>
-
-                <div className="absolute bottom-0 left-0 right-0 bg-black/80 p-4 border-t border-white/10 text-white flex justify-between items-end">
-                  <div>
-                    <span className={`inline-block px-3 py-0.5 text-xs font-bold uppercase tracking-wider mb-1 ${selectedApt.available ? "bg-emerald-600" : "bg-rose-600"}`}>
-                      {selectedApt.available ? "Available for Lease" : "Occupied"}
-                    </span>
-                    <h2 className="text-2xl md:text-4xl font-extrabold uppercase tracking-wide">
-                      Apartment {selectedApt.apartmentNo}
-                    </h2>
-                    <p className="text-xs font-bold uppercase tracking-wider text-gray-300 mt-0.5">
-                      {selectedApt.blockName || selectedApt.block || "Block A"} • Floor {selectedApt.floorNo || selectedApt.floor || 1}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-3xl font-black text-emerald-400">${selectedApt.rent}</div>
-                    <div className="text-xs font-bold uppercase tracking-wider text-gray-300">per month</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Modal Content Body */}
-              <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
-                {/* Specifications Grid Box */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-base-200/40 border border-base-200 text-center">
-                  <div>
-                    <div className="text-xs font-bold uppercase tracking-wider text-base-content/60">Square Feet</div>
-                    <div className="text-base font-bold text-base-content mt-1">{selectedApt.squareFeet || 1200} sqft</div>
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold uppercase tracking-wider text-base-content/60">Washrooms</div>
-                    <div className="text-base font-bold text-base-content mt-1">{selectedApt.washroomCount || 2} Bathrooms</div>
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold uppercase tracking-wider text-base-content/60">Kitchen</div>
-                    <div className="text-base font-bold text-base-content mt-1">{selectedApt.kitchenCount || 1} Kitchen</div>
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold uppercase tracking-wider text-base-content/60">Min Term</div>
-                    <div className="text-base font-bold text-base-content mt-1">12 Months</div>
-                  </div>
-                </div>
-
-                {/* Video Tour Section */}
-                {selectedApt.video && (
-                  <div className="p-4 bg-primary/10 border border-primary/40 flex items-center justify-between">
-                    <div>
-                      <h4 className="font-bold uppercase tracking-wider text-sm text-primary">Video Tour Link</h4>
-                      <p className="text-xs text-base-content/70 font-medium">Watch the video walk-through before proceeding.</p>
-                    </div>
-                    <a
-                      href={selectedApt.video}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="btn btn-primary rounded-none btn-sm font-bold uppercase tracking-wider gap-2 text-white"
-                    >
-                      🎬 Watch Tour
-                    </a>
-                  </div>
-                )}
-
-                {/* Description */}
-                <div className="border-l-4 border-primary pl-4 py-1">
-                  <h4 className="font-bold text-base uppercase tracking-wider text-base-content mb-1 flex items-center gap-2">
-                    <FaInfoCircle className="text-primary" /> Apartment Description
-                  </h4>
-                  <p className="text-xs md:text-sm text-base-content/80 leading-relaxed font-medium">
-                    {selectedApt.details || selectedApt.description || "This premium residence features luxury finishes, optimal architectural layout, high-speed elevator access, 24/7 building security, and dedicated maintenance support."}
-                  </p>
-                </div>
-
-                {/* Pre-Booking Direct Chat Box (Only for non-admin users) */}
-                {role !== "admin" && (
-                  <div className="p-4 bg-base-200/50 border border-base-200 flex items-center justify-between">
-                    <div>
-                      <h5 className="font-bold uppercase text-xs tracking-wider text-base-content">Need pre-booking clarifications?</h5>
-                      <p className="text-xs text-base-content/70 font-medium">Chat directly with the Admin or Owner to discuss terms.</p>
-                    </div>
-                    <button
-                      onClick={handleChatWithOwner}
-                      className="btn btn-outline btn-primary rounded-none btn-sm font-bold uppercase tracking-wider gap-2"
-                    >
-                      <FaComments /> Direct Chat
-                    </button>
-                  </div>
-                )}
-
-                {/* Agreement Terms Checklist Box */}
-                <div className="p-5 bg-base-100 border border-base-200 space-y-3">
-                  <h4 className="font-bold uppercase text-sm tracking-wider text-base-content flex items-center gap-2">
-                    <FaShieldAlt className="text-primary" /> Agreement Fulfillment Checklist
-                  </h4>
-                  <p className="text-xs text-base-content/70 font-medium">
-                    Verify applicant information and accept lease conditions to submit your application.
-                  </p>
-
-                  <div className="space-y-2 text-xs font-bold bg-base-200/40 p-3 border border-base-200">
-                    <div className="flex justify-between">
-                      <span className="uppercase text-base-content/60">Applicant Name:</span>
-                      <span className="text-base-content">{user?.displayName || user?.email || "Guest"}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="uppercase text-base-content/60">Applicant Email:</span>
-                      <span className="text-base-content">{user?.email || "Not Signed In"}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="uppercase text-base-content/60">Monthly Rent:</span>
-                      <span className="font-black text-primary">${selectedApt.rent} / month</span>
-                    </div>
-                  </div>
-
-                  {role !== "admin" && (
-                    <label className="flex items-start gap-3 cursor-pointer pt-2">
-                      <input
-                        type="checkbox"
-                        checked={termsAccepted}
-                        onChange={(e) => setTermsAccepted(e.target.checked)}
-                        className="checkbox checkbox-primary rounded-none checkbox-sm mt-0.5"
-                      />
-                      <span className="text-xs text-base-content font-bold">
-                        I confirm that I have reviewed the apartment details and agree to fulfill this rental agreement application for Admin review.
-                      </span>
-                    </label>
-                  )}
-                </div>
-              </div>
-
-              {/* Modal Footer Actions */}
-              <div className="p-4 bg-base-200/60 border-t border-base-200 flex flex-col sm:flex-row justify-between gap-3">
-                <form method="dialog">
-                  <button className="btn btn-ghost rounded-none font-bold uppercase text-xs tracking-wider w-full sm:w-auto">Cancel</button>
-                </form>
-
-                <div className="flex gap-2">
-                  {role !== "admin" && (
-                    <>
-                      <button
-                        onClick={handleChatWithOwner}
-                        className="btn btn-outline btn-primary rounded-none font-bold uppercase text-xs tracking-wider flex-1 sm:flex-none gap-2"
-                      >
-                        <FaComments /> Ask Question
-                      </button>
-                      <button
-                        onClick={() => handleFulfillAgreement(selectedApt)}
-                        disabled={submitting || !selectedApt.available}
-                        className="btn btn-primary rounded-none font-bold uppercase text-xs tracking-wider flex-1 sm:flex-none gap-2 text-white"
-                      >
-                        <FaCheckCircle /> Fulfill & Submit Agreement
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </dialog>
-
       {/* Pagination */}
-      {apartmentsList.length === 0 && data?.pages > 1 && (
+      {apartmentsList.length > 0 && data?.pages > 1 && (
         <div className="flex justify-center items-center gap-2 mt-10 flex-wrap">
           <button
             onClick={() => setPage((old) => Math.max(old - 1, 1))}
@@ -630,8 +471,256 @@ const Apartments = () => {
           </button>
         </div>
       )}
+
+      {/* Leasing Benefits Banner */}
+      <LeasingBenefits />
+
+      {/* Architectural Standard Features Section */}
+      <FloorPlanFeatures />
+
+      {/* FAQ & Support CTA Section */}
+      <LeasingFAQCTA />
+
+
+      {/* Architectural Box Modal - Center Aligned & Fully Responsive */}
+      <dialog id="apt_details_modal" className="modal modal-middle p-2 sm:p-4">
+        <div
+          className="modal-box m-auto p-0 rounded-none bg-base-100 border border-base-300 shadow-2xl flex flex-col max-h-[92vh] w-[95vw] md:w-[82vw] lg:w-[80vw]"
+          style={{ width: "min(95vw, 82vw)", maxWidth: "95vw" }}
+        >
+          {selectedApt && (() => {
+            const galleryImages = (selectedApt.images && selectedApt.images.length > 0)
+              ? selectedApt.images
+              : (selectedApt.image ? [selectedApt.image] : [building6Img]);
+
+            const activeImg = galleryImages[currentImageIndex] || selectedApt.image || building6Img;
+
+
+            return (
+              <div className="flex flex-col h-full overflow-hidden">
+                {/* Modal Banner Viewport with Multi-Image Slider */}
+                <div className="relative h-48 sm:h-64 md:h-80 lg:h-96 bg-black shrink-0 border-b border-base-300">
+                  <img
+                    src={activeImg}
+                    alt={`Apartment ${selectedApt.apartmentNo} photo ${currentImageIndex + 1}`}
+                    className="w-full h-full object-cover rounded-none transition-all duration-300"
+                  />
+
+                  {galleryImages.length > 1 && (
+                    <>
+                      <button
+                        onClick={() => setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : galleryImages.length - 1))}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-black/70 hover:bg-primary text-white border-none z-10"
+                        title="Previous Image"
+                      >
+                        <FaChevronLeft />
+                      </button>
+
+                      <button
+                        onClick={() => setCurrentImageIndex((prev) => (prev < galleryImages.length - 1 ? prev + 1 : 0))}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-black/70 hover:bg-primary text-white border-none z-10"
+                        title="Next Image"
+                      >
+                        <FaChevronRight />
+                      </button>
+
+                      <div className="absolute top-3 left-3 bg-black/80 text-white text-[11px] sm:text-xs font-bold px-2.5 py-1 border border-white/20 z-10">
+                        Photo {currentImageIndex + 1} of {galleryImages.length}
+                      </div>
+                    </>
+                  )}
+
+                  <form method="dialog" className="absolute top-3 right-3 z-10">
+                    <button className="btn btn-square btn-sm bg-black text-white border-none rounded-none hover:bg-red-600 font-bold">
+                      <FaTimes />
+                    </button>
+                  </form>
+
+                  <div className="absolute bottom-0 left-0 right-0 bg-black/85 p-3 sm:p-5 md:p-6 border-t border-white/10 text-white flex justify-between items-end gap-2">
+                    <div>
+                      <span className={`inline-block px-2.5 py-0.5 text-[10px] sm:text-xs font-extrabold uppercase tracking-wider mb-1 ${selectedApt.available ? "bg-emerald-600" : "bg-rose-600"}`}>
+                        {selectedApt.available ? "Available for Lease" : "Occupied"}
+                      </span>
+                      <h2 className="text-xl sm:text-2xl md:text-4xl font-black uppercase tracking-wide text-white">
+                        Apartment {selectedApt.apartmentNo}
+                      </h2>
+                      <p className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-gray-300 mt-0.5">
+                        {selectedApt.blockName || selectedApt.block || "Block A"} • Floor {selectedApt.floorNo || selectedApt.floor || 1}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl sm:text-3xl md:text-4xl font-black text-emerald-400">${selectedApt.rent}</div>
+                      <div className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-300">per month</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Multi-Image Thumbnail Gallery Strip */}
+                {galleryImages.length > 1 && (
+                  <div className="flex items-center gap-2 p-2 bg-base-100 border-b border-base-200 overflow-x-auto shrink-0">
+                    {galleryImages.map((imgUrl, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setCurrentImageIndex(i)}
+                        className={`w-14 sm:w-16 h-10 sm:h-12 shrink-0 border-2 transition-all ${
+                          currentImageIndex === i ? "border-primary scale-105 shadow-md" : "border-base-300 opacity-70 hover:opacity-100"
+                        }`}
+                      >
+                        <img src={imgUrl} alt={`Thumbnail ${i + 1}`} className="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Modal Content Body - Clean High Contrast & Bright Backgrounds */}
+                <div className="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 overflow-y-auto flex-1 max-h-[65vh] bg-base-100">
+                  {/* Specifications Grid Box */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 p-3 sm:p-4 bg-base-100 border border-base-300 shadow-xs text-center">
+                    <div>
+                      <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-base-content/70">Square Feet</div>
+                      <div className="text-sm sm:text-base font-extrabold text-base-content mt-1">{selectedApt.squareFeet || 1200} sqft</div>
+                    </div>
+                    <div>
+                      <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-base-content/70">Washrooms</div>
+                      <div className="text-sm sm:text-base font-extrabold text-base-content mt-1">{selectedApt.washroomCount || 2} Bathrooms</div>
+                    </div>
+                    <div>
+                      <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-base-content/70">Kitchen</div>
+                      <div className="text-sm sm:text-base font-extrabold text-base-content mt-1">{selectedApt.kitchenCount || 1} Kitchen</div>
+                    </div>
+                    <div>
+                      <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-base-content/70">Min Term</div>
+                      <div className="text-sm sm:text-base font-extrabold text-base-content mt-1">12 Months</div>
+                    </div>
+                  </div>
+
+                  {/* Video Tour Section */}
+                  {selectedApt.video && (
+                    <div className="p-3 sm:p-4 bg-base-100 border border-base-300 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <h4 className="font-extrabold uppercase tracking-wider text-xs sm:text-sm text-primary">Video Tour Link</h4>
+                        <p className="text-[11px] sm:text-xs text-base-content/80 font-medium">Watch the video walk-through before proceeding.</p>
+                      </div>
+                      <a
+                        href={selectedApt.video}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn btn-primary rounded-none btn-sm font-bold uppercase tracking-wider gap-2 text-white shrink-0"
+                      >
+                        <FaVideo /> Watch Tour
+                      </a>
+                    </div>
+                  )}
+
+                  {/* Description */}
+                  <div className="border-l-4 border-primary bg-base-100 border border-base-300 p-3 sm:p-4 shadow-xs">
+                    <h4 className="font-extrabold text-xs sm:text-base uppercase tracking-wider text-base-content mb-1 flex items-center gap-2">
+                      <FaInfoCircle className="text-primary" /> Apartment Description
+                    </h4>
+                    <p className="text-xs sm:text-sm text-base-content/90 leading-relaxed font-semibold">
+                      {selectedApt.details || selectedApt.description || "This premium residence features luxury finishes, optimal architectural layout, high-speed elevator access, 24/7 building security, and dedicated maintenance support."}
+                    </p>
+                  </div>
+
+                  {/* Pre-Booking Direct Chat Box (Only for non-admin users) */}
+                  {role !== "admin" && (
+                    <div className="p-3 sm:p-4 bg-base-100 border border-base-300 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <h5 className="font-extrabold uppercase text-xs tracking-wider text-base-content">Need pre-booking clarifications?</h5>
+                        <p className="text-[11px] sm:text-xs text-base-content/80 font-medium">Chat directly with the Admin or Owner to discuss terms.</p>
+                      </div>
+                      <button
+                        onClick={handleChatWithOwner}
+                        className="btn btn-outline btn-primary rounded-none btn-sm font-bold uppercase tracking-wider gap-2 shrink-0"
+                      >
+                        <FaComments /> Direct Chat
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Agreement Terms Checklist Box - High Contrast Pure Background */}
+                  <div className="p-4 sm:p-5 bg-base-100 border border-base-300 shadow-xs space-y-3 sm:space-y-4">
+                    <h4 className="font-black uppercase text-xs sm:text-sm tracking-wider text-base-content flex items-center gap-2">
+                      <FaShieldAlt className="text-primary text-base" /> Agreement Fulfillment Checklist
+                    </h4>
+                    <p className="text-[11px] sm:text-xs text-base-content/80 font-medium">
+                      Verify applicant information and accept lease conditions to submit your application.
+                    </p>
+
+                    <div className="space-y-2.5 text-xs font-bold bg-base-100 p-3 sm:p-4 border border-base-300 shadow-xs">
+                      <div className="flex justify-between items-center py-1 border-b border-base-200">
+                        <span className="uppercase text-base-content/70 font-bold text-[10px] sm:text-xs">Applicant Name:</span>
+                        <span className="text-base-content font-extrabold text-xs sm:text-sm">{user?.displayName || user?.email?.split("@")[0] || "Guest"}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-1 border-b border-base-200">
+                        <span className="uppercase text-base-content/70 font-bold text-[10px] sm:text-xs">Applicant Email:</span>
+                        <span className="text-base-content font-extrabold font-mono text-[10px] sm:text-xs truncate max-w-[180px] sm:max-w-none">{user?.email || "Not Signed In"}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-1">
+                        <span className="uppercase text-base-content/70 font-bold text-[10px] sm:text-xs">Monthly Rent:</span>
+                        <span className="font-black text-emerald-600 dark:text-emerald-400 text-sm sm:text-base">${selectedApt.rent} / month</span>
+                      </div>
+                    </div>
+
+                    {role !== "admin" && (
+                      <label className="flex items-start gap-3 cursor-pointer pt-2">
+                        <input
+                          type="checkbox"
+                          checked={termsAccepted}
+                          onChange={(e) => setTermsAccepted(e.target.checked)}
+                          className="checkbox checkbox-primary rounded-none checkbox-sm mt-0.5 shrink-0"
+                        />
+                        <span className="text-[11px] sm:text-xs text-base-content font-extrabold leading-snug">
+                          I confirm that I have reviewed the apartment details and agree to fulfill this rental agreement application for Admin review.
+                        </span>
+                      </label>
+                    )}
+                  </div>
+                </div>
+
+                {/* Modal Footer Actions - Centered & Responsive Buttons */}
+                <div className="p-3 sm:p-4 bg-base-100 border-t border-base-300 flex flex-col sm:flex-row justify-between items-center gap-2.5 sm:gap-3 shrink-0">
+                  <form method="dialog" className="w-full sm:w-auto">
+                    <button className="btn btn-ghost rounded-none font-black uppercase text-[11px] sm:text-xs tracking-wider w-full sm:w-auto text-base-content">
+                      Cancel
+                    </button>
+                  </form>
+
+                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    {role !== "admin" && (
+                      <>
+                        <button
+                          onClick={handleChatWithOwner}
+                          className="btn btn-outline btn-primary rounded-none font-black uppercase text-[11px] sm:text-xs tracking-wider w-full sm:w-auto gap-2"
+                        >
+                          <FaComments /> <span className="whitespace-nowrap">Ask Question</span>
+                        </button>
+                        <button
+                          onClick={() => handleFulfillAgreement(selectedApt)}
+                          disabled={submitting || !selectedApt.available}
+                          className="btn btn-primary rounded-none font-black uppercase text-[11px] sm:text-xs tracking-wider w-full sm:w-auto gap-2 text-white"
+                        >
+                          <FaCheckCircle />
+                          <span className="whitespace-nowrap sm:hidden">Fulfill Agreement</span>
+                          <span className="hidden sm:inline whitespace-nowrap">Fulfill & Submit Agreement</span>
+                        </button>
+                      </>
+                    )}
+
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      </dialog>
     </div>
   );
 };
 
+
+
+
 export default Apartments;
+
+

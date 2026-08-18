@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import Swal from "sweetalert2";
+import showToast from "../../../lib/toast";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import useAuth from "../../../hooks/useAuth";
 import GoogleSignButton from "../GoogleSignButton/GoogleSignButton";
@@ -36,23 +36,11 @@ const Login = () => {
         setUser(userObj);
       }
 
-      Swal.fire({
-        icon: "success",
-        title: "Welcome back!",
-        toast: true,
-        position: "center",
-        showConfirmButton: false,
-        timer: 1500,
-      }).then(() => {
-        navigate(from, { replace: true });
-      });
+      showToast.success("Welcome back!");
+      navigate(from, { replace: true });
     } catch (error) {
       console.error(error);
-      Swal.fire({
-        icon: "error",
-        title: "Login Failed",
-        text: error.response?.data?.message || error.message || "Invalid email or password",
-      });
+      showToast.error(error.response?.data?.message || error.message || "Invalid email or password");
     }
   };
 

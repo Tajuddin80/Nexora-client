@@ -1,6 +1,11 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { gsap } from "gsap";
 
+import building3Img from "../../../assets/building-3.jpg";
+import building4Img from "../../../assets/building-4.jpg";
+import building5Img from "../../../assets/building-5.jpg";
+import building6Img from "../../../assets/building-6.jpg";
+
 const DEFAULT_PARTICLE_COUNT = 12;
 const DEFAULT_SPOTLIGHT_RADIUS = 300;
 const MOBILE_BREAKPOINT = 768;
@@ -15,7 +20,7 @@ const cardData = [
     description:
       "Round‑the‑clock surveillance ensures complete safety and peace of mind.",
     label: "Security",
-    image: "https://i.ibb.co/whvstfQ6/lr36.jpg",
+    image: building6Img,
   },
   {
     color: "#060010",
@@ -23,7 +28,7 @@ const cardData = [
     description:
       "High‑grade insulation for a quieter, more comfortable living experience.",
     label: "Privacy",
-    image: "https://i.ibb.co/vvgMQrcV/lr33.jpg",
+    image: building5Img,
   },
   {
     color: "#060010",
@@ -31,7 +36,7 @@ const cardData = [
     description:
       "Premium finishing with elegant designs that redefine luxury living.",
     label: "Lifestyle",
-    image: "https://i.ibb.co/hJS85cfG/lr29.jpg",
+    image: building3Img,
   },
   {
     color: "#060010",
@@ -39,9 +44,10 @@ const cardData = [
     description:
       "Keyless entry and biometric access for secure, hassle‑free movement.",
     label: "Technology",
-    image: "https://i.ibb.co/yb2x2SR/lr34.jpg",
+    image: building4Img,
   },
 ];
+
 
 // Particle creation helper
 const createParticleElement = (x, y, color = DEFAULT_GLOW_COLOR) => {

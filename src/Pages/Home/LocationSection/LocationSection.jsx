@@ -1,46 +1,42 @@
-// src/components/Home/LocationSection.jsx
 import React from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-//  Custom marker icon
 const markerIcon = new L.Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
   iconSize: [32, 32],
 });
 
-//  Gulshan, Dhaka coordinates
 const position = [23.8103, 90.4125];
 
-//  Bounds for Bangladesh (rough bounding box)
 const bangladeshBounds = [
-  [20.0, 88.0], // Southwest corner
-  [27.5, 93.0], // Northeast corner
+  [20.0, 88.0],
+  [27.5, 93.0],
 ];
 
 const LocationSection = () => {
   return (
-    <section className="my-12 p-6 md:p-10 bg-secondary/10 rounded-2xl shadow-xl">
+    <section className="my-12 p-6 md:p-10 bg-base-100 text-base-content border border-base-content/15 shadow-xs">
       {/* Heading */}
-      <div className="flex items-center gap-3 mb-6">
-        <FaMapMarkerAlt className="text-4xl text-secondary" />
-        <h2 className="text-3xl md:text-4xl font-bold text-secondary">
+      <div className="flex items-center gap-3 mb-6 pb-4 border-b border-base-content/10">
+        <FaMapMarkerAlt className="text-3xl text-base-content" />
+        <h2 className="text-2xl md:text-3xl font-black text-base-content uppercase tracking-wide">
           Location & Directions
         </h2>
       </div>
 
       {/* Description */}
-      <p className="text-base md:text-lg text-secondary mb-6">
+      <p className="text-sm md:text-base text-base-content/80 mb-6 leading-relaxed font-medium">
         We are located in the heart of{" "}
-        <span className="font-bold text-secondary">Dhaka, Bangladesh</span>,
+        <span className="font-bold text-base-content">Dhaka, Bangladesh</span>,
         with quick access to major highways, shopping malls, and public
-        transport. Use the map below to easily find us.
+        transport. Use the interactive map below to easily find us.
       </p>
 
       {/* Map */}
-      <div className="h-72 md:h-96 rounded-xl overflow-hidden border-4 border-primary shadow-inner relative z-[50]">
+      <div className="h-72 md:h-96 border-2 border-base-content overflow-hidden relative z-[50] shadow-xs">
         <MapContainer
           center={position}
           zoom={12}
@@ -49,21 +45,21 @@ const LocationSection = () => {
           maxBoundsViscosity={1.0}
           className="h-full w-full"
           scrollWheelZoom={false}
-          style={{ zIndex: 50 }} // inline style also works
+          style={{ zIndex: 50 }}
         >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <Marker position={position} icon={markerIcon}>
             <Popup>
               <strong>
-                <span className="text-primary">
-                  <strong>NEXORA</strong>
+                <span className="text-black font-black uppercase">
+                  NEXORA
                 </span>{" "}
                 Apartment Building
               </strong>{" "}
               <br />
               Easy to reach! <br />
               Call:{" "}
-              <span className="text-primary font-semibold">
+              <span className="text-black font-bold">
                 +8801845072525
               </span>{" "}
               <br />

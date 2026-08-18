@@ -25,7 +25,7 @@ const AdminDashboard = () => {
     <div className="min-h-[80vh] px-4 py-10 text-center">
       <h1 className="text-3xl md:text-4xl font-bold mb-2 text-[color:var(--color-base-content)]">
         Welcome back,{" "}
-        <span className="text-primary">{user?.displayName || "Admin"}</span>! 🎉
+        <span className="text-primary">{user?.displayName || "Admin"}</span>
       </h1>
       <p className="text-base opacity-70 max-w-2xl mx-auto mb-10 text-[color:var(--color-base-content)]">
         You’re managing the building system like a pro. Use the menu to handle

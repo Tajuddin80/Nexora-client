@@ -45,7 +45,11 @@ const AdminProfile = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div className="flex items-center gap-4">
           <img
-            src={user?.photoURL || "https://via.placeholder.com/100"}
+            src={user?.photoURL || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+            }}
             alt="Admin"
             className="w-24 h-24 rounded-full border-4 border-primary shadow-md object-cover"
           />

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import Swal from "sweetalert2";
+import showToast from "../../../lib/toast";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { FaEdit, FaTrash, FaCalendarAlt, FaPlus } from "react-icons/fa";
 import DatePicker from "react-datepicker";
@@ -48,20 +48,11 @@ const ManageCoupons = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["coupons"]);
-      Swal.fire({
-        icon: "success",
-        title: editCouponId ? "Coupon updated!" : "Coupon added!",
-        timer: 1500,
-        showConfirmButton: false,
-      });
+      showToast.success(editCouponId ? "Coupon updated successfully!" : "Coupon created successfully!");
       resetForm();
     },
     onError: (err) => {
-      Swal.fire({
-        icon: "error",
-        title: "Failed to save coupon",
-        text: err?.response?.data?.message || "Something went wrong",
-      });
+      showToast.error(err?.response?.data?.message || "Failed to save coupon.");
     },
   });
 
@@ -73,19 +64,10 @@ const ManageCoupons = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["coupons"]);
-      Swal.fire({
-        icon: "success",
-        title: "Coupon deleted!",
-        timer: 1500,
-        showConfirmButton: false,
-      });
+      showToast.success("Coupon deleted successfully!");
     },
     onError: (err) => {
-      Swal.fire({
-        icon: "error",
-        title: "Failed to delete coupon",
-        text: err?.response?.data?.message || "Something went wrong",
-      });
+      showToast.error(err?.response?.data?.message || "Failed to delete coupon.");
     },
   });
 
@@ -105,12 +87,7 @@ const ManageCoupons = () => {
     e.preventDefault();
     const { code, discount, description, expiryDate, available } = formData;
     if (!code || !discount || !description || !expiryDate) {
-      Swal.fire({
-        icon: "warning",
-        title: "Please fill out all fields, including expiry date",
-        timer: 1800,
-        showConfirmButton: false,
-      });
+      showToast.warning("Please fill out all fields, including expiry date.");
       return;
     }
     saveCouponMutation.mutate({
@@ -136,19 +113,9 @@ const ManageCoupons = () => {
   };
 
   const handleDelete = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this deletion!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        deleteCouponMutation.mutate(id);
-      }
-    });
+    if (window.confirm("Are you sure you want to delete this coupon?")) {
+      deleteCouponMutation.mutate(id);
+    }
   };
 
   if (isLoading) return <Loader></Loader>;
@@ -230,9 +197,9 @@ const ManageCoupons = () => {
       )}
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative">
-            <h3 className="text-2xl font-bold mb-5 text-primary">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-xs">
+          <div className="bg-base-100 rounded-none border border-base-300 shadow-2xl w-11/12 max-w-lg p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl sm:text-2xl font-black uppercase tracking-wider mb-5 text-base-content border-b border-base-200 pb-3">
               {editCouponId ? "Edit Coupon" : "Add New Coupon"}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-5">

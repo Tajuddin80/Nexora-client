@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import Swal from "sweetalert2";
+import showToast from "../../../lib/toast";
 import { FaEdit, FaTrash, FaBullhorn } from "react-icons/fa";
 import useUserRole from "../../../hooks/useUserRole";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
@@ -41,25 +41,13 @@ const Announcements = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["announcements"]);
-      Swal.fire({
-        icon: "success",
-        title: editingId ? "Announcement updated!" : "Announcement added!",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+      showToast.success(editingId ? "Announcement updated!" : "Announcement posted!");
       setShowModal(false);
       setFormData({ title: "", description: "" });
       setEditingId(null);
     },
-    onError: () => {
-      Swal.fire({
-        icon: "error",
-        title: editingId
-          ? "Could not update announcement"
-          : "Could not add announcement",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+    onError: (err) => {
+      showToast.error(err?.response?.data?.message || "Failed to save announcement.");
     },
   });
 
@@ -70,32 +58,17 @@ const Announcements = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["announcements"]);
-      Swal.fire({
-        icon: "success",
-        title: "Announcement removed!",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+      showToast.success("Announcement deleted!");
     },
-    onError: () => {
-      Swal.fire({
-        icon: "error",
-        title: "Could not delete announcement",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+    onError: (err) => {
+      showToast.error(err?.response?.data?.message || "Failed to delete announcement.");
     },
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.title || !formData.description) {
-      Swal.fire({
-        icon: "error",
-        title: "All fields are required!",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+      showToast.warning("All fields are required!");
       return;
     }
 
@@ -108,18 +81,9 @@ const Announcements = () => {
   };
 
   const handleDelete = (id) => {
-    Swal.fire({
-      title: "Delete this announcement?",
-      text: "This action cannot be undone.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        deleteMutation.mutate(id);
-      }
-    });
+    if (window.confirm("Are you sure you want to delete this announcement?")) {
+      deleteMutation.mutate(id);
+    }
   };
 
   const handleEdit = (announcement) => {
@@ -155,7 +119,7 @@ const Announcements = () => {
         <Loader />
       ) : announcements.length === 0 ? (
         <EmptyState
-          icon="📢"
+          icon={<FaBullhorn className="text-3xl text-primary" />}
           title="No Announcements Yet"
           message="Check back later for community updates, building notices, and property news."
           actionText={role === "admin" ? "Create First Announcement" : null}
@@ -207,10 +171,10 @@ const Announcements = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
-          <div className="bg-base-100 text-base-content rounded-xl p-6 w-full max-w-5xl shadow-xl">
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <FaBullhorn />
+        <div className="fixed inset-0 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-xs z-50">
+          <div className="bg-base-100 text-base-content rounded-none border border-base-300 p-5 sm:p-8 w-11/12 max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl font-black uppercase tracking-wider mb-4 flex items-center gap-2 border-b border-base-200 pb-3">
+              <FaBullhorn className="text-primary" />
               {editingId ? "Edit Announcement" : "New Announcement"}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">

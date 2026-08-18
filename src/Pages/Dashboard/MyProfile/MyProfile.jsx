@@ -61,8 +61,12 @@ const MyProfile = () => {
       {/*  User Info */}
       <div className="flex items-center gap-6 mb-8">
         <img
-          src={user.photoURL || "https://via.placeholder.com/100"}
-          alt={user.displayName || "User"}
+          src={user?.photoURL || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+          }}
+          alt={user?.displayName || "User"}
           className="w-24 h-24 rounded-full object-cover border-2 border-primary"
         />
         <div>

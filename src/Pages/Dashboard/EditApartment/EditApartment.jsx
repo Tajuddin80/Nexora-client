@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import showToast from "../../../lib/toast";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import Loader from "../../../Shared/component/Loader/Loader";
 import {
   FaBuilding,
   FaDollarSign,
@@ -17,9 +18,11 @@ import {
   FaPlus,
 } from "react-icons/fa";
 
-const AddApartment = () => {
+const EditApartment = () => {
+  const { id } = useParams();
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
+  const [fetching, setFetching] = useState(true);
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingVideo, setUploadingVideo] = useState(false);
@@ -40,6 +43,42 @@ const AddApartment = () => {
 
   const [imagesList, setImagesList] = useState([]);
   const [customImageUrl, setCustomImageUrl] = useState("");
+
+  useEffect(() => {
+    const fetchApartment = async () => {
+      try {
+        const res = await axiosSecure.get(`/apartments/${id}`);
+        if (res.data?.success && res.data?.data) {
+          const apt = res.data.data;
+          setFormData({
+            apartmentNo: apt.apartmentNo || "",
+            floorNo: String(apt.floorNo || 1),
+            blockName: apt.blockName || "Block A",
+            rent: String(apt.rent || ""),
+            squareFeet: String(apt.squareFeet || 1200),
+            bedroomCount: String(apt.bedroomCount || 2),
+            washroomCount: String(apt.washroomCount || 2),
+            kitchenCount: String(apt.kitchenCount || 1),
+            available: apt.available ?? true,
+            video: apt.video || "",
+            details: apt.details || "",
+          });
+
+          const initialImgs = (apt.images && apt.images.length > 0)
+            ? apt.images
+            : [apt.image].filter(Boolean);
+          setImagesList(initialImgs);
+        }
+      } catch (err) {
+        console.error("Fetch apartment details error:", err);
+        showToast.error("Failed to load apartment details.");
+      } finally {
+        setFetching(false);
+      }
+    };
+
+    fetchApartment();
+  }, [id, axiosSecure]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -163,19 +202,23 @@ const AddApartment = () => {
         details: formData.details.trim(),
       };
 
-      const res = await axiosSecure.post("/apartments", payload);
+      const res = await axiosSecure.patch(`/apartments/${id}`, payload);
 
       if (res.data?.success) {
-        showToast.success(`Apartment ${payload.apartmentNo} created successfully!`);
+        showToast.success(`Apartment ${payload.apartmentNo} updated successfully!`);
         navigate("/apartments");
       }
     } catch (err) {
-      console.error("Create apartment error:", err);
-      showToast.error(err?.response?.data?.message || "Failed to create apartment.");
+      console.error("Update apartment error:", err);
+      showToast.error(err?.response?.data?.message || "Failed to update apartment.");
     } finally {
       setLoading(false);
     }
   };
+
+  if (fetching) {
+    return <Loader />;
+  }
 
   return (
     <div className="w-full px-4 md:px-10 py-6">
@@ -184,10 +227,10 @@ const AddApartment = () => {
           <FaBuilding className="text-4xl text-primary" />
           <div>
             <h1 className="text-2xl md:text-4xl font-extrabold uppercase tracking-wider text-base-content">
-              Add New Apartment
+              Edit Apartment Specifications
             </h1>
             <p className="text-xs md:text-sm text-base-content/70 font-medium">
-              Create a new residence listing with complete specifications and up to 5 images for gallery viewing.
+              Update complete specifications and up to 5 images for Apartment {formData.apartmentNo}.
             </p>
           </div>
         </div>
@@ -335,7 +378,7 @@ const AddApartment = () => {
           <div className="p-4 bg-base-100 border border-base-300 space-y-4">
             <div className="flex justify-between items-center">
               <label className="text-xs font-bold uppercase tracking-wider text-base-content flex items-center gap-2">
-                <FaImage className="text-primary" /> Upload Apartment Images (Up to 5 Photos) <span className="text-error">*</span>
+                <FaImage className="text-primary" /> Apartment Gallery Images (Up to 5 Photos) <span className="text-error">*</span>
               </label>
               <span className="text-xs font-bold text-primary font-mono">{imagesList.length} / 5 Uploaded</span>
             </div>
@@ -453,7 +496,7 @@ const AddApartment = () => {
               className="checkbox checkbox-primary rounded-none checkbox-sm"
             />
             <label htmlFor="available" className="text-xs font-bold uppercase tracking-wider text-base-content cursor-pointer">
-              Mark Apartment as Available for Lease Immediately
+              Mark Apartment as Available for Lease
             </label>
           </div>
 
@@ -470,7 +513,7 @@ const AddApartment = () => {
               disabled={loading || uploadingImage || uploadingVideo}
               className="btn btn-primary rounded-none font-bold uppercase text-xs tracking-wider border border-primary min-w-[160px]"
             >
-              {loading ? "Creating..." : "Create Apartment"}
+              {loading ? "Updating..." : "Update Apartment"}
             </button>
           </div>
         </form>
@@ -479,4 +522,4 @@ const AddApartment = () => {
   );
 };
 
-export default AddApartment;
+export default EditApartment;

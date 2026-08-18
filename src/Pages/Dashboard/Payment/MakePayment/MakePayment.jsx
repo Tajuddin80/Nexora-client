@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import Swal from "sweetalert2";
+import showToast from "../../../../lib/toast";
 import { useNavigate } from "react-router";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
@@ -58,7 +58,7 @@ const MakePayment = () => {
   // Apply coupon code and set discount percent
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
-      Swal.fire({ icon: "warning", title: "Please enter a coupon code" });
+      showToast.warning("Please enter a coupon code.");
       return;
     }
     try {
@@ -67,34 +67,20 @@ const MakePayment = () => {
       });
       if (res.data.valid) {
         setDiscountPercent(res.data.discountPercent);
-        Swal.fire({
-          icon: "success",
-          title: "Coupon Applied!",
-          text: `-${res.data.discountPercent}% discount applied.`,
-          timer: 2000,
-          showConfirmButton: false,
-        });
+        showToast.success(`Coupon Applied! -${res.data.discountPercent}% discount applied.`);
       } else {
         setDiscountPercent(0);
-        Swal.fire({
-          icon: "error",
-          title: "Coupon Not Valid",
-          text: res.data.message || "Invalid coupon code",
-        });
+        showToast.error(res.data.message || "Invalid coupon code.");
       }
     } catch (err) {
       setDiscountPercent(0);
-      Swal.fire({
-        icon: "error",
-        title: "Coupon Validation Failed",
-        text: err?.response?.data?.message || "Please try again later",
-      });
+      showToast.error(err?.response?.data?.message || "Coupon validation failed.");
     }
   };
 
   const onSubmit = async (data) => {
     if (!agreement) {
-      Swal.fire({ icon: "error", title: "No active agreement found." });
+      showToast.error("No active agreement found.");
       return;
     }
     if (!stripe || !elements) return;
@@ -104,86 +90,78 @@ const MakePayment = () => {
       agreement.rent - (agreement.rent * discountPercent) / 100
     );
 
-    Swal.fire({
-      title: "Confirm Payment",
-      html: `<p>Month: <b>${data.month}</b></p><p>Amount: <b>${finalAmount} Tk</b></p>`,
-      icon: "info",
-      showCancelButton: true,
-      confirmButtonText: "Yes, Pay Now",
-    }).then(async (result) => {
-      if (!result.isConfirmed) return;
+    if (!window.confirm(`Confirm payment of $${finalAmount} for month ${data.month}?`)) {
+      return;
+    }
 
-      setIsProcessing(true);
-      setMessage(null);
-      setIsError(false);
+    setIsProcessing(true);
+    setMessage(null);
+    setIsError(false);
 
-      const card = elements.getElement(CardElement);
-      if (!card) {
+    const card = elements.getElement(CardElement);
+    if (!card) {
+      setIsProcessing(false);
+      return;
+    }
+
+    try {
+      // Create payment method
+      const { error, paymentMethod } = await stripe.createPaymentMethod({
+        type: "card",
+        card,
+      });
+      if (error) {
+        setIsError(true);
+        setMessage(error.message);
+        showToast.error(error.message);
         setIsProcessing(false);
         return;
       }
 
-      try {
-        // Create payment method
-        const { error, paymentMethod } = await stripe.createPaymentMethod({
-          type: "card",
-          card,
-        });
-        if (error) {
-          setIsError(true);
-          setMessage(error.message);
-          setIsProcessing(false);
-          return;
+      // Create payment intent on backend with coupon and discount info
+      const { data: intentRes } = await axiosSecure.post(
+        "/create-payment-intent",
+        {
+          userEmail: user.email,
+          apartmentNo: agreement.apartmentNo,
+          fullName: user.displayName || "",
+          couponCode: couponCode.trim() || null,
+          discountPercent,
         }
+      );
 
-        // Create payment intent on backend with coupon and discount info
-        const { data: intentRes } = await axiosSecure.post(
-          "/create-payment-intent",
-          {
-            userEmail: user.email,
-            apartmentNo: agreement.apartmentNo,
-            fullName: user.displayName || "",
-            couponCode: couponCode.trim() || null,
-            discountPercent,
-          }
-        );
+      const clientSecret = intentRes.clientSecret;
 
-        const clientSecret = intentRes.clientSecret;
+      // Confirm card payment
+      const confirmRes = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: paymentMethod.id,
+      });
 
-        // Confirm card payment
-        const confirmRes = await stripe.confirmCardPayment(clientSecret, {
-          payment_method: paymentMethod.id,
-        });
+      if (confirmRes.error) {
+        setIsError(true);
+        setMessage(confirmRes.error.message);
+        showToast.error(confirmRes.error.message);
+        setIsProcessing(false);
+        return;
+      }
 
-        if (confirmRes.error) {
-          setIsError(true);
-          setMessage(confirmRes.error.message);
-          setIsProcessing(false);
-          return;
-        }
-
-        if (confirmRes.paymentIntent.status === "succeeded") {
-          // Mark rent as paid on backend
-          const rentRecord = unpaidRents.find((r) => r.month === data.month);
-          if (rentRecord) {
-            await axiosSecure.patch(`/rent-payments/${rentRecord._id}`, {
-              status: "paid",
-              transactionId: confirmRes.paymentIntent.id,
-              apartmentId: agreement.apartmentNo,
-            });
-          }
-
-          setIsError(false);
-          setMessage("Payment succeeded!");
-          Swal.fire({
-            title: "Rent Paid Successfully",
-            html: `<p class="text-lg">Transaction ID:<br/><strong>${confirmRes.paymentIntent.id}</strong></p>`,
-            icon: "success",
-            showConfirmButton: true,
+      if (confirmRes.paymentIntent.status === "succeeded") {
+        // Mark rent as paid on backend
+        const rentRecord = unpaidRents.find((r) => r.month === data.month);
+        if (rentRecord) {
+          await axiosSecure.patch(`/rent-payments/${rentRecord._id}`, {
+            status: "paid",
+            transactionId: confirmRes.paymentIntent.id,
+            apartmentId: agreement.apartmentNo,
           });
-          navigate("/dashboard/payment-history");
         }
-      } catch (err) {
+
+        setIsError(false);
+        setMessage("Payment succeeded!");
+        showToast.success(`Rent Paid! Transaction ID: ${confirmRes.paymentIntent.id}`);
+        navigate("/dashboard/payment-history");
+      }
+    } catch (err) {
         console.error("Payment error:", err);
         const errMsg =
           err?.response?.data?.message ||
@@ -194,8 +172,7 @@ const MakePayment = () => {
       } finally {
         setIsProcessing(false);
       }
-    });
-  };
+    };
 
   if (agreementLoading) return <Loader />;
 

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import Swal from "sweetalert2";
+import showToast from "../../../lib/toast";
 import { useForm } from "react-hook-form";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
@@ -28,14 +28,7 @@ const Register = () => {
       !imageUploadRef.current ||
       !imageUploadRef.current.isValidImageUploaded()
     ) {
-      Swal.fire({
-        icon: "info",
-        title: "Please upload a profile image",
-        showConfirmButton: false,
-        timer: 1500,
-        toast: true,
-        position: "center",
-      });
+      showToast.warning("Please select a profile image to complete registration.");
       return;
     }
 
@@ -44,7 +37,7 @@ const Register = () => {
     try {
       const imageUrl = await imageUpload(imageFile);
       if (!imageUrl) {
-        Swal.fire("Image upload failed", "Please try again", "error");
+        showToast.error("Image upload failed. Please try again.");
         return;
       }
 
@@ -59,18 +52,10 @@ const Register = () => {
       };
       const userRes = await axiosPublic.post("/users", userInfo);
 
-      Swal.fire({
-        icon: "success",
-        title: userRes.data.inserted ? "Welcome to NEXORA!" : "Welcome back!",
-        showConfirmButton: false,
-        timer: 1500,
-        toast: true,
-        position: "center",
-      });
-
+      showToast.success(userRes.data.inserted ? "Welcome to NEXORA!" : "Welcome back!");
       navigate(from, { replace: true });
     } catch (error) {
-      Swal.fire("Error", error.message || "Registration failed", "error");
+      showToast.error(error.message || "Registration failed.");
     }
   };
 

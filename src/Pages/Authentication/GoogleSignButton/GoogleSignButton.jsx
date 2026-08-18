@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router";
-import Swal from "sweetalert2";
+import showToast from "../../../lib/toast";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import useAuth from "../../../hooks/useAuth";
 
@@ -33,29 +33,16 @@ const GoogleSignButton = () => {
             title = "Welcome to NEXORA!";
           }
 
-          Swal.fire({
-            icon: "success",
-            title,
-            showConfirmButton: false,
-            timer: 1500,
-            toast: true,
-            position: "center",
-          });
+          showToast.success(userRes.data?.inserted ? "Welcome to NEXORA!" : "Welcome back!");
         } catch (dbErr) {
           console.error("Error posting to /users endpoint:", dbErr);
         }
       }
 
-      setTimeout(() => {
-        navigate(from || "/", { replace: true });
-      }, 1600);
+      navigate(from || "/", { replace: true });
     } catch (error) {
       console.error("Google sign-in error:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Google Sign-in Failed",
-        text: error?.message || "Could not connect to Google authentication.",
-      });
+      showToast.error(error?.message || "Could not connect to Google authentication.");
     }
   };
 
