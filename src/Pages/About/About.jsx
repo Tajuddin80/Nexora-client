@@ -16,6 +16,8 @@ import building4Img from "../../assets/building-4.jpg";
 import building5Img from "../../assets/building-5.jpg";
 import building6Img from "../../assets/building-6.jpg";
 
+import SustainabilityStandards from "./SustainabilityStandards";
+
 const stats = [
   { value: "50+", label: "Luxury Units Managed" },
   { value: "99.8%", label: "Tenant Satisfaction" },
@@ -258,6 +260,9 @@ const About = () => {
             </div>
           </div>
         </div>
+
+        {/* 5. Sustainability & Green Architecture Section */}
+        <SustainabilityStandards />
 
         {/* 5. Architectural Showcase Gallery Grid */}
         <div className="p-8 md:p-12 bg-base-100 border border-base-content/25 shadow-xs space-y-8 w-full">

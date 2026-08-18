@@ -29,6 +29,7 @@ import showToast from "../../lib/toast";
 import LeasingBenefits from "./components/LeasingBenefits";
 import FloorPlanFeatures from "./components/FloorPlanFeatures";
 import LeasingFAQCTA from "./components/LeasingFAQCTA";
+import LeasingProcessTimeline from "./components/LeasingProcessTimeline";
 
 import building3Img from "../../assets/building-3.jpg";
 import building4Img from "../../assets/building-4.jpg";
@@ -98,6 +99,23 @@ const Apartments = () => {
   const [selectedApt, setSelectedApt] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [termsAccepted, setTermsAccepted] = useState(false);
+
+  const openFullViewModal = (index = null) => {
+    if (index !== null) {
+      setCurrentImageIndex(index);
+    }
+    const modal = document.getElementById("full_view_modal");
+    if (modal) {
+      modal.showModal();
+    }
+  };
+
+  const closeFullViewModal = () => {
+    const modal = document.getElementById("full_view_modal");
+    if (modal) {
+      modal.close();
+    }
+  };
   const [submitting, setSubmitting] = useState(false);
 
   const fetchApartments = async ({ queryKey }) => {
@@ -475,6 +493,9 @@ const Apartments = () => {
       {/* Leasing Benefits Banner */}
       <LeasingBenefits />
 
+      {/* 4-Step Digital Leasing Timeline */}
+      <LeasingProcessTimeline />
+
       {/* Architectural Standard Features Section */}
       <FloorPlanFeatures />
 
@@ -485,8 +506,7 @@ const Apartments = () => {
       {/* Architectural Box Modal - Center Aligned & Fully Responsive */}
       <dialog id="apt_details_modal" className="modal modal-middle p-2 sm:p-4">
         <div
-          className="modal-box m-auto p-0 rounded-none bg-base-100 border border-base-300 shadow-2xl flex flex-col max-h-[92vh] w-[95vw] md:w-[82vw] lg:w-[80vw]"
-          style={{ width: "min(95vw, 82vw)", maxWidth: "95vw" }}
+          className="modal-box m-auto p-0 rounded-none bg-base-100 border border-base-content/30 shadow-2xl flex flex-col max-h-[95vh] w-[95vw] max-w-5xl md:max-w-6xl overflow-hidden"
         >
           {selectedApt && (() => {
             const galleryImages = (selectedApt.images && selectedApt.images.length > 0)
@@ -499,18 +519,20 @@ const Apartments = () => {
             return (
               <div className="flex flex-col h-full overflow-hidden">
                 {/* Modal Banner Viewport with Multi-Image Slider */}
-                <div className="relative h-48 sm:h-64 md:h-80 lg:h-96 bg-black shrink-0 border-b border-base-300">
+                <div className="relative h-44 sm:h-56 md:h-64 lg:h-72 bg-black shrink-0 border-b border-base-content/20">
                   <img
                     src={activeImg}
                     alt={`Apartment ${selectedApt.apartmentNo} photo ${currentImageIndex + 1}`}
-                    className="w-full h-full object-cover rounded-none transition-all duration-300"
+                    onClick={() => openFullViewModal()}
+                    className="w-full h-full object-cover rounded-none transition-all duration-300 cursor-pointer hover:scale-105"
+                    title="Click to open image in full screen view"
                   />
 
                   {galleryImages.length > 1 && (
                     <>
                       <button
                         onClick={() => setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : galleryImages.length - 1))}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-black/70 hover:bg-primary text-white border-none z-10"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-black/70 hover:bg-base-content text-base-100 border-none z-10"
                         title="Previous Image"
                       >
                         <FaChevronLeft />
@@ -518,7 +540,7 @@ const Apartments = () => {
 
                       <button
                         onClick={() => setCurrentImageIndex((prev) => (prev < galleryImages.length - 1 ? prev + 1 : 0))}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-black/70 hover:bg-primary text-white border-none z-10"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 btn btn-circle btn-sm bg-black/70 hover:bg-base-content text-base-100 border-none z-10"
                         title="Next Image"
                       >
                         <FaChevronRight />
@@ -557,14 +579,15 @@ const Apartments = () => {
 
                 {/* Multi-Image Thumbnail Gallery Strip */}
                 {galleryImages.length > 1 && (
-                  <div className="flex items-center gap-2 p-2 bg-base-100 border-b border-base-200 overflow-x-auto shrink-0">
+                  <div className="flex items-center gap-2 p-2 bg-base-100 border-b border-base-content/20 overflow-x-auto shrink-0">
                     {galleryImages.map((imgUrl, i) => (
                       <button
                         key={i}
-                        onClick={() => setCurrentImageIndex(i)}
+                        onClick={() => openFullViewModal(i)}
                         className={`w-14 sm:w-16 h-10 sm:h-12 shrink-0 border-2 transition-all ${
-                          currentImageIndex === i ? "border-primary scale-105 shadow-md" : "border-base-300 opacity-70 hover:opacity-100"
+                          currentImageIndex === i ? "border-base-content scale-105 shadow-xs" : "border-base-content/20 opacity-70 hover:opacity-100"
                         }`}
+                        title="Click to view photo in full screen"
                       >
                         <img src={imgUrl} alt={`Thumbnail ${i + 1}`} className="w-full h-full object-cover" />
                       </button>
@@ -573,9 +596,9 @@ const Apartments = () => {
                 )}
 
                 {/* Modal Content Body - Clean High Contrast & Bright Backgrounds */}
-                <div className="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 overflow-y-auto flex-1 max-h-[65vh] bg-base-100">
+                <div className="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 overflow-y-auto flex-1 bg-base-100">
                   {/* Specifications Grid Box */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 p-3 sm:p-4 bg-base-100 border border-base-300 shadow-xs text-center">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 p-3 sm:p-4 bg-base-100 border border-base-content/20 shadow-xs text-center">
                     <div>
                       <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-base-content/70">Square Feet</div>
                       <div className="text-sm sm:text-base font-extrabold text-base-content mt-1">{selectedApt.squareFeet || 1200} sqft</div>
@@ -596,16 +619,16 @@ const Apartments = () => {
 
                   {/* Video Tour Section */}
                   {selectedApt.video && (
-                    <div className="p-3 sm:p-4 bg-base-100 border border-base-300 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="p-3 sm:p-4 bg-base-100 border border-base-content/20 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div>
-                        <h4 className="font-extrabold uppercase tracking-wider text-xs sm:text-sm text-primary">Video Tour Link</h4>
+                        <h4 className="font-extrabold uppercase tracking-wider text-xs sm:text-sm text-base-content">Video Tour Link</h4>
                         <p className="text-[11px] sm:text-xs text-base-content/80 font-medium">Watch the video walk-through before proceeding.</p>
                       </div>
                       <a
                         href={selectedApt.video}
                         target="_blank"
                         rel="noreferrer"
-                        className="btn btn-primary rounded-none btn-sm font-bold uppercase tracking-wider gap-2 text-white shrink-0"
+                        className="btn bg-base-content text-base-100 hover:bg-base-content/80 rounded-none btn-sm font-bold uppercase tracking-wider gap-2 border-none shrink-0"
                       >
                         <FaVideo /> Watch Tour
                       </a>
@@ -613,9 +636,9 @@ const Apartments = () => {
                   )}
 
                   {/* Description */}
-                  <div className="border-l-4 border-primary bg-base-100 border border-base-300 p-3 sm:p-4 shadow-xs">
+                  <div className="border-l-4 border-base-content bg-base-100 border border-base-content/20 p-3 sm:p-4 shadow-xs">
                     <h4 className="font-extrabold text-xs sm:text-base uppercase tracking-wider text-base-content mb-1 flex items-center gap-2">
-                      <FaInfoCircle className="text-primary" /> Apartment Description
+                      <FaInfoCircle className="text-base-content" /> Apartment Description
                     </h4>
                     <p className="text-xs sm:text-sm text-base-content/90 leading-relaxed font-semibold">
                       {selectedApt.details || selectedApt.description || "This premium residence features luxury finishes, optimal architectural layout, high-speed elevator access, 24/7 building security, and dedicated maintenance support."}
@@ -624,14 +647,14 @@ const Apartments = () => {
 
                   {/* Pre-Booking Direct Chat Box (Only for non-admin users) */}
                   {role !== "admin" && (
-                    <div className="p-3 sm:p-4 bg-base-100 border border-base-300 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="p-3 sm:p-4 bg-base-100 border border-base-content/20 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div>
                         <h5 className="font-extrabold uppercase text-xs tracking-wider text-base-content">Need pre-booking clarifications?</h5>
                         <p className="text-[11px] sm:text-xs text-base-content/80 font-medium">Chat directly with the Admin or Owner to discuss terms.</p>
                       </div>
                       <button
                         onClick={handleChatWithOwner}
-                        className="btn btn-outline btn-primary rounded-none btn-sm font-bold uppercase tracking-wider gap-2 shrink-0"
+                        className="btn border border-base-content bg-transparent text-base-content hover:bg-base-content/10 rounded-none btn-sm font-bold uppercase tracking-wider gap-2 shrink-0"
                       >
                         <FaComments /> Direct Chat
                       </button>
@@ -639,26 +662,26 @@ const Apartments = () => {
                   )}
 
                   {/* Agreement Terms Checklist Box - High Contrast Pure Background */}
-                  <div className="p-4 sm:p-5 bg-base-100 border border-base-300 shadow-xs space-y-3 sm:space-y-4">
+                  <div className="p-4 sm:p-5 bg-base-100 border border-base-content/20 shadow-xs space-y-3 sm:space-y-4">
                     <h4 className="font-black uppercase text-xs sm:text-sm tracking-wider text-base-content flex items-center gap-2">
-                      <FaShieldAlt className="text-primary text-base" /> Agreement Fulfillment Checklist
+                      <FaShieldAlt className="text-base-content text-base" /> Agreement Fulfillment Checklist
                     </h4>
                     <p className="text-[11px] sm:text-xs text-base-content/80 font-medium">
                       Verify applicant information and accept lease conditions to submit your application.
                     </p>
 
-                    <div className="space-y-2.5 text-xs font-bold bg-base-100 p-3 sm:p-4 border border-base-300 shadow-xs">
-                      <div className="flex justify-between items-center py-1 border-b border-base-200">
+                    <div className="space-y-2.5 text-xs font-bold bg-base-100 p-3 sm:p-4 border border-base-content/20 shadow-xs">
+                      <div className="flex justify-between items-center py-1 border-b border-base-content/15">
                         <span className="uppercase text-base-content/70 font-bold text-[10px] sm:text-xs">Applicant Name:</span>
                         <span className="text-base-content font-extrabold text-xs sm:text-sm">{user?.displayName || user?.email?.split("@")[0] || "Guest"}</span>
                       </div>
-                      <div className="flex justify-between items-center py-1 border-b border-base-200">
+                      <div className="flex justify-between items-center py-1 border-b border-base-content/15">
                         <span className="uppercase text-base-content/70 font-bold text-[10px] sm:text-xs">Applicant Email:</span>
                         <span className="text-base-content font-extrabold font-mono text-[10px] sm:text-xs truncate max-w-[180px] sm:max-w-none">{user?.email || "Not Signed In"}</span>
                       </div>
                       <div className="flex justify-between items-center py-1">
                         <span className="uppercase text-base-content/70 font-bold text-[10px] sm:text-xs">Monthly Rent:</span>
-                        <span className="font-black text-emerald-600 dark:text-emerald-400 text-sm sm:text-base">${selectedApt.rent} / month</span>
+                        <span className="font-black text-base-content text-sm sm:text-base">${selectedApt.rent} / month</span>
                       </div>
                     </div>
 
@@ -668,7 +691,7 @@ const Apartments = () => {
                           type="checkbox"
                           checked={termsAccepted}
                           onChange={(e) => setTermsAccepted(e.target.checked)}
-                          className="checkbox checkbox-primary rounded-none checkbox-sm mt-0.5 shrink-0"
+                          className="checkbox rounded-none checkbox-sm mt-0.5 shrink-0 border-base-content"
                         />
                         <span className="text-[11px] sm:text-xs text-base-content font-extrabold leading-snug">
                           I confirm that I have reviewed the apartment details and agree to fulfill this rental agreement application for Admin review.
@@ -679,9 +702,9 @@ const Apartments = () => {
                 </div>
 
                 {/* Modal Footer Actions - Centered & Responsive Buttons */}
-                <div className="p-3 sm:p-4 bg-base-100 border-t border-base-300 flex flex-col sm:flex-row justify-between items-center gap-2.5 sm:gap-3 shrink-0">
+                <div className="p-3 sm:p-4 bg-base-100 border-t border-base-content/20 flex flex-col sm:flex-row justify-between items-center gap-2.5 sm:gap-3 shrink-0">
                   <form method="dialog" className="w-full sm:w-auto">
-                    <button className="btn btn-ghost rounded-none font-black uppercase text-[11px] sm:text-xs tracking-wider w-full sm:w-auto text-base-content">
+                    <button className="btn btn-ghost rounded-none font-black uppercase text-[11px] sm:text-xs tracking-wider w-full sm:w-auto text-base-content hover:bg-base-content/10">
                       Cancel
                     </button>
                   </form>
@@ -691,14 +714,14 @@ const Apartments = () => {
                       <>
                         <button
                           onClick={handleChatWithOwner}
-                          className="btn btn-outline btn-primary rounded-none font-black uppercase text-[11px] sm:text-xs tracking-wider w-full sm:w-auto gap-2"
+                          className="btn border border-base-content bg-transparent text-base-content hover:bg-base-content/10 rounded-none font-black uppercase text-[11px] sm:text-xs tracking-wider w-full sm:w-auto gap-2"
                         >
                           <FaComments /> <span className="whitespace-nowrap">Ask Question</span>
                         </button>
                         <button
                           onClick={() => handleFulfillAgreement(selectedApt)}
                           disabled={submitting || !selectedApt.available}
-                          className="btn btn-primary rounded-none font-black uppercase text-[11px] sm:text-xs tracking-wider w-full sm:w-auto gap-2 text-white"
+                          className="btn bg-base-content text-base-100 hover:bg-base-content/80 rounded-none font-black uppercase text-[11px] sm:text-xs tracking-wider w-full sm:w-auto gap-2 border-none px-6"
                         >
                           <FaCheckCircle />
                           <span className="whitespace-nowrap sm:hidden">Fulfill Agreement</span>
@@ -706,8 +729,85 @@ const Apartments = () => {
                         </button>
                       </>
                     )}
-
                   </div>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      </dialog>
+
+      {/* Full Screen High-Res Image Lightbox Native Dialog - Stacked Top Layer */}
+      <dialog id="full_view_modal" className="modal modal-middle p-0 z-[999999]">
+        <div className="modal-box w-screen h-screen max-w-none max-h-none rounded-none bg-black/95 text-white p-4 sm:p-6 flex flex-col justify-between overflow-hidden">
+          {selectedApt && (() => {
+            const galleryImages = (selectedApt.images && selectedApt.images.length > 0)
+              ? selectedApt.images
+              : (selectedApt.image ? [selectedApt.image] : [building6Img]);
+            const activeImg = galleryImages[currentImageIndex] || selectedApt.image || building6Img;
+
+            return (
+              <div className="flex flex-col h-full justify-between items-center w-full">
+                {/* Header */}
+                <div className="w-full flex items-center justify-between border-b border-white/20 pb-3 shrink-0">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 block">
+                      FULL RESOLUTION IMAGE VIEW
+                    </span>
+                    <h3 className="text-base sm:text-xl font-black uppercase tracking-wider text-white">
+                      Apartment {selectedApt.apartmentNo} • {selectedApt.blockName || "Block A"}
+                    </h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={closeFullViewModal}
+                    className="btn btn-square btn-sm bg-white text-black hover:bg-red-600 hover:text-white rounded-none border-none font-bold"
+                    title="Close Full View"
+                  >
+                    <FaTimes className="text-base" />
+                  </button>
+                </div>
+
+                {/* Center Display Image */}
+                <div className="relative flex-1 w-full flex items-center justify-center p-2 sm:p-4 my-2 overflow-hidden">
+                  <img
+                    src={activeImg}
+                    alt={`Apartment ${selectedApt.apartmentNo} full view`}
+                    className="max-h-[82vh] max-w-[92vw] object-contain shadow-2xl border border-white/20"
+                  />
+
+                  {galleryImages.length > 1 && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : galleryImages.length - 1))}
+                        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 btn btn-circle btn-sm sm:btn-md bg-black/80 text-white hover:bg-white hover:text-black border border-white/30 z-20"
+                        title="Previous Photo"
+                      >
+                        <FaChevronLeft className="text-base sm:text-lg" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentImageIndex((prev) => (prev < galleryImages.length - 1 ? prev + 1 : 0))}
+                        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 btn btn-circle btn-sm sm:btn-md bg-black/80 text-white hover:bg-white hover:text-black border border-white/30 z-20"
+                        title="Next Photo"
+                      >
+                        <FaChevronRight className="text-base sm:text-lg" />
+                      </button>
+                    </>
+                  )}
+                </div>
+
+                {/* Footer instruction */}
+                <div className="w-full text-center border-t border-white/20 pt-2 text-xs text-white/70 font-mono shrink-0 flex justify-between items-center">
+                  <span>Photo {currentImageIndex + 1} of {galleryImages.length}</span>
+                  <button
+                    type="button"
+                    onClick={closeFullViewModal}
+                    className="btn btn-xs bg-white text-black hover:bg-red-600 hover:text-white rounded-none font-bold uppercase"
+                  >
+                    Close Full View
+                  </button>
                 </div>
               </div>
             );
@@ -717,9 +817,6 @@ const Apartments = () => {
     </div>
   );
 };
-
-
-
 
 export default Apartments;
 

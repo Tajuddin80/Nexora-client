@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import showToast from "../../../lib/toast";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
-import { FaEdit, FaTrash, FaCalendarAlt, FaPlus } from "react-icons/fa";
+import { FaEdit, FaTrash, FaCalendarAlt, FaPlus, FaTimes, FaGift } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Loader from "../../../Shared/component/Loader/Loader";
@@ -48,6 +48,7 @@ const ManageCoupons = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["coupons"]);
+      queryClient.invalidateQueries(["all-coupons"]);
       showToast.success(editCouponId ? "Coupon updated successfully!" : "Coupon created successfully!");
       resetForm();
     },
@@ -64,6 +65,7 @@ const ManageCoupons = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["coupons"]);
+      queryClient.invalidateQueries(["all-coupons"]);
       showToast.success("Coupon deleted successfully!");
     },
     onError: (err) => {
@@ -118,76 +120,103 @@ const ManageCoupons = () => {
     }
   };
 
-  if (isLoading) return <Loader></Loader>;
+  if (isLoading) return <Loader />;
   if (isError)
-    return <div className="p-4 text-error">Error: {error.message}</div>;
+    return <div className="p-4 text-error font-bold">Error: {error.message}</div>;
 
   return (
-    <div className="p-6 bg-base-100 rounded-lg shadow-md">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold ">Manage Coupons</h2>
+    <div className="p-6 md:p-10 bg-base-100 text-base-content border border-base-content/25 shadow-xs space-y-6 w-full">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-base-content/15">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-base-content/10 text-base-content border border-base-content/20 flex items-center justify-center text-lg shrink-0">
+            <FaGift />
+          </div>
+          <div>
+            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-wide text-base-content">
+              Manage Coupons
+            </h2>
+            <p className="text-xs text-base-content/70 font-bold">
+              Create, modify, and monitor promotional discount vouchers.
+            </p>
+          </div>
+        </div>
+
         <button
           onClick={() => {
             resetForm();
             setShowModal(true);
           }}
-          className="btn btn-primary flex items-center gap-2 px-5 py-2 hover:scale-105 transition"
+          className="btn bg-base-content text-base-100 hover:bg-base-content/80 rounded-none font-bold uppercase text-xs tracking-wider flex items-center gap-2 px-5 py-2.5 border-none shrink-0"
         >
           <FaPlus /> Add Coupon
         </button>
       </div>
 
+      {/* Table Section */}
       {coupons.length === 0 ? (
-        <p className="text-center text-gray-500">No coupons found.</p>
+        <p className="text-center text-base-content/70 font-medium py-8">No coupons found.</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg shadow-sm">
-          <table className="table w-full border border-primary/40">
-            <thead className="bg-primary text-white">
+        <div className="overflow-x-auto border border-base-content/20 shadow-xs">
+          <table className="table w-full text-base-content">
+            <thead className="bg-base-content/10 text-base-content border-b border-base-content/20 font-black uppercase text-xs tracking-wider">
               <tr>
-                <th>Code</th>
-                <th>Discount (%)</th>
-                <th>Description</th>
-                <th>Expiry Date</th>
-                <th>Available</th>
-                <th className="text-center">Actions</th>
+                <th className="py-3 px-4">Code</th>
+                <th className="py-3 px-4">Discount</th>
+                <th className="py-3 px-4">Description</th>
+                <th className="py-3 px-4">Expiry Date</th>
+                <th className="py-3 px-4">Status</th>
+                <th className="py-3 px-4 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-base-content/10">
               {coupons.map((coupon) => (
                 <tr
                   key={coupon._id}
-                  className="bg-base-100 hover:bg-primary/10 transition-colors"
+                  className="bg-base-100 hover:bg-base-content/5 transition-colors text-xs font-bold"
                 >
-                  <td className="font-semibold">{coupon.code}</td>
-                  <td>{coupon.discount}</td>
-                  <td>{coupon.description}</td>
-                  <td>
+                  <td className="font-mono font-black text-sm text-base-content py-4 px-4">
+                    {coupon.code}
+                  </td>
+                  <td className="py-4 px-4 font-black text-sm">
+                    {coupon.discount}% OFF
+                  </td>
+                  <td className="py-4 px-4 text-base-content/85 max-w-xs font-medium">
+                    {coupon.description}
+                  </td>
+                  <td className="py-4 px-4">
                     {coupon.expiryDate
                       ? new Date(coupon.expiryDate).toLocaleDateString()
-                      : "N/A"}
+                      : "Lifetime"}
                   </td>
-                  <td
-                    className={`font-bold ${
-                      coupon.available ? "text-green-600" : "text-red-500"
-                    }`}
-                  >
-                    {coupon.available ? "Yes" : "No"}
+                  <td className="py-4 px-4">
+                    <span
+                      className={`inline-block px-2 py-0.5 text-[10px] font-black uppercase tracking-wider ${
+                        coupon.available
+                          ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                          : "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30"
+                      }`}
+                    >
+                      {coupon.available ? "Active" : "Disabled"}
+                    </span>
                   </td>
-                  <td className="flex justify-center gap-3">
-                    <button
-                      onClick={() => handleEdit(coupon)}
-                      className="btn btn-sm btn-primary text-white flex items-center gap-1 hover:scale-105 transition"
-                      title="Edit Coupon"
-                    >
-                      <FaEdit />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(coupon._id)}
-                      className="btn btn-sm btn-primary text-white flex items-center gap-1 hover:scale-105 transition"
-                      title="Delete Coupon"
-                    >
-                      <FaTrash />
-                    </button>
+                  <td className="py-4 px-4">
+                    <div className="flex justify-center gap-2">
+                      <button
+                        onClick={() => handleEdit(coupon)}
+                        className="btn btn-sm border border-base-content/30 bg-transparent text-base-content hover:bg-base-content/10 rounded-none font-bold text-xs"
+                        title="Edit Coupon"
+                      >
+                        <FaEdit /> <span className="hidden sm:inline">Edit</span>
+                      </button>
+                      <button
+                        onClick={() => handleDelete(coupon._id)}
+                        className="btn btn-sm border border-rose-500/40 bg-transparent text-rose-500 hover:bg-rose-500 hover:text-white rounded-none font-bold text-xs"
+                        title="Delete Coupon"
+                      >
+                        <FaTrash /> <span className="hidden sm:inline">Delete</span>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -196,76 +225,111 @@ const ManageCoupons = () => {
         </div>
       )}
 
+      {/* Add / Edit Coupon Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-xs">
-          <div className="bg-base-100 rounded-none border border-base-300 shadow-2xl w-11/12 max-w-lg p-4 sm:p-6 relative max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl sm:text-2xl font-black uppercase tracking-wider mb-5 text-base-content border-b border-base-200 pb-3">
-              {editCouponId ? "Edit Coupon" : "Add New Coupon"}
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <input
-                type="text"
-                placeholder="Coupon Code"
-                className="input input-bordered w-full"
-                value={formData.code}
-                onChange={(e) =>
-                  setFormData({ ...formData, code: e.target.value })
-                }
-              />
-              <input
-                type="number"
-                placeholder="Discount (%)"
-                className="input input-bordered w-full"
-                value={formData.discount}
-                onChange={(e) =>
-                  setFormData({ ...formData, discount: e.target.value })
-                }
-                min={0}
-                max={100}
-              />
-              <textarea
-                placeholder="Coupon Description"
-                className="textarea textarea-bordered w-full"
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-              />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-xs">
+          <div className="bg-base-100 rounded-none border border-base-content/30 shadow-2xl w-full max-w-lg p-6 relative">
+            <div className="flex justify-between items-center pb-4 mb-5 border-b border-base-content/15">
+              <h3 className="text-xl font-black uppercase tracking-wider text-base-content">
+                {editCouponId ? "Edit Coupon" : "Add New Coupon"}
+              </h3>
+              <button
+                type="button"
+                onClick={resetForm}
+                className="btn btn-square btn-sm bg-transparent text-base-content border-none hover:bg-base-content/10 rounded-none font-bold"
+              >
+                <FaTimes />
+              </button>
+            </div>
 
-              {/* Calendar Picker */}
-              <div className="relative">
-                <FaCalendarAlt className="absolute top-3 left-3 text-primary text-lg pointer-events-none" />
-                <DatePicker
-                  selected={formData.expiryDate}
-                  onChange={(date) =>
-                    setFormData({ ...formData, expiryDate: date })
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-base-content uppercase tracking-wider mb-1 block">
+                  Coupon Code
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. WELCOME2026"
+                  className="input input-bordered rounded-none border border-base-content/20 bg-base-100 text-base-content w-full focus:outline-none focus:border-base-content font-mono font-bold uppercase"
+                  value={formData.code}
+                  onChange={(e) =>
+                    setFormData({ ...formData, code: e.target.value.toUpperCase() })
                   }
-                  className="input input-bordered w-full pl-10"
-                  placeholderText="Select expiry date"
-                  minDate={new Date()}
-                  dateFormat="dd/MM/yyyy"
-                  showPopperArrow={false}
                 />
               </div>
 
-              {/*  Availability toggle */}
-              <label className="flex items-center gap-2 cursor-pointer">
+              <div>
+                <label className="text-xs font-bold text-base-content uppercase tracking-wider mb-1 block">
+                  Discount Percentage (%)
+                </label>
+                <input
+                  type="number"
+                  placeholder="e.g. 20"
+                  className="input input-bordered rounded-none border border-base-content/20 bg-base-100 text-base-content w-full focus:outline-none focus:border-base-content font-bold"
+                  value={formData.discount}
+                  onChange={(e) =>
+                    setFormData({ ...formData, discount: e.target.value })
+                  }
+                  min={0}
+                  max={100}
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-base-content uppercase tracking-wider mb-1 block">
+                  Coupon Description
+                </label>
+                <textarea
+                  placeholder="e.g. Exclusive 20% discount on first month rent"
+                  className="textarea textarea-bordered rounded-none border border-base-content/20 bg-base-100 text-base-content w-full focus:outline-none focus:border-base-content font-medium h-24"
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                />
+              </div>
+
+              {/* Calendar Picker */}
+              <div>
+                <label className="text-xs font-bold text-base-content uppercase tracking-wider mb-1 block">
+                  Expiry Date
+                </label>
+                <div className="relative">
+                  <FaCalendarAlt className="absolute top-3.5 left-3.5 text-base-content/60 text-sm pointer-events-none" />
+                  <DatePicker
+                    selected={formData.expiryDate}
+                    onChange={(date) =>
+                      setFormData({ ...formData, expiryDate: date })
+                    }
+                    className="input input-bordered rounded-none border border-base-content/20 bg-base-100 text-base-content w-full pl-10 focus:outline-none focus:border-base-content font-bold"
+                    placeholderText="Select expiry date"
+                    minDate={new Date()}
+                    dateFormat="dd/MM/yyyy"
+                    showPopperArrow={false}
+                  />
+                </div>
+              </div>
+
+              {/* Availability toggle */}
+              <label className="flex items-center gap-3 cursor-pointer pt-2">
                 <input
                   type="checkbox"
                   checked={formData.available}
                   onChange={(e) =>
                     setFormData({ ...formData, available: e.target.checked })
                   }
-                  className="checkbox checkbox-primary"
+                  className="checkbox rounded-none checkbox-sm border-base-content shrink-0"
                 />
-                <span className="label-text text-primary">Available</span>
+                <span className="text-xs font-bold text-base-content uppercase tracking-wider">
+                  Active & Available for Users
+                </span>
               </label>
 
-              <div className="flex justify-end gap-4">
+              <div className="flex justify-end gap-3 pt-4 border-t border-base-content/15">
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="btn  btn-primary hover:text-white"
+                  className="btn btn-ghost rounded-none font-bold uppercase text-xs tracking-wider text-base-content hover:bg-base-content/10"
                   disabled={saveCouponMutation.isLoading}
                 >
                   Cancel
@@ -273,22 +337,12 @@ const ManageCoupons = () => {
                 <button
                   type="submit"
                   disabled={saveCouponMutation.isLoading}
-                  className={`btn btn-primary ${
-                    saveCouponMutation.isLoading ? "loading" : ""
-                  }`}
+                  className="btn bg-base-content text-base-100 hover:bg-base-content/80 rounded-none font-bold uppercase text-xs tracking-wider border-none px-6"
                 >
-                  {saveCouponMutation.isLoading ? "Saving..." : "Save Coupon"}
+                  {saveCouponMutation.isLoading ? "Saving..." : editCouponId ? "Update Coupon" : "Create Coupon"}
                 </button>
               </div>
             </form>
-            <button
-              onClick={resetForm}
-              className="absolute top-3 right-3 btn text-white"
-              title="Close"
-              aria-label="Close"
-            >
-              Close
-            </button>
           </div>
         </div>
       )}

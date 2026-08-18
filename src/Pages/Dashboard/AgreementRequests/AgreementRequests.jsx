@@ -50,6 +50,8 @@ const AgreementRequests = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries(["agreements"]);
+      queryClient.invalidateQueries(["apartments"]);
+      queryClient.invalidateQueries(["all-apartments"]);
       showToast.success(
         `Agreement successfully ${variables.action === "accept" ? "Accepted! User promoted to Member." : "Rejected."}`
       );
