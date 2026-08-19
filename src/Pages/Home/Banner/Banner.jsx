@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
-import blackImg from "../../../assets/black.jpg";
-import building3Img from "../../../assets/building-3.jpg";
-import building4Img from "../../../assets/building-4.jpg";
-import building5Img from "../../../assets/building-5.jpg";
-import building6Img from "../../../assets/building-6.jpg";
+import blackImg from "../../../assets/black.webp";
+import building3Img from "../../../assets/building-3.webp";
+import building4Img from "../../../assets/building-4.webp";
+import building5Img from "../../../assets/building-5.webp";
+import building6Img from "../../../assets/building-6.webp";
 
 const panels = [
   {

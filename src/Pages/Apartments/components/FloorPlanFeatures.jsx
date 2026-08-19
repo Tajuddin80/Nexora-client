@@ -37,7 +37,7 @@ const featureGroups = [
 const FloorPlanFeatures = () => {
   return (
     <div className="my-10 p-6 md:p-10 bg-base-100 text-base-content border border-base-content/25 shadow-xs w-full">
-      <div className="text-center max-w-3xl mx-auto mb-10">
+      <div className="text-center w-full mb-10">
         <span className="text-xs font-bold uppercase tracking-widest text-base-content/60 block mb-1">
           Standard Specifications
         </span>

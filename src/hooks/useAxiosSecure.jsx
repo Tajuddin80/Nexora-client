@@ -31,10 +31,19 @@ const useAxiosSecure = () => {
       (res) => res,
       (error) => {
         const status = error?.response?.status;
-        if (status === 403) navigate("/forbidden");
-        else if (status === 401) {
+        if (status === 403) {
+          const url = error?.config?.url || "";
+          const isPaymentAction =
+            url.includes("/create-payment-intent") ||
+            url.includes("/rent-payments") ||
+            url.includes("/coupons/validate");
+
+          if (!isPaymentAction && window.location.pathname !== "/forbidden") {
+            navigate("/forbidden");
+          }
+        } else if (status === 401) {
           logOut()
-            .then(() => navigate("/signin"))
+            .then(() => navigate("/login"))
             .catch(console.log);
         }
         return Promise.reject(error);

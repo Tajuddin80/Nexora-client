@@ -53,7 +53,12 @@ const MakePayment = () => {
     enabled: !!user?.email,
   });
 
+  const currentMonth = new Date().toLocaleString("default", {
+    month: "long",
+    year: "numeric",
+  });
   const unpaidMonths = unpaidRents.map((rent) => rent.month);
+  const monthOptions = unpaidMonths.length > 0 ? unpaidMonths : [currentMonth];
 
   // Apply coupon code and set discount percent
   const handleApplyCoupon = async () => {
@@ -89,10 +94,6 @@ const MakePayment = () => {
     const finalAmount = Math.round(
       agreement.rent - (agreement.rent * discountPercent) / 100
     );
-
-    if (!window.confirm(`Confirm payment of $${finalAmount} for month ${data.month}?`)) {
-      return;
-    }
 
     setIsProcessing(true);
     setMessage(null);
@@ -154,6 +155,14 @@ const MakePayment = () => {
             transactionId: confirmRes.paymentIntent.id,
             apartmentId: agreement.apartmentNo,
           });
+        } else {
+          await axiosSecure.post(`/rent-payments`, {
+            userEmail: user.email,
+            apartmentId: agreement.apartmentNo,
+            month: data.month,
+            transactionId: confirmRes.paymentIntent.id,
+            couponCode: couponCode.trim() || null,
+          });
         }
 
         setIsError(false);
@@ -189,7 +198,7 @@ const MakePayment = () => {
   );
 
   return (
-    <div className="p-6 mx-auto bg-base-100 rounded-xl shadow-md ">
+    <div className="p-6 w-full bg-base-100 rounded-xl shadow-md ">
       <h2 className="text-3xl font-bold mb-6 text-primary">Make Payment</h2>
 
       {message && (
@@ -276,15 +285,11 @@ const MakePayment = () => {
             className="select select-bordered w-full"
           >
             <option value="">Select Month</option>
-            {unpaidMonths.length > 0 ? (
-              unpaidMonths.map((month) => (
-                <option key={month} value={month}>
-                  {month}
-                </option>
-              ))
-            ) : (
-              <option disabled>No unpaid months</option>
-            )}
+            {monthOptions.map((month) => (
+              <option key={month} value={month}>
+                {month}
+              </option>
+            ))}
           </select>
           {errors.month && (
             <p className="text-red-500 text-sm">{errors.month.message}</p>
@@ -359,7 +364,7 @@ const MakePayment = () => {
           type="submit"
           className="btn btn-primary mt-6 w-full text-lg"
           disabled={
-            isProcessing || unpaidMonths.length === 0 || !stripe || !elements
+            isProcessing || monthOptions.length === 0 || !stripe || !elements
           }
         >
           {isProcessing

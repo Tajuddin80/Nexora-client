@@ -3,6 +3,7 @@ import { Link, NavLink } from "react-router";
 import useAuth from "../../hooks/useAuth";
 import Toggle from "../component/Toggle/Toggle";
 import Logo from "../Logo/Logo";
+import NavbarNotificationBell from "./NavbarNotificationBell";
 
 const Navbar = () => {
   const { user, logOut } = useAuth();
@@ -91,6 +92,7 @@ const Navbar = () => {
       {/* Right: auth buttons or avatar */}
       <div className="navbar-end gap-3">
         <Toggle />
+        {user && <NavbarNotificationBell />}
         {!user ? (
           <Link
             to="/login"

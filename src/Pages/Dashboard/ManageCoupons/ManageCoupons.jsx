@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import showToast from "../../../lib/toast";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
-import { FaEdit, FaTrash, FaCalendarAlt, FaPlus, FaTimes, FaGift } from "react-icons/fa";
+import { FaEdit, FaTrash, FaCalendarAlt, FaPlus, FaTimes, FaGift, FaExclamationTriangle } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Loader from "../../../Shared/component/Loader/Loader";
@@ -114,9 +114,16 @@ const ManageCoupons = () => {
     setShowModal(true);
   };
 
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this coupon?")) {
-      deleteCouponMutation.mutate(id);
+    setDeleteConfirmId(id);
+  };
+
+  const confirmDelete = () => {
+    if (deleteConfirmId) {
+      deleteCouponMutation.mutate(deleteConfirmId);
+      setDeleteConfirmId(null);
     }
   };
 
@@ -343,6 +350,41 @@ const ManageCoupons = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
+          <div className="bg-base-100 border border-base-content/30 shadow-2xl p-6 max-w-md w-full text-base-content rounded-none space-y-5">
+            <div className="flex items-center gap-3 border-b border-base-content/15 pb-3">
+              <div className="w-9 h-9 bg-base-content/10 text-base-content border border-base-content/20 flex items-center justify-center text-sm">
+                <FaExclamationTriangle />
+              </div>
+              <h3 className="text-lg font-black uppercase tracking-wide text-base-content">
+                Confirm Deletion
+              </h3>
+            </div>
+            <p className="text-sm text-base-content/85 font-medium leading-relaxed">
+              Are you sure you want to delete this promotional coupon? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmId(null)}
+                className="btn btn-ghost rounded-none font-bold uppercase text-xs tracking-wider text-base-content hover:bg-base-content/10 border border-base-content/20"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDelete}
+                className="btn bg-base-content text-base-100 hover:bg-base-content/80 rounded-none font-bold uppercase text-xs tracking-wider border-none px-6"
+              >
+                Confirm Delete
+              </button>
+            </div>
           </div>
         </div>
       )}

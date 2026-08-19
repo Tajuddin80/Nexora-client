@@ -19,6 +19,7 @@ import {
   FaChevronRight,
   FaExclamationTriangle,
   FaVideo,
+  FaLock,
 } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
 import useUserRole from "../../hooks/useUserRole";
@@ -31,10 +32,10 @@ import FloorPlanFeatures from "./components/FloorPlanFeatures";
 import LeasingFAQCTA from "./components/LeasingFAQCTA";
 import LeasingProcessTimeline from "./components/LeasingProcessTimeline";
 
-import building3Img from "../../assets/building-3.jpg";
-import building4Img from "../../assets/building-4.jpg";
-import building5Img from "../../assets/building-5.jpg";
-import building6Img from "../../assets/building-6.jpg";
+import building3Img from "../../assets/building-3.webp";
+import building4Img from "../../assets/building-4.webp";
+import building5Img from "../../assets/building-5.webp";
+import building6Img from "../../assets/building-6.webp";
 
 const buildingFallbacks = [building6Img, building5Img, building4Img, building3Img];
 
@@ -99,6 +100,7 @@ const Apartments = () => {
   const [selectedApt, setSelectedApt] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [activeTab, setActiveTab] = useState("available");
 
   const openFullViewModal = (index = null) => {
     if (index !== null) {
@@ -336,25 +338,76 @@ const Apartments = () => {
         </div>
       </div>
 
-      {/* Apartments Grid - Architectural Clean Cards */}
-      {apartmentsList.length === 0 ? (
-        <EmptyState
-          icon={<FaBuilding className="text-3xl text-base-content" />}
-          title="No Apartments Available"
-          message="No apartments match your current criteria. Try resetting filters."
-          actionText="Reset Filters"
-          onAction={() => {
-            setMinRent(0);
-            setMaxRent(9999999);
-            setMinRentInput(0);
-            setMaxRentInput(100000);
+      {/* Category Tabbed Navigation Bar */}
+      <div className="flex border-b border-base-content/20 mb-8 bg-base-100 p-1">
+        <button
+          onClick={() => {
+            setActiveTab("available");
             setPage(1);
           }}
-        />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          className={`px-6 py-3.5 text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 border-b-2 ${
+            activeTab === "available"
+              ? "border-base-content bg-base-content/10 text-base-content"
+              : "border-transparent text-base-content/60 hover:text-base-content"
+          }`}
+        >
+          <FaBuilding className="text-sm" /> Available / Listings
+          <span className="ml-1.5 px-2 py-0.5 text-[10px] bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-black border border-emerald-500/30">
+            {apartmentsList.filter((a) => a.available === true).length}
+          </span>
+        </button>
 
-          {apartmentsList.map((apt, index) => (
+        <button
+          onClick={() => {
+            setActiveTab("rented");
+            setPage(1);
+          }}
+          className={`px-6 py-3.5 text-xs font-black uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2 border-b-2 ${
+            activeTab === "rented"
+              ? "border-base-content bg-base-content/10 text-base-content"
+              : "border-transparent text-base-content/60 hover:text-base-content"
+          }`}
+        >
+          <FaLock className="text-sm" /> Already Rented
+          <span className="ml-1.5 px-2 py-0.5 text-[10px] bg-rose-500/15 text-rose-600 dark:text-rose-400 font-black border border-rose-500/30">
+            {apartmentsList.filter((a) => a.available === false).length}
+          </span>
+        </button>
+      </div>
+
+      {/* Apartments Grid - Architectural Clean Cards */}
+      {(() => {
+        const displayedApartments = apartmentsList.filter((apt) => {
+          if (activeTab === "available") return apt.available === true;
+          if (activeTab === "rented") return apt.available === false;
+          return true;
+        });
+
+        if (displayedApartments.length === 0) {
+          return (
+            <EmptyState
+              icon={<FaBuilding className="text-3xl text-base-content" />}
+              title={activeTab === "available" ? "No Available Apartments" : "No Occupied Apartments"}
+              message={
+                activeTab === "available"
+                  ? "All apartments are currently rented out or match filters."
+                  : "No apartments are currently marked as rented."
+              }
+              actionText="Reset Filters"
+              onAction={() => {
+                setMinRent(0);
+                setMaxRent(9999999);
+                setMinRentInput(0);
+                setMaxRentInput(100000);
+                setPage(1);
+              }}
+            />
+          );
+        }
+
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {displayedApartments.map((apt, index) => (
             <div
               key={apt._id}
               className="bg-base-100 border border-base-content/25 shadow-xs hover:border-base-content/70 transition-all duration-200 flex flex-col justify-between"
@@ -453,7 +506,8 @@ const Apartments = () => {
             </div>
           ))}
         </div>
-      )}
+      );
+    })()}
 
       {/* Pagination */}
       {apartmentsList.length > 0 && data?.pages > 1 && (

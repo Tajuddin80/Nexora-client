@@ -42,7 +42,7 @@ const DashboardLayout = () => {
       <input id="dashboard-drawer" type="checkbox" className="drawer-toggle" />
 
       {/* Main Content Area */}
-      <div className="drawer-content flex flex-col bg-base-100 text-base-content min-h-screen">
+      <div className="drawer-content flex flex-col bg-base-100 text-base-content min-h-screen w-full">
         {/* Mobile Top Navigation Header */}
         <div className="w-full navbar bg-base-100 lg:hidden border-b border-base-content/20 px-4">
           <div className="flex-none">
@@ -75,7 +75,7 @@ const DashboardLayout = () => {
         </div>
 
         {/* Dynamic Page Outlet */}
-        <div className="p-4 md:p-8 flex-1">
+        <div className="p-4 md:p-8 flex-1 w-full">
           <Outlet />
         </div>
       </div>

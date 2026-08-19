@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import showToast from "../../../lib/toast";
-import { FaEdit, FaTrash, FaBullhorn } from "react-icons/fa";
+import { FaEdit, FaTrash, FaBullhorn, FaExclamationTriangle } from "react-icons/fa";
 import useUserRole from "../../../hooks/useUserRole";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useAuth from "../../../hooks/useAuth";
@@ -80,9 +80,16 @@ const Announcements = () => {
     });
   };
 
+  const [deleteAnnouncementId, setDeleteAnnouncementId] = useState(null);
+
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this announcement?")) {
-      deleteMutation.mutate(id);
+    setDeleteAnnouncementId(id);
+  };
+
+  const confirmDeleteAnnouncement = () => {
+    if (deleteAnnouncementId) {
+      deleteMutation.mutate(deleteAnnouncementId);
+      setDeleteAnnouncementId(null);
     }
   };
 
@@ -219,6 +226,41 @@ const Announcements = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Delete Confirmation Modal */}
+      {deleteAnnouncementId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
+          <div className="bg-base-100 border border-base-content/30 shadow-2xl p-6 max-w-md w-full text-base-content rounded-none space-y-5">
+            <div className="flex items-center gap-3 border-b border-base-content/15 pb-3">
+              <div className="w-9 h-9 bg-base-content/10 text-base-content border border-base-content/20 flex items-center justify-center text-sm">
+                <FaExclamationTriangle />
+              </div>
+              <h3 className="text-lg font-black uppercase tracking-wide text-base-content">
+                Confirm Announcement Deletion
+              </h3>
+            </div>
+            <p className="text-sm text-base-content/85 font-medium leading-relaxed">
+              Are you sure you want to delete this property announcement? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setDeleteAnnouncementId(null)}
+                className="btn btn-ghost rounded-none font-bold uppercase text-xs tracking-wider text-base-content hover:bg-base-content/10 border border-base-content/20"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteAnnouncement}
+                className="btn bg-base-content text-base-100 hover:bg-base-content/80 rounded-none font-bold uppercase text-xs tracking-wider border-none px-6"
+              >
+                Confirm Delete
+              </button>
+            </div>
           </div>
         </div>
       )}

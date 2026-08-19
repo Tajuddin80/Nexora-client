@@ -42,13 +42,13 @@ const TestimonialSlider = () => {
         <h2 className="text-2xl md:text-3xl font-black text-base-content uppercase tracking-wide">
           What Our Residents Say
         </h2>
-        <p className="mt-2 text-sm text-base-content/75 max-w-2xl mx-auto leading-relaxed font-medium">
+        <p className="mt-2 text-sm text-base-content/75 w-full leading-relaxed font-medium">
           Real feedback from customers who have experienced living at NEXORA.
         </p>
       </div>
 
       {/* Testimonial Card */}
-      <div className="max-w-4xl mx-auto p-6 md:p-10 bg-base-100 border border-base-content/15 shadow-xs text-left relative">
+      <div className="w-full p-6 md:p-10 bg-base-100 border border-base-content/15 shadow-xs text-left relative">
         <FaQuoteLeft className="text-3xl text-base-content mb-4 opacity-30" />
         <p className="text-base md:text-lg text-base-content font-medium leading-relaxed mb-6">
           “{currentReview.review}”

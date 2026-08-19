@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import HomeLayout from "../Layouts/HomeLayout/HomeLayout";
 import Home from "../Pages/Home/Home";
 import ErrorPage from "../Pages/ErrorPage/ErrorPage";
@@ -30,25 +30,24 @@ import PrivateRoute from "../ProtectedRoutes/PrivateRoute";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomeLayout></HomeLayout>,
-    errorElement: <ErrorPage></ErrorPage>,
+    element: <HomeLayout />,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
-        loader: () => fetch("/reviews.json"),
-        element: <Home></Home>,
+        element: <Home />,
       },
       {
         path: "apartments",
-        element: <Apartments></Apartments>,
+        element: <Apartments />,
       },
       {
         path: "about",
-        element: <About></About>,
+        element: <About />,
       },
       {
         path: "forbidden",
-        element: <Forbidden></Forbidden>,
+        element: <Forbidden />,
       },
       {
         path: "*",
@@ -58,18 +57,21 @@ export const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <AuthLayout></AuthLayout>,
+    element: <AuthLayout />,
     errorElement: <ErrorPage />,
     children: [
       {
         path: "login",
-        element: <Login></Login>,
+        element: <Login />,
+      },
+      {
+        path: "signin",
+        element: <Navigate to="/login" replace />,
       },
       {
         path: "register",
-        element: <Register></Register>,
+        element: <Register />,
       },
-
       {
         path: "*",
         element: <ErrorPage />,
@@ -85,7 +87,7 @@ export const router = createBrowserRouter([
     ),
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <DashboardHome></DashboardHome> },
+      { index: true, element: <DashboardHome /> },
       // USER & MEMBER common
       {
         path: "my-profile",
@@ -117,7 +119,7 @@ export const router = createBrowserRouter([
         path: "makepayment",
         element: (
           <MembarRoute>
-            <Payment></Payment>
+            <Payment />
           </MembarRoute>
         ),
       },

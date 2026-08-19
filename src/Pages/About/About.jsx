@@ -11,10 +11,10 @@ import {
   FaCheck,
 } from "react-icons/fa";
 
-import building3Img from "../../assets/building-3.jpg";
-import building4Img from "../../assets/building-4.jpg";
-import building5Img from "../../assets/building-5.jpg";
-import building6Img from "../../assets/building-6.jpg";
+import building3Img from "../../assets/building-3.webp";
+import building4Img from "../../assets/building-4.webp";
+import building5Img from "../../assets/building-5.webp";
+import building6Img from "../../assets/building-6.webp";
 
 import SustainabilityStandards from "./SustainabilityStandards";
 
@@ -53,8 +53,8 @@ const About = () => {
     <div className="min-h-screen bg-base-100 text-base-content py-8 px-4 md:px-8 lg:px-12 w-full">
       <div className="w-full space-y-10">
         {/* 1. Header Banner & Hero Section */}
-        <div className="p-8 md:p-12 bg-base-100 border border-base-content/25 shadow-xs">
-          <div className="text-center max-w-4xl mx-auto mb-10">
+        <div className="p-8 md:p-12 bg-base-100 border border-base-content/25 shadow-xs w-full">
+          <div className="text-center w-full mb-10">
             <span className="text-xs font-bold uppercase tracking-widest text-base-content/60 block mb-2">
               Architectural Landmark Platform
             </span>
@@ -177,7 +177,7 @@ const About = () => {
 
         {/* 4. Core Platform Capabilities */}
         <div className="p-8 md:p-12 bg-base-100 border border-base-content/25 shadow-xs space-y-8 w-full">
-          <div className="text-center max-w-3xl mx-auto">
+          <div className="text-center w-full">
             <span className="text-xs font-bold uppercase tracking-widest text-base-content/60 block mb-1">
               Integrated Capabilities
             </span>

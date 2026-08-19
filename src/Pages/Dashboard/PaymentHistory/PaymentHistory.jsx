@@ -39,7 +39,7 @@ const PaymentHistory = () => {
   }
 
   return (
-    <div className="p-6 mx-auto">
+    <div className="p-6 w-full">
       <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-primary">
         <FaListAlt className="text-primary" size={24} />
         Payment History

@@ -50,6 +50,8 @@ const AgreementRequests = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries(["agreements"]);
+      queryClient.invalidateQueries(["members"]);
+      queryClient.invalidateQueries(["admin-stats"]);
       queryClient.invalidateQueries(["apartments"]);
       queryClient.invalidateQueries(["all-apartments"]);
       showToast.success(
