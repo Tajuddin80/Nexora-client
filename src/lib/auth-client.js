@@ -1,7 +1,7 @@
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
-  baseURL: typeof window !== "undefined" ? window.location.origin : (import.meta.env.VITE_SERVER_URL || "http://localhost:5000"),
+  baseURL: import.meta.env.VITE_SERVER_URL || "https://nexora-server-v2.vercel.app",
 });
 
 export const { signIn, signUp, signOut, useSession } = authClient;
