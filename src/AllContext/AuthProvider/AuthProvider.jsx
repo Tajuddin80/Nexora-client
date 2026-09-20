@@ -110,6 +110,15 @@ const AuthProvider = ({ children }) => {
         callbackURL: window.location.origin,
         errorCallbackURL: `${window.location.origin}/login`,
       });
+
+      if (res?.error) {
+        setLoading(false);
+        throw new Error(res.error.message || "Failed to initiate Google sign in.");
+      }
+
+      if (res?.data?.url) {
+        window.location.href = res.data.url;
+      }
       return res;
     } catch (err) {
       setLoading(false);

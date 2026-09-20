@@ -14,32 +14,8 @@ const GoogleSignButton = () => {
   const handleGoogleSignIn = async () => {
     if (loading) return;
     try {
-      const result = await signInWithGoogle();
-
-      // Ensure user info is saved to your backend /users MongoDB endpoint
-      if (result?.data?.user || result?.user) {
-        const loggedUser = result?.data?.user || result?.user;
-        const userInfo = {
-          email: loggedUser.email,
-          role: "user",
-          last_log_in: new Date().toISOString(),
-          created_at: new Date().toISOString(),
-        };
-
-        try {
-          const userRes = await axiosPublic.post("/users", userInfo);
-          let title = "Welcome back!";
-          if (userRes.data.inserted) {
-            title = "Welcome to NEXORA!";
-          }
-
-          showToast.success(userRes.data?.inserted ? "Welcome to NEXORA!" : "Welcome back!");
-        } catch (dbErr) {
-          console.error("Error posting to /users endpoint:", dbErr);
-        }
-      }
-
-      navigate(from || "/", { replace: true });
+      await signInWithGoogle();
+      // Browser redirects to Google accounts automatically
     } catch (error) {
       console.error("Google sign-in error:", error);
       showToast.error(error?.message || "Could not connect to Google authentication.");
