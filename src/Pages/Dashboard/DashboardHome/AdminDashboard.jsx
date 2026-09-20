@@ -25,14 +25,14 @@ const AdminDashboard = () => {
     <div className="min-h-[80vh] px-4 py-10 text-center">
       <h1 className="text-3xl md:text-4xl font-bold mb-2 text-[color:var(--color-base-content)]">
         Welcome back,{" "}
-        <span className="text-primary">{user?.displayName || "Admin"}</span>! 🎉
+        <span className="text-primary">{user?.displayName || "Admin"}</span>
       </h1>
-      <p className="text-base opacity-70 max-w-2xl mx-auto mb-10 text-[color:var(--color-base-content)]">
+      <p className="text-base opacity-70 w-full mb-10 text-[color:var(--color-base-content)]">
         You’re managing the building system like a pro. Use the menu to handle
         apartments, agreements, payments, and users efficiently.
       </p>
 
-      <div className="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
         <InfoCard
           icon={FaBuilding}
           title="Manage Apartments"

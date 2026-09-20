@@ -1,123 +1,155 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import Swal from "sweetalert2";
-import { FaGift } from "react-icons/fa";
-import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { FaGift, FaCopy, FaCheckCircle, FaInfinity } from "react-icons/fa";
+import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import Loader from "../../../Shared/component/Loader/Loader";
+import showToast from "../../../lib/toast";
 
 const CouponsSection = () => {
-  const axiosSecure = useAxiosSecure();
+  const axiosPublic = useAxiosPublic();
 
-  //  Fetch coupons
+  // Fetch coupons
   const {
     data: coupons = [],
     isLoading,
     isError,
-    error,
   } = useQuery({
     queryKey: ["all-coupons"],
     queryFn: async () => {
-      const res = await axiosSecure.get("/coupons");
+      const res = await axiosPublic.get("/coupons");
       return res.data;
     },
   });
 
-  //  Loader state
   if (isLoading) {
     return <Loader />;
   }
 
-  //  Error state
   if (isError) {
     return (
-      <section className="my-12 p-6 md:p-10 rounded-2xl shadow-xl bg-base-100">
-        <p className="text-red-500">Failed to load coupons: {error.message}</p>
+      <section className="w-full py-12 md:py-16 bg-base-100 text-base-content border-b border-base-content/15">
+        <div className="w-full px-4 md:px-8 lg:px-12">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-base-content/15">
+            <div className="w-10 h-10 bg-base-content/10 text-base-content border border-base-content/20 flex items-center justify-center text-lg">
+              <FaGift />
+            </div>
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-base-content/60 block mb-0.5">
+                Exclusive Savings
+              </span>
+              <h2 className="text-2xl md:text-3xl font-black text-base-content uppercase tracking-wide">
+                Special Discount Coupons
+              </h2>
+            </div>
+          </div>
+          <p className="text-center text-base-content/75 font-medium py-4">
+            No coupons available right now. Check back later!
+          </p>
+        </div>
       </section>
     );
   }
 
-  //  Only show available coupons
   const availableCoupons = coupons.filter((c) => c.available === true);
 
-  //  Handle copy
   const handleCopy = async (code) => {
     try {
       await navigator.clipboard.writeText(code);
-      Swal.fire({
-        toast: true,
-        position: "top-end",
-        icon: "success",
-        title: `Coupon "${code}" copied!`,
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-        background: "#fff",
-      });
+      showToast.success(`Coupon code "${code}" copied to clipboard!`);
     } catch (err) {
-      Swal.fire({
-        toast: true,
-        position: "top-end",
-        icon: "error",
-        title: "Failed to copy coupon",
-        showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-        background: "#fff",
-      });
+      showToast.error("Failed to copy coupon code.");
     }
   };
 
   return (
-    <section
-      className="my-12 p-6 md:p-10 rounded-2xl shadow-xl 
-        bg-[color-mix(in_srgb,var(--color-primary)_10%,var(--color-base-100)_90%)]
-        text-[color:var(--color-base-content)]
-        border-r border-[rgba(0,0,0,0.1)]"
-    >
-      <div className="flex items-center gap-3 mb-6">
-        <FaGift className="text-4xl text-secondary" />
-        <h2 className="text-3xl text-secondary md:text-4xl font-bold">
-          Special Coupons
-        </h2>
-      </div>
-
-      {availableCoupons.length === 0 ? (
-        <p className="text-center text-base-content">
-          No coupons available right now.
-        </p>
-      ) : (
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-          {availableCoupons.map((c) => (
-            <div
-              key={c._id}
-              className="
-                p-5 rounded-xl shadow-md hover:shadow-2xl transition-transform transform hover:-translate-y-1
-                  bg-[color:var(--color-base-100)] text-base-content
-              "
-            >
-              <h3 className="text-xl font-bold">{c.discount}% OFF</h3>
-              <p className="text-sm mt-1 opacity-90">{c.description}</p>
-              <p className="text-xs mt-1 text-base-content">
-                Expiry:{" "}
-                {c.expiryDate
-                  ? new Date(c.expiryDate).toLocaleDateString()
-                  : "N/A"}
-              </p>
-              <button
-                onClick={() => handleCopy(c.code)}
-                className="
-                  mt-4 w-full p-2 border-dashed border-2 rounded-md font-mono font-semibold
-                  transition-all cursor-pointer
-                  bg-primary-content/10 hover:bg-primary-content/20 text-base-content
-                  border-primary
-                "
-              >
-                {c.code}
-              </button>
+    <section className="w-full py-12 md:py-16 bg-base-100 text-base-content border-b border-base-content/15">
+      <div className="w-full px-4 md:px-8 lg:px-12">
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 pb-4 border-b border-base-content/15">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 bg-base-content/10 text-base-content border border-base-content/20 flex items-center justify-center text-xl shrink-0">
+              <FaGift />
             </div>
-          ))}
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-base-content/60 block mb-0.5">
+                Exclusive Tenant Offers
+              </span>
+              <h2 className="text-2xl md:text-3xl font-black text-base-content uppercase tracking-wide">
+                Special Discount Coupons
+              </h2>
+            </div>
+          </div>
+          <span className="px-4 py-2 bg-base-content/10 text-base-content text-xs font-black uppercase tracking-widest border border-base-content/20 shrink-0">
+            {availableCoupons.length} Active Offers
+          </span>
         </div>
-      )}
+
+        {availableCoupons.length === 0 ? (
+          <p className="text-center text-base-content/75 font-medium py-8">
+            No active discount coupons available right now.
+          </p>
+        ) : (
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full">
+            {availableCoupons.map((c) => {
+              const isLifetime =
+                !c.expiryDate ||
+                new Date(c.expiryDate).getFullYear() >= 2090 ||
+                c.description.toLowerCase().includes("lifetime");
+
+              return (
+                <div
+                  key={c._id}
+                  className="p-6 bg-base-100 border border-base-content/20 shadow-xs hover:border-base-content/60 transition-all flex flex-col justify-between group"
+                >
+                  <div>
+                    {/* Top Badge Strip */}
+                    <div className="flex items-center justify-between mb-4 pb-3 border-b border-base-content/15">
+                      <span className="text-2xl font-black text-base-content tracking-tight">
+                        {c.discount}% OFF
+                      </span>
+                      <span className="text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-1 bg-base-content/10 text-base-content border border-base-content/20 flex items-center gap-1">
+                        {isLifetime ? (
+                          <>
+                            <FaInfinity className="text-xs text-base-content" /> Lifetime Limit
+                          </>
+                        ) : (
+                          <>
+                            <FaCheckCircle className="text-xs text-base-content" /> Verified
+                          </>
+                        )}
+                      </span>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-sm text-base-content/85 font-medium leading-relaxed mb-4">
+                      {c.description}
+                    </p>
+
+                    {/* Validity Info */}
+                    <p className="text-xs text-base-content/60 font-bold uppercase tracking-wider mb-6">
+                      Validity:{" "}
+                      {isLifetime ? (
+                        <span className="text-base-content font-black">Lifetime Unlimited</span>
+                      ) : (
+                        <span>Expires {new Date(c.expiryDate).toLocaleDateString()}</span>
+                      )}
+                    </p>
+                  </div>
+
+                  {/* Copy Button */}
+                  <button
+                    onClick={() => handleCopy(c.code)}
+                    className="w-full py-3 px-4 border border-dashed border-base-content/50 bg-base-content/5 hover:bg-base-content hover:text-base-100 transition-all cursor-pointer font-mono font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 text-base-content rounded-none"
+                    title="Click to Copy Code"
+                  >
+                    <FaCopy className="text-xs" /> {c.code}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </section>
   );
 };

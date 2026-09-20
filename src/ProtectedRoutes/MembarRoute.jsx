@@ -11,7 +11,7 @@ const MembarRoute = ({ children }) => {
     return <Loader />;
   }
 
-  if (!user || role !== "member") {
+  if (!user || (role !== "member" && role !== "admin")) {
     return <Navigate to={"/forbidden"}></Navigate>;
   }
 

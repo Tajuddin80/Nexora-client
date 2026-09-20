@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import HomeLayout from "../Layouts/HomeLayout/HomeLayout";
 import Home from "../Pages/Home/Home";
 import ErrorPage from "../Pages/ErrorPage/ErrorPage";
@@ -20,6 +20,9 @@ import Apartments from "../Pages/Apartments/Apartments";
 import About from "../Pages/About/About";
 import DashboardHome from "../Pages/Dashboard/DashboardHome/DashboardHome";
 import Payment from "../Pages/Dashboard/Payment/Payment";
+import AddApartment from "../Pages/Dashboard/AddApartment/AddApartment";
+import EditApartment from "../Pages/Dashboard/EditApartment/EditApartment";
+import Chat from "../Pages/Dashboard/Chat/Chat";
 import AdminRoute from "../ProtectedRoutes/AdminRoute";
 import MembarRoute from "../ProtectedRoutes/MembarRoute";
 import PrivateRoute from "../ProtectedRoutes/PrivateRoute";
@@ -27,54 +30,48 @@ import PrivateRoute from "../ProtectedRoutes/PrivateRoute";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomeLayout></HomeLayout>,
-    errorElement: <ErrorPage></ErrorPage>,
+    element: <HomeLayout />,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
-        loader: () => fetch("/reviews.json"),
-        element: <Home></Home>,
+        element: <Home />,
       },
       {
         path: "apartments",
-        element: <Apartments></Apartments>,
+        element: <Apartments />,
       },
       {
         path: "about",
-        element: <About></About>,
+        element: <About />,
       },
       {
         path: "forbidden",
-        element: <Forbidden></Forbidden>,
-      },
-      {
-        path: "*",
-        element: <ErrorPage />,
+        element: <Forbidden />,
       },
     ],
   },
   {
     path: "/",
-    element: <AuthLayout></AuthLayout>,
+    element: <AuthLayout />,
     errorElement: <ErrorPage />,
     children: [
       {
         path: "login",
-        element: <Login></Login>,
+        element: <Login />,
+      },
+      {
+        path: "signin",
+        element: <Navigate to="/login" replace />,
       },
       {
         path: "register",
-        element: <Register></Register>,
-      },
-
-      {
-        path: "*",
-        element: <ErrorPage />,
+        element: <Register />,
       },
     ],
   },
   {
-    path: "dashboard",
+    path: "/dashboard",
     element: (
       <PrivateRoute>
         <DashboardLayout />
@@ -82,7 +79,7 @@ export const router = createBrowserRouter([
     ),
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <DashboardHome></DashboardHome> },
+      { index: true, element: <DashboardHome /> },
       // USER & MEMBER common
       {
         path: "my-profile",
@@ -100,13 +97,37 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+      {
+        path: "chat",
+        element: (
+          <PrivateRoute>
+            <Chat />
+          </PrivateRoute>
+        ),
+      },
 
       // MEMBER extra
       {
         path: "makepayment",
         element: (
           <MembarRoute>
-            <Payment></Payment>
+            <Payment />
+          </MembarRoute>
+        ),
+      },
+      {
+        path: "make-payment",
+        element: (
+          <MembarRoute>
+            <Payment />
+          </MembarRoute>
+        ),
+      },
+      {
+        path: "payment",
+        element: (
+          <MembarRoute>
+            <Payment />
           </MembarRoute>
         ),
       },
@@ -125,6 +146,22 @@ export const router = createBrowserRouter([
         element: (
           <AdminRoute>
             <AdminProfile />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "add-apartment",
+        element: (
+          <AdminRoute>
+            <AddApartment />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "edit-apartment/:id",
+        element: (
+          <AdminRoute>
+            <EditApartment />
           </AdminRoute>
         ),
       },
@@ -152,10 +189,10 @@ export const router = createBrowserRouter([
           </AdminRoute>
         ),
       },
-      {
-        path: "*",
-        element: <ErrorPage />,
-      },
     ],
+  },
+  {
+    path: "*",
+    element: <ErrorPage />,
   },
 ]);

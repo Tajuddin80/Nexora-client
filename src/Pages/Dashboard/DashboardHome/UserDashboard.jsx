@@ -13,7 +13,7 @@ const UserDashboard = () => {
         Welcome,{" "}
         <span className="text-primary">{user?.displayName || "User"}</span>
       </h1>
-      <p className="text-base md:text-lg opacity-80 max-w-xl mb-6">
+      <p className="text-base md:text-lg opacity-80 w-full mb-6">
         Ready to become a member? Request an agreement to enjoy full access to
         building services and make rent payments.
       </p>

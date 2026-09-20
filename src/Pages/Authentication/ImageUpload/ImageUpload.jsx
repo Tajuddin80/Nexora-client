@@ -1,7 +1,7 @@
 // src/pages/Register/ImageUpload.jsx
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 import defaultProfile from "../../../assets/default.png";
-import Swal from "sweetalert2";
+import showToast from "../../../lib/toast";
 
 const ImageUpload = forwardRef((props, ref) => {
   const [preview, setPreview] = useState(defaultProfile);
@@ -16,11 +16,11 @@ const ImageUpload = forwardRef((props, ref) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       if (!selectedFile.type.startsWith("image/")) {
-        Swal.fire("Invalid", "Please upload a valid image", "info");
+        showToast.error("Please upload a valid image file.");
         return;
       }
       if (selectedFile.size > 500 * 1024) {
-        Swal.fire("Too Large", "Max size 500KB", "info");
+        showToast.error("Profile image file size must be less than 500 KB.");
         return;
       }
 

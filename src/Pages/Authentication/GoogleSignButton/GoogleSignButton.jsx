@@ -1,23 +1,26 @@
+import React from "react";
 import { useLocation, useNavigate } from "react-router";
-import Swal from "sweetalert2";
+import showToast from "../../../lib/toast";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import useAuth from "../../../hooks/useAuth";
+
 const GoogleSignButton = () => {
   const { signInWithGoogle, loading } = useAuth();
-
   const location = useLocation();
   const navigate = useNavigate();
   const axiosPublic = useAxiosPublic();
   const from = location.state?.from || "/";
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
     if (loading) return;
-    signInWithGoogle()
-      .then(async (result) => {
-        const user = result.user;
+    try {
+      const result = await signInWithGoogle();
 
+      // Ensure user info is saved to your backend /users MongoDB endpoint
+      if (result?.data?.user || result?.user) {
+        const loggedUser = result?.data?.user || result?.user;
         const userInfo = {
-          email: user.email,
+          email: loggedUser.email,
           role: "user",
           last_log_in: new Date().toISOString(),
           created_at: new Date().toISOString(),
@@ -25,45 +28,22 @@ const GoogleSignButton = () => {
 
         try {
           const userRes = await axiosPublic.post("/users", userInfo);
-          console.log(userRes.data.message);
-
-          let title = "Already logged in";
+          let title = "Welcome back!";
           if (userRes.data.inserted) {
-            title = "Welcome to NEXORA";
-          } else if (userRes.data.updated) {
-            title = "Welcome back!";
+            title = "Welcome to NEXORA!";
           }
 
-          Swal.fire({
-            icon: "success",
-            title,
-            showConfirmButton: false,
-            timer: 1500,
-            timerProgressBar: true,
-            toast: true,
-            position: "center",
-          });
-
-          setTimeout(() => {
-            navigate(from || "/", { replace: true });
-          }, 1600); // a bit more than toast timer
-        } catch (error) {
-          console.error("Error saving user info:", error);
-          Swal.fire({
-            icon: "error",
-            title: "Something went wrong",
-            text: error.message,
-          });
+          showToast.success(userRes.data?.inserted ? "Welcome to NEXORA!" : "Welcome back!");
+        } catch (dbErr) {
+          console.error("Error posting to /users endpoint:", dbErr);
         }
-      })
-      .catch((error) => {
-        console.error("Google sign-in error:", error.message);
-        Swal.fire({
-          icon: "error",
-          title: "Google Sign-in Failed",
-          text: error.message,
-        });
-      });
+      }
+
+      navigate(from || "/", { replace: true });
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      showToast.error(error?.message || "Could not connect to Google authentication.");
+    }
   };
 
   return (

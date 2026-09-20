@@ -1,6 +1,11 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { gsap } from "gsap";
 
+import building3Img from "../../../assets/building-3.webp";
+import building4Img from "../../../assets/building-4.webp";
+import building5Img from "../../../assets/building-5.webp";
+import building6Img from "../../../assets/building-6.webp";
+
 const DEFAULT_PARTICLE_COUNT = 12;
 const DEFAULT_SPOTLIGHT_RADIUS = 300;
 const MOBILE_BREAKPOINT = 768;
@@ -15,7 +20,7 @@ const cardData = [
     description:
       "Round‑the‑clock surveillance ensures complete safety and peace of mind.",
     label: "Security",
-    image: "https://i.ibb.co/whvstfQ6/lr36.jpg",
+    image: building6Img,
   },
   {
     color: "#060010",
@@ -23,7 +28,7 @@ const cardData = [
     description:
       "High‑grade insulation for a quieter, more comfortable living experience.",
     label: "Privacy",
-    image: "https://i.ibb.co/vvgMQrcV/lr33.jpg",
+    image: building5Img,
   },
   {
     color: "#060010",
@@ -31,7 +36,7 @@ const cardData = [
     description:
       "Premium finishing with elegant designs that redefine luxury living.",
     label: "Lifestyle",
-    image: "https://i.ibb.co/hJS85cfG/lr29.jpg",
+    image: building3Img,
   },
   {
     color: "#060010",
@@ -39,9 +44,10 @@ const cardData = [
     description:
       "Keyless entry and biometric access for secure, hassle‑free movement.",
     label: "Technology",
-    image: "https://i.ibb.co/yb2x2SR/lr34.jpg",
+    image: building4Img,
   },
 ];
+
 
 // Particle creation helper
 const createParticleElement = (x, y, color = DEFAULT_GLOW_COLOR) => {
@@ -415,62 +421,65 @@ const MagicBentoWithImages = ({
   return (
     <section
       ref={gridRef}
-      className={`grid gap-6 p-6
-    grid-cols-1 
-    sm:grid-cols-2 
-    lg:grid-cols-4
-    auto-rows-[200px] md:auto-rows-[250px]
-    ${className}`}
-      style={{ position: "relative" }}
+      className="w-full py-12 md:py-20 bg-base-200/40 text-base-content border-b border-base-content/15 relative"
     >
-      {enableStars && (
-        <GlobalSpotlight gridRef={gridRef} glowColor={glowColor} />
-      )}
+      <div
+        className={`w-full px-4 md:px-8 lg:px-12 grid gap-6
+          grid-cols-1 
+          sm:grid-cols-2 
+          lg:grid-cols-4
+          auto-rows-[200px] md:auto-rows-[250px]
+          ${className}`}
+      >
+        {enableStars && (
+          <GlobalSpotlight gridRef={gridRef} glowColor={glowColor} />
+        )}
 
-      {cardsToShow.map((card, index) => {
-        // 🎨 decide span dynamically
-        let spanClasses = "";
-        if (index === 0) {
-          spanClasses = "lg:col-span-2 lg:row-span-2"; // hero card
-        } else if (index === 3) {
-          spanClasses = "lg:col-span-2"; // wide card
-        }
+        {cardsToShow.map((card, index) => {
+          // 🎨 decide span dynamically
+          let spanClasses = "";
+          if (index === 0) {
+            spanClasses = "lg:col-span-2 lg:row-span-2"; // hero card
+          } else if (index === 3) {
+            spanClasses = "lg:col-span-2"; // wide card
+          }
 
-        return (
-          <ParticleCard
-            key={index}
-            className={`relative rounded-xl shadow-xl cursor-pointer overflow-hidden ${spanClasses}`}
-            style={{
-              background: `linear-gradient(135deg, rgba(${PRIMARY_COLOR},0.25), rgba(${SECONDARY_COLOR},0.25))`,
-              border: `1px solid rgba(${PRIMARY_COLOR},0.4)`,
-            }}
-            particleCount={particleCount}
-            glowColor={glowColor}
-            enableTilt={enableTilt}
-            enableMagnetism={enableMagnetism}
-            clickEffect={clickEffect}
-          >
-            <div className="absolute inset-0">
-              {card.image && (
-                <img
-                  src={card.image}
-                  alt={card.title}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                />
-              )}
-              <div className="absolute inset-0 bg-black/30 p-4 flex flex-col justify-end text-white">
-                <span className="text-sm font-semibold mb-1">{card.label}</span>
-                <h3 className="text-xl md:text-2xl font-bold mb-1 line-clamp-1">
-                  {card.title}
-                </h3>
-                <p className="text-sm opacity-90 line-clamp-2">
-                  {card.description}
-                </p>
+          return (
+            <ParticleCard
+              key={index}
+              className={`relative rounded-xl shadow-xl cursor-pointer overflow-hidden ${spanClasses}`}
+              style={{
+                background: `linear-gradient(135deg, rgba(${PRIMARY_COLOR},0.25), rgba(${SECONDARY_COLOR},0.25))`,
+                border: `1px solid rgba(${PRIMARY_COLOR},0.4)`,
+              }}
+              particleCount={particleCount}
+              glowColor={glowColor}
+              enableTilt={enableTilt}
+              enableMagnetism={enableMagnetism}
+              clickEffect={clickEffect}
+            >
+              <div className="absolute inset-0">
+                {card.image && (
+                  <img
+                    src={card.image}
+                    alt={card.title}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                )}
+                <div className="absolute inset-0 bg-black/30 p-4 flex flex-col justify-end text-white">
+                  <span className="text-sm font-semibold mb-1">{card.label}</span>
+                  <h3 className="text-xl md:text-2xl font-bold mb-1 line-clamp-1">
+                    {card.title}
+                  </h3>
+                  <p className="text-sm opacity-90 line-clamp-2">
+                    {card.description}
+                  </p>
+                </div>
               </div>
-            </div>
-          </ParticleCard>
-        );
-      })}
+            </ParticleCard>
+          );
+        })}
+      </div>
     </section>
   );
 };

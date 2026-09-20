@@ -5,19 +5,27 @@ import CouponsSection from "./CouponsSection/CouponsSection";
 import LocationSection from "./LocationSection/LocationSection";
 import MagicBentoWithImages from "../../Shared/component/MagicBentoWithImages/MagicBentoWithImages";
 import FAQSection from "./FAQSection/FAQSection";
-import TestimonialSlider from "./TestimonialSlider/TestimonialSlider";
+import AmenitiesSection from "./AmenitiesSection/AmenitiesSection";
+import HowItWorks from "./HowItWorks/HowItWorks";
+import SignatureShowcase from "./SignatureShowcase/SignatureShowcase";
+import ResidentTestimonials from "./ResidentTestimonials/ResidentTestimonials";
+import NeighborhoodHighlights from "./NeighborhoodHighlights/NeighborhoodHighlights";
 
 const Home = () => {
   return (
-    <>
-      <Banner></Banner>
-      <CouponsSection></CouponsSection>
-      <MagicBentoWithImages></MagicBentoWithImages>
-      <BuildingDetails></BuildingDetails>
-      <TestimonialSlider></TestimonialSlider>
-      <LocationSection></LocationSection>
-      <FAQSection></FAQSection>
-    </>
+    <div className="w-full overflow-hidden">
+      <Banner />
+      <CouponsSection />
+      <SignatureShowcase />
+      <AmenitiesSection />
+      <MagicBentoWithImages />
+      <BuildingDetails />
+      <NeighborhoodHighlights />
+      <HowItWorks />
+      <ResidentTestimonials />
+      <LocationSection />
+      <FAQSection />
+    </div>
   );
 };
 

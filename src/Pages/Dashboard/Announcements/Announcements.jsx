@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import Swal from "sweetalert2";
-import { FaEdit, FaTrash, FaBullhorn } from "react-icons/fa";
+import showToast from "../../../lib/toast";
+import { FaEdit, FaTrash, FaBullhorn, FaExclamationTriangle } from "react-icons/fa";
 import useUserRole from "../../../hooks/useUserRole";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useAuth from "../../../hooks/useAuth";
 import Loader from "../../../Shared/component/Loader/Loader";
+import EmptyState from "../../../Shared/component/EmptyState/EmptyState";
 
 const Announcements = () => {
   const axiosSecure = useAxiosSecure();
@@ -17,7 +18,6 @@ const Announcements = () => {
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ title: "", description: "" });
 
-  //  Fetch announcements
   const { data: announcements = [], isLoading } = useQuery({
     queryKey: ["announcements"],
     queryFn: async () => {
@@ -26,7 +26,6 @@ const Announcements = () => {
     },
   });
 
-  //  Add/Edit announcement
   const saveMutation = useMutation({
     mutationFn: async (announcement) => {
       if (editingId) {
@@ -42,29 +41,16 @@ const Announcements = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["announcements"]);
-      Swal.fire({
-        icon: "success",
-        title: editingId ? "Announcement updated!" : "Announcement added!",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+      showToast.success(editingId ? "Announcement updated!" : "Announcement posted!");
       setShowModal(false);
       setFormData({ title: "", description: "" });
       setEditingId(null);
     },
-    onError: () => {
-      Swal.fire({
-        icon: "error",
-        title: editingId
-          ? "Could not update announcement"
-          : "Could not add announcement",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+    onError: (err) => {
+      showToast.error(err?.response?.data?.message || "Failed to save announcement.");
     },
   });
 
-  //  Delete announcement
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
       const res = await axiosSecure.delete(`/announcements/${id}`);
@@ -72,32 +58,17 @@ const Announcements = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["announcements"]);
-      Swal.fire({
-        icon: "success",
-        title: "Announcement removed!",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+      showToast.success("Announcement deleted!");
     },
-    onError: () => {
-      Swal.fire({
-        icon: "error",
-        title: "Could not delete announcement",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+    onError: (err) => {
+      showToast.error(err?.response?.data?.message || "Failed to delete announcement.");
     },
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.title || !formData.description) {
-      Swal.fire({
-        icon: "error",
-        title: "All fields are required!",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+      showToast.warning("All fields are required!");
       return;
     }
 
@@ -109,19 +80,17 @@ const Announcements = () => {
     });
   };
 
+  const [deleteAnnouncementId, setDeleteAnnouncementId] = useState(null);
+
   const handleDelete = (id) => {
-    Swal.fire({
-      title: "Delete this announcement?",
-      text: "This action cannot be undone.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        deleteMutation.mutate(id);
-      }
-    });
+    setDeleteAnnouncementId(id);
+  };
+
+  const confirmDeleteAnnouncement = () => {
+    if (deleteAnnouncementId) {
+      deleteMutation.mutate(deleteAnnouncementId);
+      setDeleteAnnouncementId(null);
+    }
   };
 
   const handleEdit = (announcement) => {
@@ -137,7 +106,7 @@ const Announcements = () => {
     <div className="space-y-6">
       <div className="flex justify-between flex-wrap gap-10 items-center">
         <h2 className="text-3xl font-bold flex items-center gap-2">
-          <FaBullhorn className="" /> Announcements
+          <FaBullhorn /> Announcements
         </h2>
         {role === "admin" && (
           <button
@@ -156,7 +125,17 @@ const Announcements = () => {
       {isLoading ? (
         <Loader />
       ) : announcements.length === 0 ? (
-        <p className="text-gray-500">No announcements yet.</p>
+        <EmptyState
+          icon={<FaBullhorn className="text-3xl text-primary" />}
+          title="No Announcements Yet"
+          message="Check back later for community updates, building notices, and property news."
+          actionText={role === "admin" ? "Create First Announcement" : null}
+          onAction={() => {
+            setEditingId(null);
+            setFormData({ title: "", description: "" });
+            setShowModal(true);
+          }}
+        />
       ) : (
         <div className="space-y-4">
           {announcements.map((a) => (
@@ -199,10 +178,10 @@ const Announcements = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
-          <div className="bg-base-100 text-base-content rounded-xl p-6 w-full max-w-5xl shadow-xl">
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <FaBullhorn />
+        <div className="fixed inset-0 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-xs z-50">
+          <div className="bg-base-100 text-base-content rounded-none border border-base-300 p-5 sm:p-8 w-11/12 max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl font-black uppercase tracking-wider mb-4 flex items-center gap-2 border-b border-base-200 pb-3">
+              <FaBullhorn className="text-primary" />
               {editingId ? "Edit Announcement" : "New Announcement"}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -247,6 +226,41 @@ const Announcements = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Delete Confirmation Modal */}
+      {deleteAnnouncementId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
+          <div className="bg-base-100 border border-base-content/30 shadow-2xl p-6 max-w-md w-full text-base-content rounded-none space-y-5">
+            <div className="flex items-center gap-3 border-b border-base-content/15 pb-3">
+              <div className="w-9 h-9 bg-base-content/10 text-base-content border border-base-content/20 flex items-center justify-center text-sm">
+                <FaExclamationTriangle />
+              </div>
+              <h3 className="text-lg font-black uppercase tracking-wide text-base-content">
+                Confirm Announcement Deletion
+              </h3>
+            </div>
+            <p className="text-sm text-base-content/85 font-medium leading-relaxed">
+              Are you sure you want to delete this property announcement? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setDeleteAnnouncementId(null)}
+                className="btn btn-ghost rounded-none font-bold uppercase text-xs tracking-wider text-base-content hover:bg-base-content/10 border border-base-content/20"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteAnnouncement}
+                className="btn bg-base-content text-base-100 hover:bg-base-content/80 rounded-none font-bold uppercase text-xs tracking-wider border-none px-6"
+              >
+                Confirm Delete
+              </button>
+            </div>
           </div>
         </div>
       )}
