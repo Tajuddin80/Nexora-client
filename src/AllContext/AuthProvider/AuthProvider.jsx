@@ -102,12 +102,14 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (redirectPath = "/dashboard") => {
     setLoading(true);
     try {
+      const targetURL = `${window.location.origin}${redirectPath.startsWith("/") ? redirectPath : `/${redirectPath}`}`;
+
       const res = await authClient.signIn.social({
         provider: "google",
-        callbackURL: window.location.origin,
+        callbackURL: targetURL,
         errorCallbackURL: `${window.location.origin}/login`,
       });
 

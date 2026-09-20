@@ -14,7 +14,7 @@ const GoogleSignButton = () => {
   const handleGoogleSignIn = async () => {
     if (loading) return;
     try {
-      await signInWithGoogle();
+      await signInWithGoogle(from && from !== "/login" ? from : "/dashboard");
       // Browser redirects to Google accounts automatically
     } catch (error) {
       console.error("Google sign-in error:", error);
