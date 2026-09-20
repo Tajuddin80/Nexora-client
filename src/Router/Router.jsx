@@ -49,10 +49,6 @@ export const router = createBrowserRouter([
         path: "forbidden",
         element: <Forbidden />,
       },
-      {
-        path: "*",
-        element: <ErrorPage />,
-      },
     ],
   },
   {
@@ -72,14 +68,10 @@ export const router = createBrowserRouter([
         path: "register",
         element: <Register />,
       },
-      {
-        path: "*",
-        element: <ErrorPage />,
-      },
     ],
   },
   {
-    path: "dashboard",
+    path: "/dashboard",
     element: (
       <PrivateRoute>
         <DashboardLayout />
@@ -117,6 +109,22 @@ export const router = createBrowserRouter([
       // MEMBER extra
       {
         path: "makepayment",
+        element: (
+          <MembarRoute>
+            <Payment />
+          </MembarRoute>
+        ),
+      },
+      {
+        path: "make-payment",
+        element: (
+          <MembarRoute>
+            <Payment />
+          </MembarRoute>
+        ),
+      },
+      {
+        path: "payment",
         element: (
           <MembarRoute>
             <Payment />
@@ -181,10 +189,10 @@ export const router = createBrowserRouter([
           </AdminRoute>
         ),
       },
-      {
-        path: "*",
-        element: <ErrorPage />,
-      },
     ],
+  },
+  {
+    path: "*",
+    element: <ErrorPage />,
   },
 ]);
