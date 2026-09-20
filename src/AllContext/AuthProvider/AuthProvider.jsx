@@ -108,6 +108,7 @@ const AuthProvider = ({ children }) => {
       const res = await authClient.signIn.social({
         provider: "google",
         callbackURL: window.location.origin,
+        errorCallbackURL: `${window.location.origin}/login`,
       });
       return res;
     } catch (err) {
